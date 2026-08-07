@@ -39,7 +39,6 @@
         .hover-bar { transition: width 0.3s ease, background-color 0.3s ease; width: 0; height: 3px; }
         .filter-btn.active { background-color: #1e40af; color: white; border-color: #1e40af; }
         
-        /* Loading Overlay */
         #loading-overlay { display: flex; }
         .hidden-loader { display: none !important; }
     </style>
@@ -69,11 +68,12 @@
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
             <button onclick="navigate('import')" id="nav-import" class="opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
-            <button onclick="navigate('admin')" id="nav-admin" class="opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
+            <!-- BOTÃO ADMIN INICIA OCULTO (classe hidden) -->
+            <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
             
             <div class="ml-6 border-l border-blue-400 pl-6 flex items-center gap-2">
                 <span class="text-xs text-blue-300">Simulador de Login:</span>
-                <select id="userRole" class="bg-blue-800 text-white border border-blue-600 rounded px-2 py-1 text-xs outline-none">
+                <select id="userRole" onchange="updateUIPermissions(); navigate('dashboard');" class="bg-blue-800 text-white border border-blue-600 rounded px-2 py-1 text-xs outline-none">
                     <!-- Preenchido via JS -->
                 </select>
             </div>
@@ -318,16 +318,18 @@
         let currentFilter = 'Todos';
         let pendingImportData = null;
 
+        // ESTRUTURA ATUALIZADA (com Fast Atende e Suporte da área de Negócios)
         const defaultAreas = [
             { id: 'implantacao', name: 'Implantação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'plug', name: 'Plug Marketing', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'rh', name: 'RH', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'fastedu', name: 'Fast Educação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'suporte', name: 'Suporte de Operações', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'suporte', name: 'Suporte da área de Negócios', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'fornecedores', name: 'Fornecedores Homologados', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'persports', name: 'Per Sports | Fon.de Uniformes', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'playfast', name: 'Play Fast', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'operacao', name: 'Operação Própria', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'fastatende', name: 'Fast Atende', realNps: null, comments: 0, done: 0, late: 0, items: [] },
         ];
         
         const defaultAdmin = [
@@ -352,11 +354,22 @@
                     let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
                     let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
                     
-                    if(Array.isArray(aData) && aData.length > 0) areasData = aData;
-                    else areasData = defaultAreas;
-                    
                     if(Array.isArray(aUsers) && aUsers.length > 0) adminUsers = aUsers;
                     else adminUsers = defaultAdmin;
+                    
+                    // Sistema de migração inteligente para não perder dados antigos
+                    if(Array.isArray(aData) && aData.length > 0) {
+                        areasData = defaultAreas.map(defArea => {
+                            let existing = aData.find(a => a.id === defArea.id);
+                            if (existing) {
+                                existing.name = defArea.name; // Garante que a tela mostrará o novo nome
+                                return existing;
+                            }
+                            return defArea;
+                        });
+                    } else {
+                        areasData = defaultAreas;
+                    }
                 } else {
                     areasData = defaultAreas;
                     adminUsers = defaultAdmin;
@@ -368,6 +381,7 @@
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
                 updateUserRoleDropdown();
+                updateUIPermissions(); // Oculta botão Admin se necessário
                 navigate('dashboard');
             }
         });
@@ -410,6 +424,24 @@
             adminUsers.forEach(u => {
                 select.innerHTML += `<option value="${u.email}">${u.email}</option>`;
             });
+        }
+        
+        // Exibe ou oculta o botão Admin de acordo com a permissão 'all'
+        function updateUIPermissions() {
+            const loggedEmail = document.getElementById('userRole').value;
+            const user = adminUsers.find(u => u.email === loggedEmail);
+            const isAdmin = user && user.areas.includes('all');
+            
+            const adminNav = document.getElementById('nav-admin');
+            if(isAdmin) {
+                adminNav.classList.remove('hidden');
+            } else {
+                adminNav.classList.add('hidden');
+                // Se a pessoa trocou de usuário enquanto estava na tela Admin, manda pro dashboard
+                if(!document.getElementById('view-admin').classList.contains('hidden')) {
+                    navigate('dashboard');
+                }
+            }
         }
 
         function navigate(viewId) {
@@ -676,6 +708,7 @@
                         
                         if(sheetName.toLowerCase().includes('cópia') || sheetName.toLowerCase().includes('página') || sheetName.toLowerCase().includes('rede de cliente')) return;
                         
+                        // Encontra a área com match mais preciso no nome
                         const match = newAreasData.find(a => sheetName.toLowerCase().includes(a.name.toLowerCase().replace(' | fon.de uniformes', '')));
                         
                         if(match) {
@@ -862,6 +895,7 @@
             closeAdminModal();
             renderAdminTable();
             updateUserRoleDropdown();
+            updateUIPermissions(); // Atualiza a aba na hora
         }
     </script>
 </body>
