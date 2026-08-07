@@ -300,12 +300,12 @@
     <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO SUPABASE -->
     <script>
         // ======= 1. CONFIGURAÇÃO SUPABASE SEGURA =======
-        let supabase;
+        let supabaseClient;
         try {
             const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsYnd2aW5pdWJnbXd0bGptdGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMTQ0MzEsImV4cCI6MjEwMTY5MDQzMX0.5nnY9byvWTrRR-g_x4AtANTnZ97MnU_Z3RpEDZj0QZk';
             if (window.supabase) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch(e) {
             console.error("Erro ao inicializar Supabase:", e);
@@ -318,7 +318,6 @@
         let currentFilter = 'Todos';
         let pendingImportData = null;
 
-        // Estrutura padrão
         const defaultAreas = [
             { id: 'implantacao', name: 'Implantação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'plug', name: 'Plug Marketing', realNps: null, comments: 0, done: 0, late: 0, items: [] },
@@ -340,10 +339,9 @@
         // ======= 3. INICIALIZAÇÃO BLINDADA =======
         window.addEventListener('DOMContentLoaded', async () => {
             try {
-                if (!supabase) throw new Error("Supabase não carregou na página.");
+                if (!supabaseClient) throw new Error("Supabase não carregou na página.");
                 
-                // Puxa dados da nuvem com timeout de segurança (5 segundos)
-                const fetchPromise = supabase.from('app_state').select('*').eq('id', 1).single();
+                const fetchPromise = supabaseClient.from('app_state').select('*').eq('id', 1).single();
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
                 
                 const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
@@ -351,7 +349,6 @@
                 if (error) throw error;
                 
                 if (data) {
-                    // Proteção contra dados corrompidos no JSONB
                     let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
                     let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
                     
@@ -365,11 +362,10 @@
                     adminUsers = defaultAdmin;
                 }
             } catch (err) {
-                console.warn("Aviso: Falha ao sincronizar com Supabase. Carregando dados locais. Motivo:", err.message);
+                console.warn("Aviso: Falha ao sincronizar com Supabase. Carregando dados locais.", err.message);
                 areasData = defaultAreas;
                 adminUsers = defaultAdmin;
             } finally {
-                // SEMPRE oculta a tela de carregamento, mesmo se der erro
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
                 updateUserRoleDropdown();
                 navigate('dashboard');
@@ -378,9 +374,9 @@
 
         // ======= 4. FUNÇÕES DO SISTEMA =======
         async function saveStateToSupabase() {
-            if(!supabase) return;
+            if(!supabaseClient) return;
             try {
-                const { error } = await supabase.from('app_state')
+                const { error } = await supabaseClient.from('app_state')
                     .update({ areas_data: areasData, admin_users: adminUsers })
                     .eq('id', 1);
                 if(error) console.error("Erro ao salvar:", error);
@@ -654,7 +650,7 @@
             renderCommentsList();
         }
 
-        // --- SISTEMA DE LEITURA EXCEL ---
+        // --- SISTEMA DE LEITURA E INGESTÃO DE EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -727,10 +723,16 @@
                                         </li>`;
                                 totalComments += validRows;
                             }
+                        } else if(rows.length > 0) {
+                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50">
+                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Nenhuma área associada)</p></div>
+                                        <span class="text-sm text-gray-500">${rows.length} linha(s) lidas</span>
+                                    </li>`;
                         }
                     });
                     
                     previewList.innerHTML = html + '</ul>';
+                    
                     pendingImportData = newAreasData;
                     
                     const btn = document.getElementById('import-btn');
