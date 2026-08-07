@@ -45,13 +45,34 @@
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
-    <!-- Tela de Carregamento do Supabase -->
-    <div id="loading-overlay" class="fixed inset-0 bg-primary z-[100] flex flex-col items-center justify-center text-white">
-        <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
-        <h2 class="text-xl font-bold">Conectando à Nuvem (Supabase)...</h2>
-        <p class="text-blue-200 mt-2 text-sm">Sincronizando dados dos franqueados</p>
+    <!-- TELA DE LOGIN (Barreira de Acesso) -->
+    <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
+        <div class="bg-white p-10 rounded-xl shadow-2xl w-[400px] text-center">
+            <div class="mb-6 flex justify-center">
+                <div class="bg-primary px-3 py-2 rounded-lg flex items-center justify-center h-14 w-auto">
+                    <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold mb-2 text-gray-800">Acesso Restrito</h2>
+            <p class="text-sm text-gray-500 mb-8">Digite seu e-mail corporativo para acessar os Planos de Ação do NPS.</p>
+            
+            <input type="email" id="login-email" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left" placeholder="exemplo@fasttennis.com.br">
+            
+            <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ Acesso negado. Este e-mail não possui permissão no sistema.</div>
+            
+            <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors">Entrar no Sistema</button>
+            <p class="text-xs text-gray-400 mt-6">Apenas Heads e Diretoria autorizados possuem acesso.</p>
+        </div>
     </div>
 
+    <!-- Tela de Carregamento do Supabase -->
+    <div id="loading-overlay" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center text-white">
+        <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
+        <h2 class="text-xl font-bold">Conectando à Nuvem...</h2>
+        <p class="text-blue-200 mt-2 text-sm">Carregando base de dados</p>
+    </div>
+
+    <!-- SISTEMA PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-6 py-4 flex-shrink-0">
         <div class="flex items-center gap-4">
             <div class="relative group cursor-pointer" onclick="document.getElementById('logo-upload').click()" title="Clique para alterar a logo">
@@ -68,14 +89,15 @@
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
             <button onclick="navigate('import')" id="nav-import" class="opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
-            <!-- BOTÃO ADMIN INICIA OCULTO (classe hidden) -->
+            
             <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
             
-            <div class="ml-6 border-l border-blue-400 pl-6 flex items-center gap-2">
-                <span class="text-xs text-blue-300">Simulador de Login:</span>
-                <select id="userRole" onchange="updateUIPermissions(); navigate('dashboard');" class="bg-blue-800 text-white border border-blue-600 rounded px-2 py-1 text-xs outline-none">
-                    <!-- Preenchido via JS -->
-                </select>
+            <div class="ml-6 border-l border-blue-400 pl-6 flex items-center gap-3">
+                <div class="text-right">
+                    <div class="text-xs text-blue-300 uppercase tracking-wide">Logado como</div>
+                    <div id="logged-user-display" class="font-bold text-white text-xs">...</div>
+                </div>
+                <button onclick="logout()" class="bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded text-xs transition-colors" title="Sair do sistema"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </nav>
     </header>
@@ -299,7 +321,7 @@
 
     <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO SUPABASE -->
     <script>
-        // ======= 1. CONFIGURAÇÃO SUPABASE SEGURA =======
+        // ======= 1. CONFIGURAÇÃO SUPABASE =======
         let supabaseClient;
         try {
             const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
@@ -312,13 +334,13 @@
         }
 
         // ======= 2. VARIÁVEIS GLOBAIS =======
+        let loggedEmail = null; // E-mail logado atualmente
         let areasData = [];
         let adminUsers = [];
         let currentAreaId = null;
         let currentFilter = 'Todos';
         let pendingImportData = null;
 
-        // ESTRUTURA ATUALIZADA (com Fast Atende e Suporte da área de Negócios)
         const defaultAreas = [
             { id: 'implantacao', name: 'Implantação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'plug', name: 'Plug Marketing', realNps: null, comments: 0, done: 0, late: 0, items: [] },
@@ -338,10 +360,10 @@
             { email: 'lorena@fasttennis.com.br', areas: ['playfast'] }
         ];
 
-        // ======= 3. INICIALIZAÇÃO BLINDADA =======
+        // ======= 3. INICIALIZAÇÃO (LOGIN & NUVEM) =======
         window.addEventListener('DOMContentLoaded', async () => {
             try {
-                if (!supabaseClient) throw new Error("Supabase não carregou na página.");
+                if (!supabaseClient) throw new Error("Supabase não carregou.");
                 
                 const fetchPromise = supabaseClient.from('app_state').select('*').eq('id', 1).single();
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
@@ -357,12 +379,11 @@
                     if(Array.isArray(aUsers) && aUsers.length > 0) adminUsers = aUsers;
                     else adminUsers = defaultAdmin;
                     
-                    // Sistema de migração inteligente para não perder dados antigos
                     if(Array.isArray(aData) && aData.length > 0) {
                         areasData = defaultAreas.map(defArea => {
                             let existing = aData.find(a => a.id === defArea.id);
                             if (existing) {
-                                existing.name = defArea.name; // Garante que a tela mostrará o novo nome
+                                existing.name = defArea.name; 
                                 return existing;
                             }
                             return defArea;
@@ -375,34 +396,93 @@
                     adminUsers = defaultAdmin;
                 }
             } catch (err) {
-                console.warn("Aviso: Falha ao sincronizar com Supabase. Carregando dados locais.", err.message);
+                console.warn("Aviso: Falha ao sincronizar. Carregando dados locais.");
                 areasData = defaultAreas;
                 adminUsers = defaultAdmin;
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
-                updateUserRoleDropdown();
-                updateUIPermissions(); // Oculta botão Admin se necessário
-                navigate('dashboard');
+                
+                // VERIFICA SE TEM SESSÃO DE LOGIN SALVA
+                const savedSession = localStorage.getItem('fastTennisUser');
+                if (savedSession) {
+                    // Verifica se o email ainda existe na tabela
+                    const userExists = adminUsers.find(u => u.email.toLowerCase() === savedSession.toLowerCase());
+                    if (userExists) {
+                        finishLogin(savedSession);
+                    } else {
+                        localStorage.removeItem('fastTennisUser');
+                        document.getElementById('login-screen').classList.remove('hidden');
+                    }
+                } else {
+                    document.getElementById('login-screen').classList.remove('hidden');
+                }
             }
         });
 
-        // ======= 4. FUNÇÕES DO SISTEMA =======
+        // ======= SISTEMA DE LOGIN =======
+        function handleLogin() {
+            const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
+            if(!emailInput) return;
+
+            const user = adminUsers.find(u => u.email.toLowerCase() === emailInput);
+            if (user) {
+                localStorage.setItem('fastTennisUser', emailInput);
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('login-error').classList.add('hidden');
+                finishLogin(emailInput);
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function finishLogin(email) {
+            loggedEmail = email;
+            document.getElementById('logged-user-display').innerText = email;
+            updateUIPermissions();
+            navigate('dashboard');
+        }
+
+        function logout() {
+            localStorage.removeItem('fastTennisUser');
+            location.reload();
+        }
+
+        function updateUIPermissions() {
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
+            const isAdmin = user && user.areas.includes('all');
+            
+            const adminNav = document.getElementById('nav-admin');
+            if(isAdmin) {
+                adminNav.classList.remove('hidden');
+            } else {
+                adminNav.classList.add('hidden');
+            }
+        }
+
+        function checkPermission(areaId) {
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
+            if(!user) return false;
+            if(user.areas.includes('all')) return true;
+            return user.areas.includes(areaId);
+        }
+
+        // ======= 4. FUNÇÕES DO SISTEMA (DASHBOARD & SALVAMENTO) =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
             try {
-                const { error } = await supabaseClient.from('app_state')
+                await supabaseClient.from('app_state')
                     .update({ areas_data: areasData, admin_users: adminUsers })
                     .eq('id', 1);
-                if(error) console.error("Erro ao salvar:", error);
             } catch(err) {
                 console.error("Erro na API:", err);
             }
         }
 
-        // Logo Handler
         window.onload = () => {
             const savedLogo = localStorage.getItem('fastTennisLogo');
             if(savedLogo) document.getElementById('logo-img').src = savedLogo;
+            const savedLoginLogo = localStorage.getItem('fastTennisLogo');
+            if(savedLoginLogo) document.getElementById('login-logo-img').src = savedLoginLogo;
         };
 
         function changeLogo(event) {
@@ -412,43 +492,31 @@
                 reader.onload = function(e) {
                     const base64 = e.target.result;
                     document.getElementById('logo-img').src = base64;
+                    document.getElementById('login-logo-img').src = base64;
                     localStorage.setItem('fastTennisLogo', base64);
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function updateUserRoleDropdown() {
-            const select = document.getElementById('userRole');
-            select.innerHTML = '';
-            adminUsers.forEach(u => {
-                select.innerHTML += `<option value="${u.email}">${u.email}</option>`;
-            });
-        }
-        
-        // Exibe ou oculta o botão Admin de acordo com a permissão 'all'
-        function updateUIPermissions() {
-            const loggedEmail = document.getElementById('userRole').value;
-            const user = adminUsers.find(u => u.email === loggedEmail);
-            const isAdmin = user && user.areas.includes('all');
-            
-            const adminNav = document.getElementById('nav-admin');
-            if(isAdmin) {
-                adminNav.classList.remove('hidden');
-            } else {
-                adminNav.classList.add('hidden');
-                // Se a pessoa trocou de usuário enquanto estava na tela Admin, manda pro dashboard
-                if(!document.getElementById('view-admin').classList.contains('hidden')) {
-                    navigate('dashboard');
+        function navigate(viewId) {
+            // Regra de segurança: expulsa se não for admin
+            if (viewId === 'admin') {
+                const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
+                if (!user || !user.areas.includes('all')) {
+                    alert("Acesso Negado.");
+                    return;
                 }
             }
-        }
 
-        function navigate(viewId) {
             document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
             ['dashboard', 'areas', 'import', 'admin'].forEach(id => {
                 const btn = document.getElementById(`nav-${id}`);
-                if(btn) btn.className = (id === viewId) ? "opacity-100 border-b-2 border-white pb-1" : "opacity-70 hover:opacity-100 pb-1";
+                if(btn) {
+                    btn.className = (id === viewId) ? "opacity-100 border-b-2 border-white pb-1" : "opacity-70 hover:opacity-100 pb-1";
+                    // Garante que a classe hidden do Admin não seja sobrescrita indevidamente se ele não for admin
+                    if(id === 'admin') updateUIPermissions(); 
+                }
             });
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
             document.getElementById('hero-bg').style.height = (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'admin') ? '18rem' : '12rem';
@@ -494,12 +562,25 @@
             grid.innerHTML = '';
             areasData.forEach(area => {
                 const progress = area.comments > 0 ? Math.round((area.done / area.comments) * 100) : 0;
+                
+                // REGRA DE CORES DO NPS: <50 (Laranja), <=70 (Azul), >70 (Verde)
+                let npsBadge = '';
+                if (area.realNps === null) {
+                    npsBadge = `<span class="bg-gray-100 text-gray-400 text-xs font-semibold px-2 py-1 rounded">NPS —</span>`;
+                } else {
+                    let colorClass = '';
+                    if (area.realNps < 50) colorClass = 'bg-orange-100 text-orange-800'; 
+                    else if (area.realNps <= 70) colorClass = 'bg-blue-100 text-blue-800'; 
+                    else colorClass = 'bg-green-100 text-green-800'; 
+                    npsBadge = `<span class="${colorClass} text-xs font-semibold px-2 py-1 rounded">NPS ${area.realNps}</span>`;
+                }
+
                 grid.innerHTML += `
                     <div class="area-card bg-white rounded-lg shadow-sm border border-gray-100 cursor-pointer flex flex-col justify-between h-full" onclick="openArea('${area.id}')">
                         <div class="p-5 flex-1">
                             <div class="flex justify-between items-center mb-6">
                                 <h4 class="area-title font-bold text-gray-800 transition-colors">${area.name}</h4>
-                                <span class="bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded">NPS ${area.realNps || '—'}</span>
+                                ${npsBadge}
                             </div>
                             <div class="mb-4">
                                 <div class="flex justify-between text-xs text-gray-500 font-semibold mb-1">
@@ -548,7 +629,7 @@
             currentAreaId = areaId;
             const area = areasData.find(a => a.id === areaId);
             document.getElementById('detail-title').innerText = area.name;
-            document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps || '—'}`;
+            document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps !== null ? area.realNps : '—'}`;
             document.getElementById('detail-stats').innerText = `${area.done}/${area.comments} concluídos`;
             setFilter('Todos');
             navigate('area-detail');
@@ -602,14 +683,6 @@
             });
         }
 
-        function checkPermission(areaId) {
-            const loggedEmail = document.getElementById('userRole').value;
-            const user = adminUsers.find(u => u.email === loggedEmail);
-            if(!user) return false;
-            if(user.areas.includes('all')) return true;
-            return user.areas.includes(areaId);
-        }
-
         async function editNps() {
             if(!checkPermission(currentAreaId)) {
                 alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS validado.");
@@ -623,6 +696,11 @@
                 
                 await saveStateToSupabase();
                 calculateGlobalStats();
+                
+                // Recarrega Dashboard para a cor atualizar na hora
+                if(!document.getElementById('view-dashboard').classList.contains('hidden')) {
+                    renderDashboard();
+                }
             }
         }
 
@@ -682,7 +760,7 @@
             renderCommentsList();
         }
 
-        // --- SISTEMA DE LEITURA E INGESTÃO DE EXCEL ---
+        // --- INGESTÃO DE EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -708,7 +786,6 @@
                         
                         if(sheetName.toLowerCase().includes('cópia') || sheetName.toLowerCase().includes('página') || sheetName.toLowerCase().includes('rede de cliente')) return;
                         
-                        // Encontra a área com match mais preciso no nome
                         const match = newAreasData.find(a => sheetName.toLowerCase().includes(a.name.toLowerCase().replace(' | fon.de uniformes', '')));
                         
                         if(match) {
@@ -756,16 +833,10 @@
                                         </li>`;
                                 totalComments += validRows;
                             }
-                        } else if(rows.length > 0) {
-                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50">
-                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Nenhuma área associada)</p></div>
-                                        <span class="text-sm text-gray-500">${rows.length} linha(s) lidas</span>
-                                    </li>`;
                         }
                     });
                     
                     previewList.innerHTML = html + '</ul>';
-                    
                     pendingImportData = newAreasData;
                     
                     const btn = document.getElementById('import-btn');
@@ -775,7 +846,7 @@
 
                 } catch(err) {
                     console.error(err);
-                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro ao ler Excel. Verifique se o arquivo está no formato correto.</div>';
+                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro ao ler Excel.</div>';
                 }
             };
             reader.readAsArrayBuffer(input.files[0]);
@@ -783,7 +854,6 @@
 
         async function executeImport() {
             if(!pendingImportData) return;
-            
             const btn = document.getElementById('import-btn');
             btn.innerText = "Salvando no Supabase...";
             btn.classList.add('opacity-50', 'cursor-wait');
@@ -802,7 +872,7 @@
             btn.className = "w-full bg-primary text-white rounded py-2 text-sm font-medium opacity-50 cursor-not-allowed";
             btn.onclick = null;
             
-            alert("Sucesso! Planilha salva na Nuvem. Todos os usuários já podem ver a atualização.");
+            alert("Sucesso! Planilha salva na Nuvem.");
             navigate('dashboard');
         }
 
@@ -895,7 +965,7 @@
             closeAdminModal();
             renderAdminTable();
             updateUserRoleDropdown();
-            updateUIPermissions(); // Atualiza a aba na hora
+            updateUIPermissions(); 
         }
     </script>
 </body>
