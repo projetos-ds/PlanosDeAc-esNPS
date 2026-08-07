@@ -299,10 +299,17 @@
 
     <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO SUPABASE -->
     <script>
-        // ======= 1. CONFIGURAÇÃO SUPABASE =======
-        const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsYnd2aW5pdWJnbXd0bGptdGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMTQ0MzEsImV4cCI6MjEwMTY5MDQzMX0.5nnY9byvWTrRR-g_x4AtANTnZ97MnU_Z3RpEDZj0QZk';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ======= 1. CONFIGURAÇÃO SUPABASE SEGURA =======
+        let supabase;
+        try {
+            const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsYnd2aW5pdWJnbXd0bGptdGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMTQ0MzEsImV4cCI6MjEwMTY5MDQzMX0.5nnY9byvWTrRR-g_x4AtANTnZ97MnU_Z3RpEDZj0QZk';
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch(e) {
+            console.error("Erro ao inicializar Supabase:", e);
+        }
 
         // ======= 2. VARIÁVEIS GLOBAIS =======
         let areasData = [];
@@ -311,7 +318,7 @@
         let currentFilter = 'Todos';
         let pendingImportData = null;
 
-        // Estrutura padrão caso o banco esteja 100% zerado
+        // Estrutura padrão
         const defaultAreas = [
             { id: 'implantacao', name: 'Implantação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
             { id: 'plug', name: 'Plug Marketing', realNps: null, comments: 0, done: 0, late: 0, items: [] },
@@ -324,50 +331,65 @@
             { id: 'operacao', name: 'Operação Própria', realNps: null, comments: 0, done: 0, late: 0, items: [] },
         ];
         
-        const defaultAdmin = [{ email: 'ladeira@fasttennis.com.br', areas: ['all'] }];
+        const defaultAdmin = [
+            { email: 'ladeira@fasttennis.com.br', areas: ['all'] },
+            { email: 'joao@fasttennis.com.br', areas: ['implantacao'] },
+            { email: 'lorena@fasttennis.com.br', areas: ['playfast'] }
+        ];
 
-        // ======= 3. FUNÇÕES DE BANCO DE DADOS =======
-        
-        // Puxar dados da nuvem quando a tela abrir
-        async function fetchStateFromSupabase() {
+        // ======= 3. INICIALIZAÇÃO BLINDADA =======
+        window.addEventListener('DOMContentLoaded', async () => {
             try {
-                const { data, error } = await supabase.from('app_state').select('*').eq('id', 1).single();
+                if (!supabase) throw new Error("Supabase não carregou na página.");
+                
+                // Puxa dados da nuvem com timeout de segurança (5 segundos)
+                const fetchPromise = supabase.from('app_state').select('*').eq('id', 1).single();
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
+                
+                const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
                 
                 if (error) throw error;
                 
                 if (data) {
-                    areasData = (data.areas_data && data.areas_data.length > 0) ? data.areas_data : defaultAreas;
-                    adminUsers = (data.admin_users && data.admin_users.length > 0) ? data.admin_users : defaultAdmin;
+                    // Proteção contra dados corrompidos no JSONB
+                    let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
+                    let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
+                    
+                    if(Array.isArray(aData) && aData.length > 0) areasData = aData;
+                    else areasData = defaultAreas;
+                    
+                    if(Array.isArray(aUsers) && aUsers.length > 0) adminUsers = aUsers;
+                    else adminUsers = defaultAdmin;
+                } else {
+                    areasData = defaultAreas;
+                    adminUsers = defaultAdmin;
                 }
             } catch (err) {
-                console.error("Erro ao puxar dados. Usando padrão.", err);
+                console.warn("Aviso: Falha ao sincronizar com Supabase. Carregando dados locais. Motivo:", err.message);
                 areasData = defaultAreas;
                 adminUsers = defaultAdmin;
+            } finally {
+                // SEMPRE oculta a tela de carregamento, mesmo se der erro
+                document.getElementById('loading-overlay').classList.add('hidden-loader');
+                updateUserRoleDropdown();
+                navigate('dashboard');
             }
-            
-            // Oculta tela de carregamento e inicia o app
-            document.getElementById('loading-overlay').classList.add('hidden-loader');
-            updateUserRoleDropdown();
-            navigate('dashboard');
-        }
+        });
 
-        // Salvar tudo na nuvem
+        // ======= 4. FUNÇÕES DO SISTEMA =======
         async function saveStateToSupabase() {
+            if(!supabase) return;
             try {
                 const { error } = await supabase.from('app_state')
                     .update({ areas_data: areasData, admin_users: adminUsers })
                     .eq('id', 1);
-                
-                if(error) console.error("Erro ao salvar no Supabase:", error);
+                if(error) console.error("Erro ao salvar:", error);
             } catch(err) {
-                console.error("Erro crítico na API:", err);
+                console.error("Erro na API:", err);
             }
         }
 
-        // Inicializa ao carregar a página
-        window.addEventListener('DOMContentLoaded', fetchStateFromSupabase);
-
-        // Logo Handler Local
+        // Logo Handler
         window.onload = () => {
             const savedLogo = localStorage.getItem('fastTennisLogo');
             if(savedLogo) document.getElementById('logo-img').src = savedLogo;
@@ -552,7 +574,6 @@
             });
         }
 
-        // VERIFICADOR DE PERMISSÃO
         function checkPermission(areaId) {
             const loggedEmail = document.getElementById('userRole').value;
             const user = adminUsers.find(u => u.email === loggedEmail);
@@ -561,7 +582,6 @@
             return user.areas.includes(areaId);
         }
 
-        // FUNÇÃO DE EDITAR NPS 
         async function editNps() {
             if(!checkPermission(currentAreaId)) {
                 alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS validado.");
@@ -573,7 +593,6 @@
                 area.realNps = parseInt(newVal);
                 document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps}`;
                 
-                // SALVA NO SUPABASE
                 await saveStateToSupabase();
                 calculateGlobalStats();
             }
@@ -625,7 +644,6 @@
             
             area.done = area.items.filter(i => i.status === 'Concluído').length;
             
-            // SALVA NO SUPABASE
             await saveStateToSupabase();
             
             btn.innerText = "Salvar plano de ação";
@@ -636,7 +654,7 @@
             renderCommentsList();
         }
 
-        // --- SISTEMA DE LEITURA E INGESTÃO DE EXCEL ---
+        // --- SISTEMA DE LEITURA EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -709,16 +727,10 @@
                                         </li>`;
                                 totalComments += validRows;
                             }
-                        } else if(rows.length > 0) {
-                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50">
-                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Nenhuma área associada)</p></div>
-                                        <span class="text-sm text-gray-500">${rows.length} linha(s) lidas</span>
-                                    </li>`;
                         }
                     });
                     
                     previewList.innerHTML = html + '</ul>';
-                    
                     pendingImportData = newAreasData;
                     
                     const btn = document.getElementById('import-btn');
@@ -741,10 +753,8 @@
             btn.innerText = "Salvando no Supabase...";
             btn.classList.add('opacity-50', 'cursor-wait');
 
-            // Atualiza os dados
             areasData.splice(0, areasData.length, ...pendingImportData);
             
-            // ENVIA PRO SUPABASE
             await saveStateToSupabase();
             
             pendingImportData = null;
@@ -845,7 +855,6 @@
                 adminUsers.push({email: email, areas: selectedAreas});
             }
             
-            // SALVA NO SUPABASE
             await saveStateToSupabase();
             
             closeAdminModal();
