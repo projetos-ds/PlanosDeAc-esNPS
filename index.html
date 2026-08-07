@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
+    <!-- Favicon Dinâmico -->
+    <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -45,12 +48,18 @@
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
+    <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
+
     <!-- TELA DE LOGIN (Barreira de Acesso) -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
-        <div class="bg-white p-10 rounded-xl shadow-2xl w-[400px] text-center">
+        <div class="bg-white p-10 rounded-xl shadow-2xl w-[400px] text-center relative">
             <div class="mb-6 flex justify-center">
-                <div class="bg-primary px-3 py-2 rounded-lg flex items-center justify-center h-14 w-auto">
-                    <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
+                <!-- LOGO EDITÁVEL NO LOGIN -->
+                <div class="relative group cursor-pointer" onclick="triggerLogoUpload()" title="Clique para alterar a logo">
+                    <div class="bg-primary px-3 py-2 rounded-lg flex items-center justify-center h-16 w-auto min-w-[120px] overflow-hidden">
+                        <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
+                    </div>
+                    <div class="absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition-opacity">Trocar Logo</div>
                 </div>
             </div>
             <h2 class="text-2xl font-bold mb-2 text-gray-800">Acesso Restrito</h2>
@@ -75,12 +84,13 @@
     <!-- SISTEMA PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-6 py-4 flex-shrink-0">
         <div class="flex items-center gap-4">
-            <div class="relative group cursor-pointer" onclick="document.getElementById('logo-upload').click()" title="Clique para alterar a logo">
+            <!-- LOGO NO CABEÇALHO -->
+            <div class="relative group cursor-pointer" onclick="triggerLogoUpload()" title="Clique para alterar a logo">
                 <div class="px-2 py-1.5 rounded flex items-center justify-center overflow-hidden hover:bg-blue-800 transition-all h-12 w-auto min-w-[120px]">
-                    <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
+                    <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
                 </div>
-                <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
-                <div class="absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition-opacity">Trocar Logo</div>
+                <!-- Overlay oculto para não-admins -->
+                <div id="header-logo-overlay" class="hidden absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 items-center justify-center font-bold transition-opacity">Trocar Logo</div>
             </div>
             <h1 class="font-bold text-lg tracking-wide uppercase">Planos de Ação - NPS</h1>
         </div>
@@ -88,8 +98,11 @@
         <nav class="flex items-center gap-6 text-sm font-medium">
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
-            <button onclick="navigate('import')" id="nav-import" class="opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
             
+            <!-- IMPORTAR PLANILHA: Inicia oculto, apenas ADMIN vê -->
+            <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
+            
+            <!-- ADMIN: Inicia oculto -->
             <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
             
             <div class="ml-6 border-l border-blue-400 pl-6 flex items-center gap-3">
@@ -99,6 +112,11 @@
                 </div>
                 <button onclick="logout()" class="bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded text-xs transition-colors" title="Sair do sistema"><i class="fas fa-sign-out-alt"></i></button>
             </div>
+            
+            <!-- Simulador de Login oculto (pode remover depois) -->
+            <select id="userRole" class="hidden">
+                <option value="ladeira@fasttennis.com.br">ladeira@fasttennis.com.br</option>
+            </select>
         </nav>
     </header>
 
@@ -140,7 +158,8 @@
                 </div>
             </div>
 
-            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-8">Áreas</h3>
+            <!-- ESPAÇAMENTO AUMENTADO AQUI (mt-16) -->
+            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-16">Áreas</h3>
             <div class="grid grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
         </div>
 
@@ -319,9 +338,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO SUPABASE -->
     <script>
-        // ======= 1. CONFIGURAÇÃO SUPABASE =======
         let supabaseClient;
         try {
             const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
@@ -333,8 +350,7 @@
             console.error("Erro ao inicializar Supabase:", e);
         }
 
-        // ======= 2. VARIÁVEIS GLOBAIS =======
-        let loggedEmail = null; // E-mail logado atualmente
+        let loggedEmail = null; 
         let areasData = [];
         let adminUsers = [];
         let currentAreaId = null;
@@ -360,7 +376,6 @@
             { email: 'lorena@fasttennis.com.br', areas: ['playfast'] }
         ];
 
-        // ======= 3. INICIALIZAÇÃO (LOGIN & NUVEM) =======
         window.addEventListener('DOMContentLoaded', async () => {
             try {
                 if (!supabaseClient) throw new Error("Supabase não carregou.");
@@ -402,10 +417,8 @@
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
                 
-                // VERIFICA SE TEM SESSÃO DE LOGIN SALVA
                 const savedSession = localStorage.getItem('fastTennisUser');
                 if (savedSession) {
-                    // Verifica se o email ainda existe na tabela
                     const userExists = adminUsers.find(u => u.email.toLowerCase() === savedSession.toLowerCase());
                     if (userExists) {
                         finishLogin(savedSession);
@@ -447,26 +460,34 @@
             location.reload();
         }
 
+        // Exibe ou oculta opções de Admin
         function updateUIPermissions() {
-            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             const isAdmin = user && user.areas.includes('all');
             
             const adminNav = document.getElementById('nav-admin');
+            const importNav = document.getElementById('nav-import');
+            const logoOverlay = document.getElementById('header-logo-overlay');
+            
             if(isAdmin) {
                 adminNav.classList.remove('hidden');
+                importNav.classList.remove('hidden');
+                logoOverlay.classList.replace('hidden', 'flex'); // Mostra hover de trocar logo
             } else {
                 adminNav.classList.add('hidden');
+                importNav.classList.add('hidden');
+                logoOverlay.classList.replace('flex', 'hidden'); // Esconde hover
             }
         }
 
         function checkPermission(areaId) {
-            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             if(!user) return false;
             if(user.areas.includes('all')) return true;
             return user.areas.includes(areaId);
         }
 
-        // ======= 4. FUNÇÕES DO SISTEMA (DASHBOARD & SALVAMENTO) =======
+        // ======= FUNÇÕES DO SISTEMA (DASHBOARD & SALVAMENTO) =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
             try {
@@ -480,10 +501,25 @@
 
         window.onload = () => {
             const savedLogo = localStorage.getItem('fastTennisLogo');
-            if(savedLogo) document.getElementById('logo-img').src = savedLogo;
-            const savedLoginLogo = localStorage.getItem('fastTennisLogo');
-            if(savedLoginLogo) document.getElementById('login-logo-img').src = savedLoginLogo;
+            if(savedLogo) {
+                document.getElementById('logo-img').src = savedLogo;
+                document.getElementById('login-logo-img').src = savedLogo;
+                document.getElementById('favicon').href = savedLogo;
+            }
         };
+
+        // Permite trocar a logo se estiver no Login, ou se for Admin
+        function triggerLogoUpload() {
+            const isLoginScreen = !document.getElementById('login-screen').classList.contains('hidden');
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
+            const isAdmin = user && user.areas.includes('all');
+            
+            if (isLoginScreen || isAdmin) {
+                document.getElementById('logo-upload').click();
+            } else {
+                alert("Apenas administradores podem alterar a logo do sistema.");
+            }
+        }
 
         function changeLogo(event) {
             const file = event.target.files[0];
@@ -493,6 +529,7 @@
                     const base64 = e.target.result;
                     document.getElementById('logo-img').src = base64;
                     document.getElementById('login-logo-img').src = base64;
+                    document.getElementById('favicon').href = base64; // Troca o favicon também!
                     localStorage.setItem('fastTennisLogo', base64);
                 };
                 reader.readAsDataURL(file);
@@ -500,9 +537,8 @@
         }
 
         function navigate(viewId) {
-            // Regra de segurança: expulsa se não for admin
-            if (viewId === 'admin') {
-                const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
+            if (viewId === 'admin' || viewId === 'import') {
+                const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
                 if (!user || !user.areas.includes('all')) {
                     alert("Acesso Negado.");
                     return;
@@ -514,8 +550,7 @@
                 const btn = document.getElementById(`nav-${id}`);
                 if(btn) {
                     btn.className = (id === viewId) ? "opacity-100 border-b-2 border-white pb-1" : "opacity-70 hover:opacity-100 pb-1";
-                    // Garante que a classe hidden do Admin não seja sobrescrita indevidamente se ele não for admin
-                    if(id === 'admin') updateUIPermissions(); 
+                    if(id === 'admin' || id === 'import') updateUIPermissions(); 
                 }
             });
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
@@ -563,7 +598,6 @@
             areasData.forEach(area => {
                 const progress = area.comments > 0 ? Math.round((area.done / area.comments) * 100) : 0;
                 
-                // REGRA DE CORES DO NPS: <50 (Laranja), <=70 (Azul), >70 (Verde)
                 let npsBadge = '';
                 if (area.realNps === null) {
                     npsBadge = `<span class="bg-gray-100 text-gray-400 text-xs font-semibold px-2 py-1 rounded">NPS —</span>`;
@@ -696,11 +730,7 @@
                 
                 await saveStateToSupabase();
                 calculateGlobalStats();
-                
-                // Recarrega Dashboard para a cor atualizar na hora
-                if(!document.getElementById('view-dashboard').classList.contains('hidden')) {
-                    renderDashboard();
-                }
+                if(!document.getElementById('view-dashboard').classList.contains('hidden')) renderDashboard();
             }
         }
 
@@ -965,7 +995,6 @@
             closeAdminModal();
             renderAdminTable();
             updateUserRoleDropdown();
-            updateUIPermissions(); 
         }
     </script>
 </body>
