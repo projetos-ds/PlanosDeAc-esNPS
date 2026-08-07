@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos de Ação - NPS | Fast Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Biblioteca Real para ler Excel no navegador -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af', 
+                        secondary: '#2563eb', 
+                        accent: '#22c55e', 
+                        danger: '#ef4444', 
+                        warning: '#f59e0b', 
+                        bglight: '#f8fafc' 
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .slide-over-enter { transform: translateX(100%); }
+        .slide-over-enter-active { transform: translateX(0); transition: transform 300ms ease-in-out; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .area-card:hover .area-title { color: #22c55e; }
+        .area-card:hover .hover-bar { background-color: #22c55e; width: 100%; }
+        .hover-bar { transition: width 0.3s ease, background-color 0.3s ease; width: 0; height: 3px; }
+        .filter-btn.active { background-color: #1e40af; color: white; border-color: #1e40af; }
+    </style>
+</head>
+<body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-primary text-white flex items-center justify-between px-6 py-4 flex-shrink-0">
+        <div class="flex items-center gap-4">
+            <!-- CAMPO DE LOGO EDITÁVEL SEM FUNDO BRANCO -->
+            <div class="relative group cursor-pointer" onclick="document.getElementById('logo-upload').click()" title="Clique para alterar a logo">
+                <div class="px-2 py-1.5 rounded flex items-center justify-center overflow-hidden hover:bg-blue-800 transition-all h-12 w-auto min-w-[120px]">
+                    <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
+                </div>
+                <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
+                <div class="absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition-opacity">Trocar Logo</div>
+            </div>
+            
+            <h1 class="font-bold text-lg tracking-wide uppercase">Planos de Ação - NPS</h1>
+        </div>
+        
+        <nav class="flex items-center gap-6 text-sm font-medium">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
+            <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
+            <button onclick="navigate('import')" id="nav-import" class="opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
+            <button onclick="navigate('admin')" id="nav-admin" class="opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
+            
+            <div class="ml-6 border-l border-blue-400 pl-6 flex items-center gap-2">
+                <span class="text-xs text-blue-300">Simulador de Login:</span>
+                <select id="userRole" class="bg-blue-800 text-white border border-blue-600 rounded px-2 py-1 text-xs outline-none">
+                    <option value="ladeira@fasttennis.com.br">ladeira@fasttennis.com.br (Admin)</option>
+                    <option value="joao@fasttennis.com.br">joao@fasttennis.com.br (Implantação)</option>
+                    <option value="lorena@fasttennis.com.br">lorena@fasttennis.com.br (Play Fast)</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-1 overflow-auto relative">
+        <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 h-64 transition-all duration-300" id="hero-bg"></div>
+
+        <!-- ==================== VIEW: DASHBOARD ==================== -->
+        <div id="view-dashboard" class="page-view px-8 pt-8 max-w-7xl mx-auto block">
+            <div class="flex justify-between items-end mb-8 text-white">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">Visão geral do ciclo</h2>
+                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos de ação de cada head.</p>
+                </div>
+                <select class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none">
+                    <option>Junho/Julho 26</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-4 gap-4 mb-10">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+                    <div class="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários Importados</div>
+                    <div class="text-3xl font-bold text-gray-800 mb-1" id="dash-total-comments">225</div>
+                    <div class="text-xs text-gray-400">Demandam plano de ação</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+                    <div class="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Planos Concluídos</div>
+                    <div class="text-3xl font-bold text-green-600 mb-1" id="dash-total-done">0/225</div>
+                    <div class="text-xs text-gray-400" id="dash-total-percent">0% do ciclo</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+                    <div class="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Em Atraso</div>
+                    <div class="text-3xl font-bold text-danger mb-1" id="dash-total-late">0</div>
+                    <div class="text-xs text-gray-400">Prazo vencido sem conclusão</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+                    <div class="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Sem Plano</div>
+                    <div class="text-3xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">81</div>
+                    <div class="text-xs text-gray-400">Aguardando o head</div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-8">Áreas</h3>
+            <p class="text-sm text-gray-500 mb-4">Cada head acessa a área correspondente à sua aba na planilha.</p>
+            
+            <div class="grid grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
+        </div>
+
+        <!-- ==================== VIEW: ÁREAS ==================== -->
+        <div id="view-areas" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
+            <div class="text-white mb-8">
+                <h2 class="text-3xl font-bold mb-2">Áreas</h2>
+                <p class="text-blue-100 text-sm">Cada head entra na sua área, lê os comentários do ciclo e cria os planos de ação cabíveis.</p>
+            </div>
+            <div class="grid grid-cols-4 gap-4 pb-12" id="areas-list-grid"></div>
+        </div>
+
+        <!-- ==================== VIEW: IMPORTAR ==================== -->
+        <div id="view-import" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
+            <div class="text-white mb-8">
+                <h2 class="text-3xl font-bold mb-2">Importar planilha do ciclo</h2>
+                <p class="text-blue-100 text-sm">Suba o arquivo Excel. Os dados reais irão substituir as informações de teste do sistema.</p>
+            </div>
+            
+            <div class="flex gap-6 pb-12">
+                <div class="w-1/3 bg-white rounded-lg shadow p-6 border border-gray-100 h-fit">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ciclo existente (Substituir)</label>
+                        <select class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                            <option>Junho/Julho 26</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
+                        <input type="text" placeholder="Ex.: Agosto/Setembro 26" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
+                        <input type="file" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100">
+                    </div>
+                    <button id="import-btn" class="w-full bg-primary text-white rounded py-2 text-sm font-medium opacity-50 cursor-not-allowed">Aguardando arquivo...</button>
+                </div>
+                
+                <div class="w-2/3 bg-white rounded-lg shadow border border-gray-100 max-h-[500px] overflow-y-auto">
+                    <div class="px-6 py-4 border-b sticky top-0 bg-white z-10">
+                        <h3 class="font-bold text-gray-800 text-lg">Prévia das Abas do seu Excel</h3>
+                    </div>
+                    <div id="import-preview-empty" class="p-12 flex flex-col items-center justify-center text-gray-400">
+                        <i class="fas fa-file-excel text-4xl mb-3"></i>
+                        <h3 class="font-medium text-gray-600">Nenhum arquivo selecionado</h3>
+                        <p class="text-sm">Selecione um arquivo para que o sistema leia a quantidade real de comentários.</p>
+                    </div>
+                    <div id="import-preview-list" class="hidden"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== VIEW: ADMIN PERMISSIONS ==================== -->
+        <div id="view-admin" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
+            <div class="text-white mb-8">
+                <h2 class="text-3xl font-bold mb-2">Painel de Acessos</h2>
+                <p class="text-blue-100 text-sm">Atribua quais áreas cada membro da equipe pode gerenciar (pode ter mais de uma).</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-gray-800 text-lg">Gestão de Permissões</h3>
+                    <button onclick="openAdminModal()" class="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-600 transition-colors"><i class="fas fa-plus mr-1"></i> Adicionar Usuário</button>
+                </div>
+                
+                <table class="w-full text-left text-sm text-gray-600">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold text-gray-700">E-mail do Usuário</th>
+                            <th class="py-3 px-4 font-semibold text-gray-700">Permissão de Edição</th>
+                            <th class="py-3 px-4 font-semibold text-gray-700 w-24">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" id="adminTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== VIEW: AREA DETAIL ==================== -->
+        <div id="view-area-detail" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
+            <div class="flex justify-between items-start mb-8 text-white">
+                <div>
+                    <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-2 flex items-center gap-1"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <h2 class="text-3xl font-bold mb-2" id="detail-title">Implantação</h2>
+                    <p class="text-blue-100 text-sm">Leia cada comentário do ciclo e registre o plano de ação, o responsável, o status e o prazo.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2">
+                        <span id="detail-nps-display">NPS -33</span> 
+                        <button onclick="editNps()" class="text-blue-300 hover:text-white" title="Editar NPS Real"><i class="fas fa-pencil-alt text-xs"></i></button>
+                        <span class="text-blue-300 mx-1">·</span> 
+                        <span id="detail-stats">0/18 concluídos</span>
+                    </div>
+                    <button class="bg-white text-primary px-4 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">Exportar Excel</button>
+                </div>
+            </div>
+
+            <!-- Filtros Funcionais -->
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex gap-2" id="filter-buttons">
+                    <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Todos</button>
+                    <button onclick="setFilter('Em aberto')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Em aberto</button>
+                    <button onclick="setFilter('Sem plano')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Sem plano</button>
+                    <button onclick="setFilter('Atrasados')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Atrasados</button>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4 pb-12" id="comments-list"></div>
+        </div>
+
+    </main>
+
+    <!-- Modal Admin Permissões -->
+    <div id="admin-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 w-[500px] shadow-xl">
+            <h3 class="font-bold text-lg text-gray-800 mb-4" id="admin-modal-title">Editar Permissões</h3>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">E-mail do Usuário</label>
+                <input type="email" id="admin-user-email" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary">
+            </div>
+
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Áreas Permitidas para Edição</label>
+            <div class="border rounded p-3 bg-gray-50 max-h-60 overflow-y-auto mb-6">
+                <label class="flex items-center gap-2 mb-2 pb-2 border-b cursor-pointer">
+                    <input type="checkbox" id="admin-check-all" class="w-4 h-4 text-primary" onchange="toggleAllAdminAreas(this)">
+                    <span class="font-bold text-gray-800 text-sm">Administrador Geral (Todas as Áreas)</span>
+                </label>
+                <div id="admin-areas-checkboxes" class="flex flex-col gap-2"></div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button onclick="closeAdminModal()" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50 text-sm font-medium">Cancelar</button>
+                <button onclick="saveAdminModal()" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-800 text-sm font-medium">Salvar Usuário</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide-over Editar Plano -->
+    <div id="slide-over-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden transition-opacity" onclick="closePanel()"></div>
+    <div id="slide-over-panel" class="fixed inset-y-0 right-0 w-[450px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="flex justify-between items-center px-6 py-4 border-b">
+            <h3 class="font-bold text-lg text-gray-800">Plano de ação</h3>
+            <button onclick="closePanel()" class="text-gray-400 hover:text-gray-600 rounded-full p-1 border hover:bg-gray-50 w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6">
+            <div class="bg-gray-50 border rounded p-4 mb-6 text-sm">
+                <div class="flex gap-4 text-gray-500 mb-2">
+                    <span id="panel-etapa">Etapa: B2B</span>
+                    <span id="panel-unidade">Unidade: São Paulo</span>
+                </div>
+                <div class="text-gray-500 mb-2" id="panel-pesquisa">Fase: 2/2</div>
+                <div class="flex gap-4 text-gray-500 mb-3">
+                    <span id="panel-nps">Nota NPS: 6</span>
+                    <span id="panel-nps-area">Nota da área: 6</span>
+                </div>
+                <p class="text-gray-800 font-medium" id="panel-comment">Comentário</p>
+            </div>
+
+            <form id="actionPlanForm" onsubmit="event.preventDefault(); savePlan();">
+                <input type="hidden" id="form-item-id">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Plano de ação</label>
+                    <textarea id="form-plano" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary resize-none"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Ação executada</label>
+                    <textarea id="form-acao" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary resize-none"></textarea>
+                </div>
+                <div class="flex gap-4 mb-4">
+                    <div class="w-1/2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Responsável</label>
+                        <input type="text" id="form-responsavel" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Data prevista</label>
+                        <input type="date" id="form-data" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+                    <select id="form-status" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                        <option value="A iniciar">A iniciar</option>
+                        <option value="Em andamento">Em andamento</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-secondary hover:bg-primary text-white font-semibold rounded-lg py-3 transition-colors">Salvar plano de ação</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // LOGO HANDLER (Carrega logo salva no navegador)
+        window.onload = () => {
+            const savedLogo = localStorage.getItem('fastTennisLogo');
+            if(savedLogo) {
+                document.getElementById('logo-img').src = savedLogo;
+            }
+        };
+
+        function changeLogo(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    document.getElementById('logo-img').src = base64;
+                    localStorage.setItem('fastTennisLogo', base64);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Dados iniciais fictícios
+        let areasData = [
+            { id: 'implantacao', name: 'Implantação', realNps: -33, comments: 18, done: 0, late: 0, 
+              items: [
+                { id: 1, location: 'São Paulo/SP', user: 'Ricardo', topic: 'Suporte', npsArea: 6, npsTotal: 6, comment: 'Processo demorado', status: 'A iniciar', plan: '', action: '', owner: '', date: '', pesquisa: '1/2' },
+                { id: 2, location: 'Uberaba/MG', user: 'Victor', topic: 'Custos', npsArea: 6, npsTotal: 6, comment: 'Gastos altos', status: 'Em andamento', plan: 'Revisão', action: 'Iniciado', owner: 'João', date: '2026-08-01', pesquisa: '2/2' },
+                { id: 3, location: 'SP', user: 'Ana', topic: 'Obras', npsArea: 9, npsTotal: 9, comment: 'Gostei muito.', status: 'Concluído', plan: 'Manter', action: 'Feito', owner: 'João', date: '2026-07-20', pesquisa: '2/2' }
+              ] 
+            },
+            { id: 'plug', name: 'Plug Marketing', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'rh', name: 'RH', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'fastedu', name: 'Fast Educação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'suporte', name: 'Suporte de Operações', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'fornecedores', name: 'Fornecedores Homologados', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'persports', name: 'Per Sports | Fon.de Uniformes', realNps: null, comments: 0, done: 0, late: 0, items: [] },
+            { id: 'playfast', name: 'Play Fast', realNps: null, comments: 146, done: 73, late: 0, items: [] },
+            { id: 'operacao', name: 'Operação Própria', realNps: -36, comments: 60, done: 15, late: 0, items: [] },
+        ];
+
+        let adminUsers = [
+            { email: 'ladeira@fasttennis.com.br', areas: ['all'] },
+            { email: 'joao@fasttennis.com.br', areas: ['implantacao'] },
+            { email: 'lorena@fasttennis.com.br', areas: ['playfast', 'suporte'] }
+        ];
+
+        let currentAreaId = null;
+        let currentFilter = 'Todos';
+        let pendingImportData = null; 
+
+        function navigate(viewId) {
+            document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
+            ['dashboard', 'areas', 'import', 'admin'].forEach(id => {
+                const btn = document.getElementById(`nav-${id}`);
+                if(btn) btn.className = (id === viewId) ? "opacity-100 border-b-2 border-white pb-1" : "opacity-70 hover:opacity-100 pb-1";
+            });
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById('hero-bg').style.height = (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'admin') ? '18rem' : '12rem';
+
+            if(viewId === 'dashboard') renderDashboard();
+            if(viewId === 'areas') renderAreasList();
+            if(viewId === 'admin') renderAdminTable();
+        }
+
+        function calculateGlobalStats() {
+            let tComments = 0, tDone = 0, tLate = 0, tNoPlan = 0;
+            const today = new Date();
+            
+            areasData.forEach(area => {
+                let areaLate = 0;
+                let areaNoPlan = 0;
+                
+                area.items.forEach(item => {
+                    if(!item.plan || item.plan.trim() === '') areaNoPlan++;
+                    if(item.status !== 'Concluído' && item.date) {
+                        if(new Date(item.date) < today) areaLate++;
+                    }
+                });
+                
+                area.late = areaLate;
+                tComments += area.comments;
+                tDone += area.done;
+                tLate += areaLate;
+                tNoPlan += areaNoPlan;
+            });
+
+            document.getElementById('dash-total-comments').innerText = tComments;
+            document.getElementById('dash-total-done').innerText = `${tDone}/${tComments}`;
+            document.getElementById('dash-total-percent').innerText = tComments > 0 ? `${Math.round((tDone/tComments)*100)}% do ciclo` : '0% do ciclo';
+            document.getElementById('dash-total-late').innerText = tLate;
+            document.getElementById('dash-total-noplan').innerText = tNoPlan;
+        }
+
+        function renderDashboard() {
+            calculateGlobalStats();
+            const grid = document.getElementById('dashboard-areas-grid');
+            grid.innerHTML = '';
+            areasData.forEach(area => {
+                const progress = area.comments > 0 ? Math.round((area.done / area.comments) * 100) : 0;
+                grid.innerHTML += `
+                    <div class="area-card bg-white rounded-lg shadow-sm border border-gray-100 cursor-pointer flex flex-col justify-between h-full" onclick="openArea('${area.id}')">
+                        <div class="p-5 flex-1">
+                            <div class="flex justify-between items-center mb-6">
+                                <h4 class="area-title font-bold text-gray-800 transition-colors">${area.name}</h4>
+                                <span class="bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded">NPS ${area.realNps || '—'}</span>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex justify-between text-xs text-gray-500 font-semibold mb-1">
+                                    <span>Progresso</span><span>${progress}%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                    <div class="bg-accent h-1.5 rounded-full transition-all" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <div><div class="text-gray-400 text-xs">Comentários</div><div class="font-semibold">${area.comments}</div></div>
+                                <div><div class="text-gray-400 text-xs">Concluídos</div><div class="font-semibold">${area.done}</div></div>
+                                <div><div class="text-gray-400 text-xs">Atrasados</div><div class="font-semibold text-danger">${area.late}</div></div>
+                            </div>
+                        </div>
+                        <div class="hover-bar bg-accent"></div>
+                    </div>`;
+            });
+        }
+
+        function renderAreasList() {
+            const grid = document.getElementById('areas-list-grid');
+            grid.innerHTML = '';
+            areasData.forEach(area => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 flex justify-between items-center cursor-pointer hover:border-accent hover:shadow-md" onclick="openArea('${area.id}')">
+                        <h4 class="font-bold text-gray-800">${area.name}</h4>
+                        <span class="text-accent text-sm font-medium">Abrir &rarr;</span>
+                    </div>`;
+            });
+        }
+
+        function setFilter(filterType) {
+            currentFilter = filterType;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50";
+                if(btn.innerText === filterType) {
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-white', 'text-gray-600');
+                }
+            });
+            renderCommentsList();
+        }
+
+        function openArea(areaId) {
+            currentAreaId = areaId;
+            const area = areasData.find(a => a.id === areaId);
+            document.getElementById('detail-title').innerText = area.name;
+            document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps || '—'}`;
+            document.getElementById('detail-stats').innerText = `${area.done}/${area.comments} concluídos`;
+            setFilter('Todos');
+            navigate('area-detail');
+        }
+
+        function renderCommentsList() {
+            const area = areasData.find(a => a.id === currentAreaId);
+            const container = document.getElementById('comments-list');
+            container.innerHTML = '';
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            let filteredItems = area.items.filter(item => {
+                if(currentFilter === 'Todos') return true;
+                if(currentFilter === 'Em aberto') return item.status !== 'Concluído';
+                if(currentFilter === 'Sem plano') return (!item.plan || item.plan.trim() === '');
+                if(currentFilter === 'Atrasados') {
+                    if(!item.date || item.status === 'Concluído') return false;
+                    const itemDate = new Date(item.date);
+                    itemDate.setHours(0,0,0,0); 
+                    return itemDate < today;
+                }
+                return true;
+            });
+
+            if(filteredItems.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 bg-white rounded-lg border text-gray-500">Nenhum comentário atende a este filtro.</div>`;
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
+                let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
+
+                container.innerHTML += `
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent" onclick="openPanel(${item.id})">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="text-xs text-gray-500 font-medium"><span class="text-gray-800 font-bold">${item.location}</span> · ${item.user} · ${item.topic}</div>
+                            <div class="text-danger font-bold text-sm"><span class="text-gray-400 text-xs font-normal">NOTA ÁREA ${item.npsArea}</span> ${item.npsTotal}</div>
+                        </div>
+                        <p class="text-gray-800 text-sm mb-6">${item.comment}</p>
+                        <div class="flex border-t pt-3">
+                            <div class="w-1/3"><div class="text-gray-400 text-xs font-semibold mb-1">STATUS</div>
+                                <div class="inline-flex items-center gap-1.5 border px-2 py-0.5 rounded-full text-xs font-medium ${sColor}"><div class="w-1.5 h-1.5 rounded-full ${bColor}"></div>${item.status}</div>
+                            </div>
+                            <div class="w-1/3"><div class="text-gray-400 text-xs font-semibold mb-1">PRAZO</div><div class="text-sm">${item.date || '—'}</div></div>
+                            <div class="w-1/3"><div class="text-gray-400 text-xs font-semibold mb-1">RESPONSÁVEL</div><div class="text-sm">${item.owner || '—'}</div></div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // VERIFICADOR DE PERMISSÃO
+        function checkPermission(areaId) {
+            const loggedEmail = document.getElementById('userRole').value;
+            const user = adminUsers.find(u => u.email === loggedEmail);
+            if(!user) return false;
+            if(user.areas.includes('all')) return true;
+            return user.areas.includes(areaId);
+        }
+
+        // FUNÇÃO DE EDITAR NPS 
+        function editNps() {
+            if(!checkPermission(currentAreaId)) {
+                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS validado.");
+                return;
+            }
+            const area = areasData.find(a => a.id === currentAreaId);
+            const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps || 'Nenhum'})`);
+            if(newVal !== null && newVal.trim() !== '') {
+                area.realNps = parseInt(newVal);
+                document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps}`;
+                calculateGlobalStats();
+            }
+        }
+
+        function openPanel(itemId) {
+            if(!checkPermission(currentAreaId)) {
+                alert("TRAVA DE SEGURANÇA:\nVocê não tem permissão para editar os planos desta área.");
+                return;
+            }
+            const item = areasData.find(a=>a.id===currentAreaId).items.find(i=>i.id===itemId);
+            document.getElementById('form-item-id').value = item.id;
+            
+            document.getElementById('panel-etapa').innerText = `Área: ${areasData.find(a=>a.id===currentAreaId).name}`;
+            document.getElementById('panel-unidade').innerText = `Unidade: ${item.location}`;
+            document.getElementById('panel-nps').innerText = `Nota NPS: ${item.npsTotal}`;
+            document.getElementById('panel-nps-area').innerText = `Nota da área: ${item.npsArea}`;
+            document.getElementById('panel-pesquisa').innerText = `Fase de Pesquisa: ${item.pesquisa}`;
+            document.getElementById('panel-comment').innerText = item.comment;
+
+            document.getElementById('form-plano').value = item.plan || '';
+            document.getElementById('form-acao').value = item.action || '';
+            document.getElementById('form-responsavel').value = item.owner || '';
+            document.getElementById('form-data').value = item.date || '';
+            document.getElementById('form-status').value = item.status;
+            
+            document.getElementById('slide-over-backdrop').classList.remove('hidden');
+            setTimeout(() => document.getElementById('slide-over-panel').classList.remove('translate-x-full'), 10);
+        }
+
+        function closePanel() {
+            document.getElementById('slide-over-panel').classList.add('translate-x-full');
+            setTimeout(() => document.getElementById('slide-over-backdrop').classList.add('hidden'), 300);
+        }
+
+        function savePlan() {
+            const area = areasData.find(a=>a.id===currentAreaId);
+            const item = area.items.find(i=>i.id == document.getElementById('form-item-id').value);
+            
+            item.plan = document.getElementById('form-plano').value;
+            item.action = document.getElementById('form-acao').value;
+            item.owner = document.getElementById('form-responsavel').value;
+            item.date = document.getElementById('form-data').value;
+            item.status = document.getElementById('form-status').value;
+            
+            area.done = area.items.filter(i => i.status === 'Concluído').length;
+            
+            closePanel();
+            
+            document.getElementById('detail-stats').innerText = `${area.done}/${area.comments} concluídos`;
+            renderCommentsList();
+        }
+
+        // --- SISTEMA DE LEITURA E INGESTÃO DE EXCEL ---
+        function readRealExcel(input) {
+            if(!input.files || !input.files[0]) return;
+            const previewList = document.getElementById('import-preview-list');
+            document.getElementById('import-preview-empty').classList.add('hidden');
+            previewList.classList.remove('hidden');
+            previewList.innerHTML = '<div class="p-8 text-center text-gray-500">Lendo arquivo e extraindo comentários... <i class="fas fa-spinner fa-spin"></i></div>';
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    let html = '<ul class="divide-y divide-gray-100">';
+                    let totalComments = 0;
+
+                    let newAreasData = JSON.parse(JSON.stringify(areasData));
+                    newAreasData.forEach(a => { a.items = []; a.comments = 0; a.done = 0; a.late = 0; });
+
+                    workbook.SheetNames.forEach(sheetName => {
+                        const ws = workbook.Sheets[sheetName];
+                        const rows = XLSX.utils.sheet_to_json(ws);
+                        
+                        if(sheetName.toLowerCase().includes('cópia') || sheetName.toLowerCase().includes('página') || sheetName.toLowerCase().includes('rede de cliente')) return;
+                        
+                        const match = newAreasData.find(a => sheetName.toLowerCase().includes(a.name.toLowerCase().replace(' | fon.de uniformes', '')));
+                        
+                        if(match) {
+                            let validRows = 0;
+                            rows.forEach(row => {
+                                const getK = (keys) => {
+                                    for(let k of keys) {
+                                        let found = Object.keys(row).find(rk => rk.trim().toUpperCase() === k.toUpperCase());
+                                        if(found && row[found] !== undefined) return row[found];
+                                    }
+                                    return '';
+                                };
+                                
+                                let comment = getK(['COMENTÁRIO', 'Comment', 'COMENTÁRIO ']);
+                                if(comment && String(comment).trim() !== '') {
+                                    validRows++;
+                                    let status = getK(['STATUS']) || 'A iniciar';
+                                    let isDone = status.toLowerCase().includes('concluído') || status.toLowerCase().includes('concluido');
+                                    
+                                    match.items.push({
+                                        id: Date.now() + Math.random(),
+                                        location: getK(['UNIDADE', 'ÁREA', 'Unidades', 'UNIDADE/CLIENTE']) || 'Não identificada',
+                                        user: getK(['CLIENTE/FRANQUEADO', 'CLIENTE', 'NOME', 'FRANQUEADO', 'Name']) || 'Anônimo',
+                                        topic: getK(['TEMA', 'ETAPA']) || 'Feedback',
+                                        npsTotal: getK(['AVALIAÇÃO NPS', 'NOTA NPS', 'NPS', 'Evaluation']) || '-',
+                                        npsArea: getK(['NOTA DA ÁREA', 'NOTA  DA ÁREA']) || '-',
+                                        comment: String(comment).trim(),
+                                        status: isDone ? 'Concluído' : (status.toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
+                                        plan: getK(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO']) || '',
+                                        action: '',
+                                        owner: '',
+                                        date: getK(['CRONOGRAMA', 'DATA PREVISTA PARA CONCLUSÃO DO PLANO DE AÇÃO', 'DATA PREVISTA']) || '',
+                                        pesquisa: getK(['PESQUISA', 'Pesquisa', 'ETAPA']) || '-'
+                                    });
+                                }
+                            });
+                            
+                            match.comments = validRows;
+                            match.done = match.items.filter(i => i.status === 'Concluído').length;
+                            
+                            if(validRows > 0) {
+                                html += `<li class="px-6 py-4 flex justify-between items-center">
+                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Importado para: ${match.name}</p></div>
+                                            <span class="text-sm text-gray-500">${validRows} comentário(s)</span>
+                                        </li>`;
+                                totalComments += validRows;
+                            }
+                        } else if(rows.length > 0) {
+                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50">
+                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Nenhuma área associada)</p></div>
+                                        <span class="text-sm text-gray-500">${rows.length} linha(s) lidas</span>
+                                    </li>`;
+                        }
+                    });
+                    
+                    previewList.innerHTML = html + '</ul>';
+                    
+                    pendingImportData = newAreasData;
+                    
+                    const btn = document.getElementById('import-btn');
+                    btn.innerText = `Importar ${totalComments} comentário(s) reais`;
+                    btn.className = "w-full bg-primary text-white rounded py-2 text-sm font-medium hover:bg-blue-800 cursor-pointer transition-colors";
+                    btn.onclick = executeImport; 
+
+                } catch(err) {
+                    console.error(err);
+                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro ao ler Excel. Verifique se o arquivo está no formato correto.</div>';
+                }
+            };
+            reader.readAsArrayBuffer(input.files[0]);
+        }
+
+        function executeImport() {
+            if(!pendingImportData) return;
+            
+            areasData.splice(0, areasData.length, ...pendingImportData);
+            
+            pendingImportData = null;
+            document.getElementById('import-preview-list').innerHTML = '';
+            document.getElementById('import-preview-list').classList.add('hidden');
+            document.getElementById('import-preview-empty').classList.remove('hidden');
+            document.querySelector('input[type="file"]').value = '';
+            
+            const btn = document.getElementById('import-btn');
+            btn.innerText = "Aguardando arquivo...";
+            btn.className = "w-full bg-primary text-white rounded py-2 text-sm font-medium opacity-50 cursor-not-allowed";
+            btn.onclick = null;
+            
+            alert("Planilha importada com sucesso! O sistema foi atualizado com seus dados reais.");
+            navigate('dashboard');
+        }
+
+        // --- PAINEL ADMIN ---
+        let editingUserEmail = null;
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            adminUsers.forEach(u => {
+                let tags = '';
+                if(u.areas.includes('all')) {
+                    tags = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">ADM (Todas)</span>`;
+                } else {
+                    u.areas.forEach(aId => {
+                        const areaObj = areasData.find(a=>a.id === aId);
+                        if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${areaObj.name}</span>`;
+                    });
+                }
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-3 px-4 font-medium text-gray-800">${u.email}</td>
+                        <td class="py-3 px-4 flex flex-wrap gap-1">${tags || '<span class="text-gray-400 text-xs">Nenhuma área</span>'}</td>
+                        <td class="py-3 px-4 text-gray-400 hover:text-primary cursor-pointer" onclick="openAdminModal('${u.email}')"><i class="fas fa-edit"></i> Editar</td>
+                    </tr>`;
+            });
+        }
+
+        function openAdminModal(email = null) {
+            editingUserEmail = email;
+            const container = document.getElementById('admin-areas-checkboxes');
+            container.innerHTML = '';
+            
+            let user = email ? adminUsers.find(u=>u.email===email) : {email: '', areas: []};
+            document.getElementById('admin-user-email').value = user.email;
+            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões" : "Novo Usuário";
+            
+            let isAll = user.areas.includes('all');
+            document.getElementById('admin-check-all').checked = isAll;
+
+            areasData.forEach(area => {
+                const checked = isAll || user.areas.includes(area.id) ? 'checked' : '';
+                const disabled = isAll ? 'disabled' : '';
+                container.innerHTML += `
+                    <label class="flex items-center gap-2 cursor-pointer ml-2">
+                        <input type="checkbox" value="${area.id}" class="admin-area-chk w-4 h-4 text-secondary" ${checked} ${disabled}>
+                        <span class="text-gray-700 text-sm">${area.name}</span>
+                    </label>`;
+            });
+
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function toggleAllAdminAreas(chk) {
+            const boxes = document.querySelectorAll('.admin-area-chk');
+            boxes.forEach(b => {
+                b.checked = chk.checked;
+                b.disabled = chk.checked;
+            });
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function saveAdminModal() {
+            const email = document.getElementById('admin-user-email').value.trim();
+            if(!email) return alert("Digite um e-mail válido.");
+
+            const isAll = document.getElementById('admin-check-all').checked;
+            let selectedAreas = [];
+            
+            if(isAll) {
+                selectedAreas = ['all'];
+            } else {
+                document.querySelectorAll('.admin-area-chk:checked').forEach(b => selectedAreas.push(b.value));
+            }
+
+            if(editingUserEmail) {
+                let u = adminUsers.find(u => u.email === editingUserEmail);
+                u.email = email;
+                u.areas = selectedAreas;
+            } else {
+                adminUsers.push({email: email, areas: selectedAreas});
+            }
+            
+            closeAdminModal();
+            renderAdminTable();
+            
+            if(!document.querySelector(`#userRole option[value="${email}"]`)) {
+                document.getElementById('userRole').innerHTML += `<option value="${email}">${email}</option>`;
+            }
+        }
+
+        renderDashboard();
+    </script>
+</body>
+</html>
