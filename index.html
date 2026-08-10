@@ -24,7 +24,7 @@
                         accent: '#22c55e', 
                         danger: '#ef4444', 
                         warning: '#f59e0b', 
-                        bglight: '#f1f5f9' /* Ajustado para um cinza azulado super claro que destaca as sombras */
+                        bglight: '#f1f5f9'
                     }
                 }
             }
@@ -37,7 +37,6 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        /* Sombras mais suaves e flutuantes inspiradas na referência */
         .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: none; }
         .card-shadow-hover:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04); transform: translateY(-2px); }
         .area-card:hover .area-title { color: #22c55e; }
@@ -50,6 +49,9 @@
     </style>
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Uploader Oculto para Logo (Admin apenas) -->
+    <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
@@ -192,8 +194,9 @@
         </nav>
     </header>
 
-    <main class="flex-1 overflow-auto bg-bglight flex flex-col relative">
-        <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 h-[22rem] transition-all duration-300" id="hero-bg"></div>
+    <main class="flex-1 overflow-auto relative bg-bglight flex flex-col">
+        <!-- FAIXA AZUL DINÂMICA (Controlada pelo Javascript) -->
+        <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 transition-all duration-300" id="hero-bg"></div>
 
         <!-- FAIXA DE CICLO FECHADO -->
         <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow-md mb-4 z-10 relative">
@@ -202,7 +205,7 @@
 
         <!-- DASHBOARD -->
         <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full relative z-10">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end text-white gap-4 mb-10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4">
                 <div>
                     <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
                     <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
@@ -211,7 +214,7 @@
                 </select>
             </div>
 
-            <!-- CARDS TOPO (COM SHADOWS SUAVES) -->
+            <!-- CARDS TOPO -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
                 <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
                     <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Comentários</div>
@@ -235,7 +238,6 @@
                 </div>
             </div>
 
-            <!-- ESPAÇAMENTO AUMENTADO CONFORME PRINT -->
             <div class="mt-8 mb-6">
                 <h3 class="text-xl font-bold text-gray-800">Áreas de Atuação</h3>
                 <p class="text-sm text-gray-500">Selecione um card para gerenciar os planos da área correspondente.</p>
@@ -246,45 +248,46 @@
 
         <!-- VISÃO GLOBAL DE COMENTÁRIOS -->
         <div id="view-global-comments" class="page-view flex-col w-full hidden z-10 relative">
-            <div class="w-full px-4 sm:px-8 pt-6 pb-16">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-6">
                 <div class="max-w-7xl mx-auto text-white">
                     <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
                     <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-white" id="global-title">Comentários</h2>
                     <p class="text-blue-100 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
                 </div>
             </div>
-            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12" id="global-comments-list"></div>
+            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 mt-4" id="global-comments-list"></div>
         </div>
 
         <!-- VISÃO: DETALHE DA ÁREA -->
         <div id="view-area-detail" class="page-view flex-col w-full hidden z-10 relative">
-            <div class="w-full px-4 sm:px-8 pt-6 pb-16">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-6">
                 <div class="max-w-7xl mx-auto">
                     <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-start mb-2 text-white gap-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start mb-4 text-white gap-4">
                         <h2 class="text-3xl font-bold text-white" id="detail-title">Área</h2>
                         <div class="flex items-center gap-4">
                             <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2 border border-blue-600 shadow-sm">
-                                <span id="detail-nps-display" class="font-bold">NPS -</span> 
+                                <span id="detail-nps-display" class="font-bold text-white">NPS -</span> 
                                 <button onclick="editNps()" class="text-blue-300 hover:text-white transition-colors" title="Editar NPS Real"><i class="fas fa-pencil-alt text-xs"></i></button>
                                 <span class="text-blue-300 mx-1">·</span> 
-                                <span id="detail-stats">0/0 concluídos</span>
+                                <span id="detail-stats" class="text-white">0/0 concluídos</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="flex overflow-x-auto pb-2 no-scrollbar mt-4">
+                        <div class="flex gap-2" id="filter-buttons">
+                            <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Todos</button>
+                            <button onclick="setFilter('Em aberto')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Em aberto</button>
+                            <button onclick="setFilter('Sem plano')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Sem plano</button>
+                            <button onclick="setFilter('Atrasados')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Atrasados</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="-mt-10 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12">
-                <div class="flex overflow-x-auto pb-2 mb-4 no-scrollbar">
-                    <div class="flex gap-2" id="filter-buttons">
-                        <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Todos</button>
-                        <button onclick="setFilter('Em aberto')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Em aberto</button>
-                        <button onclick="setFilter('Sem plano')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Sem plano</button>
-                        <button onclick="setFilter('Atrasados')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Atrasados</button>
-                    </div>
-                </div>
+            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 mt-6">
                 <div class="flex flex-col gap-4" id="comments-list"></div>
             </div>
         </div>
@@ -378,7 +381,7 @@
                 <input type="email" id="admin-user-email" class="w-full bg-gray-50 border-none rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-secondary text-gray-800">
             </div>
 
-            <div class="mb-4 bg-blue-50 p-4 rounded-xl">
+            <div class="mb-4 bg-blue-50 border border-blue-100 p-4 rounded-xl">
                 <label class="block text-sm font-bold text-primary mb-3">Tipo de Autenticação</label>
                 <div class="flex gap-6">
                     <label class="flex items-center gap-2 cursor-pointer">
@@ -443,6 +446,11 @@
                     <label class="block text-sm font-bold text-gray-700 mb-2">Plano de Ação Previsto</label>
                     <textarea id="form-plano" rows="4" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary shadow-sm resize-none"></textarea>
                 </div>
+                <!-- Oculto Ação Executada -->
+                <div class="mb-4 hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Ação executada</label>
+                    <textarea id="form-acao" rows="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
+                </div>
                 <div class="flex flex-col sm:flex-row gap-4 mb-5">
                     <div class="w-full sm:w-1/2">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Responsável</label>
@@ -491,6 +499,20 @@
             { email: 'daniela@fasttennis.com.br', authType: 'password', password: '1234', areas: ['all'] },
             { email: 'ladeira@fasttennis.com.br', authType: 'password', password: '1234', areas: ['all'] }
         ];
+
+        // Atualiza a altura do Fundo Azul Dinamicamente
+        function updateHeroBgHeight(viewId) {
+            const isVigente = appState.activeCycleName === appState.vigenteCycle;
+            const bannerVisible = !isVigente && (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'global-comments');
+            
+            let heightRem = 14; 
+            if (viewId === 'dashboard' || viewId === 'admin' || viewId === 'global-comments') heightRem = 20;
+            else if (viewId === 'area-detail') heightRem = 24; 
+            
+            if (bannerVisible) heightRem += 4; 
+            
+            document.getElementById('hero-bg').style.height = heightRem + 'rem';
+        }
 
         window.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -784,12 +806,12 @@
             deleteSelect.innerHTML = '';
             
             if(appState.cycles.length === 0) {
-                dashSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
+                dashSelect.innerHTML = '<option value="">Nenhum ciclo criado</option>';
                 importSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 vigenteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 deleteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
             } else {
-                // Manter a ordem de criação ou alfabética (no caso reverso para os mais recentes)
+                // Inverter para mostrar os mais recentes primeiro
                 [...appState.cycles].reverse().forEach(c => {
                     let selAct = c.name === appState.activeCycleName ? 'selected' : '';
                     let selVig = c.name === appState.vigenteCycle ? 'selected' : '';
@@ -807,17 +829,9 @@
             appState.activeCycleName = newCycleName;
             document.getElementById('import-cycle-select').value = newCycleName;
             
-            const isVigente = appState.activeCycleName === appState.vigenteCycle;
-            const bannerDash = document.getElementById('read-only-banner-dash');
-            
-            if(bannerDash) {
-                if(!isVigente) bannerDash.classList.remove('hidden');
-                else bannerDash.classList.add('hidden');
-            }
-
-            renderDashboard();
-            if(!document.getElementById('view-areas').classList.contains('hidden')) renderAreasList();
-            if(!document.getElementById('view-global-comments').classList.contains('hidden')) openGlobalFilter(currentGlobalFilterType);
+            // Re-render atualiza altura e visibilidade do banner
+            const activeView = Array.from(document.querySelectorAll('.page-view')).find(el => !el.classList.contains('hidden'))?.id.replace('view-', '');
+            if(activeView) navigate(activeView);
         }
 
         async function setVigenteCycle() {
@@ -827,12 +841,9 @@
             await saveStateToSupabase();
             updateCycleDropdowns();
             
-            const bannerDash = document.getElementById('read-only-banner-dash');
-            if(appState.activeCycleName === appState.vigenteCycle) {
-                if(bannerDash) bannerDash.classList.add('hidden');
-            } else {
-                if(bannerDash) bannerDash.classList.remove('hidden');
-            }
+            const activeView = Array.from(document.querySelectorAll('.page-view')).find(el => !el.classList.contains('hidden'))?.id.replace('view-', '');
+            if(activeView) navigate(activeView);
+            
             alert("Ciclo Vigente alterado com sucesso! Apenas este ciclo permitirá edições.");
         }
 
@@ -891,6 +902,8 @@
             } else {
                 if(bannerDash) bannerDash.classList.add('hidden');
             }
+
+            updateHeroBgHeight(viewId);
 
             if(viewId === 'dashboard') renderDashboard();
             if(viewId === 'areas') renderAreasList();
@@ -1285,6 +1298,7 @@
             }
         }
 
+        // --- SISTEMA DE LEITURA EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -1399,7 +1413,7 @@
 
                 } catch(err) {
                     console.error(err);
-                    previewList.innerHTML = '<div class="p-8 text-center text-danger font-bold">Erro crítico ao ler Excel. Tente remover formatações mescladas complexas.</div>';
+                    previewList.innerHTML = '<div class="p-8 text-center text-danger font-bold">Erro crítico ao ler Excel. Tente remover formatações mescladas complexas do arquivo e tente de novo.</div>';
                 }
             };
             reader.readAsArrayBuffer(input.files[0]);
@@ -1497,6 +1511,92 @@
                         </div>
                     </div>`;
             });
+        }
+
+        function openAdminModal(email = null) {
+            editingUserEmail = email;
+            const container = document.getElementById('admin-areas-checkboxes');
+            container.innerHTML = '';
+            
+            let user = email ? adminUsers.find(u=>u.email===email) : {email: '', authType: 'password', password: '', areas: []};
+            
+            document.getElementById('admin-user-email').value = user.email;
+            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões & Senha" : "Novo Usuário";
+            
+            document.querySelector(`input[name="auth_type"][value="${user.authType}"]`).checked = true;
+            togglePwdField(user.authType);
+            
+            const deleteBtn = document.getElementById('admin-delete-btn');
+            if(email && adminUsers.length > 1) deleteBtn.classList.remove('hidden');
+            else deleteBtn.classList.add('hidden');
+            
+            let isAll = user.areas.includes('all');
+            document.getElementById('admin-check-all').checked = isAll;
+
+            const activeData = getActiveCycleData();
+            if(activeData.length === 0) {
+                container.innerHTML = "<p class='text-xs text-gray-500'>Importe um ciclo de Planilha primeiro para ver a lista de áreas disponíveis.</p>";
+            } else {
+                activeData.forEach(area => {
+                    const checked = isAll || user.areas.includes(area.id) ? 'checked' : '';
+                    const disabled = isAll ? 'disabled' : '';
+                    container.innerHTML += `
+                        <label class="flex items-center gap-2 cursor-pointer ml-2">
+                            <input type="checkbox" value="${area.id}" class="admin-area-chk w-4 h-4 text-secondary" ${checked} ${disabled}>
+                            <span class="text-gray-700 text-sm">${area.name}</span>
+                        </label>`;
+                });
+            }
+
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        async function saveAdminModal() {
+            const email = document.getElementById('admin-user-email').value.trim();
+            const authType = document.querySelector('input[name="auth_type"]:checked').value;
+            const password = document.getElementById('admin-user-password').value.trim();
+            
+            if(!email) return alert("O e-mail é obrigatório.");
+            if(authType === 'password' && !password && !editingUserEmail) return alert("A senha provisória é obrigatória para novos usuários.");
+
+            const isAll = document.getElementById('admin-check-all').checked;
+            let selectedAreas = [];
+            
+            if(isAll) {
+                selectedAreas = ['all'];
+            } else {
+                document.querySelectorAll('.admin-area-chk:checked').forEach(b => selectedAreas.push(b.value));
+            }
+
+            if(editingUserEmail) {
+                let u = adminUsers.find(u => u.email === editingUserEmail);
+                u.email = email;
+                u.authType = authType;
+                if(password) u.password = password; 
+                u.areas = selectedAreas;
+            } else {
+                adminUsers.push({email: email, authType: authType, password: password || '1234', areas: selectedAreas});
+            }
+            
+            await saveStateToSupabase();
+            closeAdminModal();
+            renderAdminTable();
+            if(editingUserEmail === loggedEmail && email !== loggedEmail) logout();
+        }
+
+        async function deleteUser() {
+            if(!editingUserEmail) return;
+            if(confirm(`Tem certeza que deseja excluir o usuário ${editingUserEmail}?`)) {
+                adminUsers = adminUsers.filter(u => u.email !== editingUserEmail);
+                await saveStateToSupabase();
+                closeAdminModal();
+                renderAdminTable();
+                if(editingUserEmail === loggedEmail) logout();
+            }
         }
     </script>
 </body>
