@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
+    <!-- Favicon Dinâmico -->
     <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Bibliotecas: Ler Excel e Supabase -->
+    <!-- Bibliotecas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -46,6 +47,7 @@
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
+    <!-- Uploader Oculto para Logo -->
     <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
 
     <!-- TELA DE LOGIN -->
@@ -67,7 +69,6 @@
             <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ Acesso negado. Este e-mail não possui permissão no sistema.</div>
             
             <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors">Entrar no Sistema</button>
-            <p class="text-xs text-gray-400 mt-6">Apenas Heads e Diretoria autorizados possuem acesso.</p>
         </div>
     </div>
 
@@ -93,11 +94,12 @@
         <nav class="flex items-center gap-6 text-sm font-medium">
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
+            
             <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
             <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
             
             <!-- STATUS DE SINCRONIZAÇÃO (Visível apenas para Admin) -->
-            <div id="sync-status" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors" title="Status da conexão com a nuvem">
+            <div id="sync-status" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow" title="Status da conexão com a nuvem">
                 <i class="fas fa-check"></i> Nuvem atualizada
             </div>
             
@@ -149,7 +151,7 @@
                 </div>
             </div>
 
-            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-16">Áreas</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-12">Áreas de Atuação</h3>
             <div class="grid grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
         </div>
 
@@ -166,22 +168,24 @@
         <div id="view-import" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
                 <h2 class="text-3xl font-bold mb-2">Importar planilha do ciclo</h2>
-                <p class="text-blue-100 text-sm">Suba o arquivo Excel. As áreas do sistema serão atualizadas dinamicamente de acordo com as abas da planilha.</p>
+                <p class="text-blue-100 text-sm">Suba o arquivo Excel. As áreas serão criadas automaticamente a partir das abas da planilha.</p>
             </div>
             
             <div class="flex gap-6 pb-12">
                 <div class="w-1/3 bg-white rounded-lg shadow p-6 border border-gray-100 h-fit">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ação</label>
-                        <select class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
-                            <option>Substituir Dados Atuais</option>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ação a ser realizada</label>
+                        <select class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary bg-gray-50 cursor-not-allowed" disabled>
+                            <option>Substituir Dados Atuais (Apaga o ciclo anterior)</option>
                         </select>
                     </div>
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Selecione o Arquivo (.xlsx)</label>
                         <input type="file" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100">
                     </div>
-                    <button id="import-btn" class="w-full bg-primary text-white rounded py-2 text-sm font-medium opacity-50 cursor-not-allowed">Aguardando arquivo...</button>
+                    <button id="import-btn" class="w-full bg-gray-300 text-gray-500 rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow">
+                        Aguardando leitura do arquivo...
+                    </button>
                 </div>
                 
                 <div class="w-2/3 bg-white rounded-lg shadow border border-gray-100 max-h-[500px] overflow-y-auto">
@@ -206,7 +210,7 @@
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-gray-800 text-lg">Gestão de Permissões</h3>
-                    <button onclick="openAdminModal()" class="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-600 transition-colors"><i class="fas fa-plus mr-1"></i> Adicionar Usuário</button>
+                    <button onclick="openAdminModal()" class="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-600 transition-colors shadow"><i class="fas fa-plus mr-1"></i> Adicionar Usuário</button>
                 </div>
                 <table class="w-full text-left text-sm text-gray-600">
                     <thead class="bg-gray-50 border-b">
@@ -238,6 +242,7 @@
                 </div>
             </div>
 
+            <!-- FILTROS REPARADOS -->
             <div class="flex justify-between items-center mb-6">
                 <div class="flex gap-2" id="filter-buttons">
                     <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Todos</button>
@@ -269,7 +274,7 @@
             </div>
             <div class="flex justify-end gap-3 shrink-0">
                 <button onclick="closeAdminModal()" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50 text-sm font-medium">Cancelar</button>
-                <button onclick="saveAdminModal()" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-800 text-sm font-medium">Salvar Usuário</button>
+                <button onclick="saveAdminModal()" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-800 text-sm font-medium shadow">Salvar Usuário</button>
             </div>
         </div>
     </div>
@@ -323,7 +328,7 @@
                         <option value="Concluído">Concluído</option>
                     </select>
                 </div>
-                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-primary text-white font-semibold rounded-lg py-3 transition-colors">Salvar plano de ação</button>
+                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-primary text-white font-semibold rounded-lg py-3 transition-colors shadow">Salvar plano de ação</button>
             </form>
         </div>
     </div>
@@ -350,8 +355,9 @@
         let currentFilter = 'Todos';
         let pendingImportData = null;
 
-        // Admin e Área base caso esteja vazio no banco
-        const defaultAdmin = [{ email: 'ladeira@fasttennis.com.br', areas: ['all'] }];
+        const defaultAdmin = [
+            { email: 'ladeira@fasttennis.com.br', areas: ['all'] }
+        ];
 
         // ======= 3. INICIALIZAÇÃO (LOGIN & NUVEM) =======
         window.addEventListener('DOMContentLoaded', async () => {
@@ -373,7 +379,7 @@
                     areasData = (Array.isArray(aData)) ? aData : [];
                 }
             } catch (err) {
-                console.warn("Aviso: Falha ao sincronizar.", err.message);
+                console.warn("Aviso: Falha ao sincronizar com Nuvem. Carregando dados base.");
                 adminUsers = defaultAdmin;
                 areasData = [];
             } finally {
@@ -458,7 +464,7 @@
             const syncUI = document.getElementById('sync-status');
             if(syncUI && !syncUI.classList.contains('hidden')) {
                 syncUI.innerHTML = '<i class="fas fa-sync fa-spin"></i> Salvando...';
-                syncUI.className = 'inline-block text-xs bg-yellow-600 text-white px-2 py-1 rounded transition-colors';
+                syncUI.className = 'inline-block text-xs bg-yellow-600 text-white px-2 py-1 rounded transition-colors shadow';
             }
 
             try {
@@ -470,14 +476,15 @@
 
                 if(syncUI && !syncUI.classList.contains('hidden')) {
                     syncUI.innerHTML = '<i class="fas fa-check"></i> Nuvem atualizada';
-                    syncUI.className = 'inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors';
+                    syncUI.className = 'inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow';
                 }
             } catch(err) {
                 console.error("Erro na API:", err);
                 if(syncUI && !syncUI.classList.contains('hidden')) {
                     syncUI.innerHTML = '<i class="fas fa-times"></i> Erro ao salvar';
-                    syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors';
-                    syncUI.title = err.message;
+                    syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
+                    syncUI.title = err.message + " (Verifique a permissão SQL)";
+                    alert("O Supabase bloqueou o salvamento. Tem certeza que rodou o código SQL com 'WITH CHECK (true)'?");
                 }
             }
         }
@@ -576,7 +583,7 @@
             grid.innerHTML = '';
             
             if(areasData.length === 0) {
-                grid.innerHTML = '<div class="col-span-4 text-center py-10 text-gray-500">Nenhum ciclo importado. Vá em Importar Planilha para começar.</div>';
+                grid.innerHTML = '<div class="col-span-4 text-center py-10 text-gray-500 font-medium">Nenhum ciclo ativo na nuvem. Administrador, vá em Importar Planilha para carregar os dados.</div>';
                 return;
             }
 
@@ -690,7 +697,7 @@
                 let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
                 let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
-                // PRÉVIA DO PLANO DE AÇÃO NO CARD
+                // Prévia do Plano e Ação no Card
                 let planPreview = item.plan && item.plan.trim() !== ''
                     ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100">
                          <span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>
@@ -705,15 +712,15 @@
                        </div>`
                     : '';
 
+                // Usando aspas seguras para o ID gerado dinamicamente
                 container.innerHTML += `
-                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel(${item.id})">
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel('${item.id}')">
                         <div class="flex justify-between items-start mb-3">
                             <div class="text-xs text-gray-500 font-medium"><span class="text-gray-800 font-bold">${item.location}</span> · ${item.user} · ${item.topic}</div>
                             <div class="text-danger font-bold text-sm"><span class="text-gray-400 text-xs font-normal">NOTA ÁREA ${item.npsArea}</span> ${item.npsTotal}</div>
                         </div>
                         <p class="text-gray-800 text-sm mb-2">${item.comment}</p>
                         
-                        <!-- Prévia Injetada -->
                         ${planPreview}
                         ${actionPreview}
 
@@ -741,7 +748,6 @@
                 
                 await saveStateToSupabase();
                 calculateGlobalStats();
-                if(!document.getElementById('view-dashboard').classList.contains('hidden')) renderDashboard();
             }
         }
 
@@ -781,7 +787,8 @@
             btn.classList.add('opacity-50', 'cursor-wait');
 
             const area = areasData.find(a=>a.id===currentAreaId);
-            const item = area.items.find(i=>i.id == document.getElementById('form-item-id').value);
+            const itemIdStr = document.getElementById('form-item-id').value;
+            const item = area.items.find(i=>i.id == itemIdStr); // usa == pois string vs number
             
             item.plan = document.getElementById('form-plano').value;
             item.action = document.getElementById('form-acao').value;
@@ -825,9 +832,7 @@
                         
                         if(sheetName.toLowerCase().includes('cópia') || sheetName.toLowerCase().includes('página') || sheetName.toLowerCase().includes('rede de cliente')) return;
                         
-                        // ID de área dinâmico a partir do nome da aba (Remove acentos, espaços e chars especiais)
                         let rawId = sheetName.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                        if(rawId.includes('persports')) rawId = 'persports'; // Ajuste especifico da sua planilha
                         
                         let validRows = 0;
                         let tempItems = [];
@@ -848,7 +853,7 @@
                                 let isDone = status.toLowerCase().includes('concluído') || status.toLowerCase().includes('concluido');
                                 
                                 tempItems.push({
-                                    id: Date.now() + Math.random(),
+                                    id: 'item_' + Date.now().toString() + '_' + Math.floor(Math.random()*1000).toString(),
                                     location: getK(['UNIDADE', 'ÁREA', 'Unidades', 'UNIDADE/CLIENTE']) || 'Não identificada',
                                     user: getK(['CLIENTE/FRANQUEADO', 'CLIENTE', 'NOME', 'FRANQUEADO', 'Name']) || 'Anônimo',
                                     topic: getK(['TEMA', 'ETAPA']) || 'Feedback',
@@ -866,7 +871,6 @@
                         });
                         
                         if(validRows > 0 || rows.length > 0) {
-                            // Procura se a área já existia no banco para manter o NPS manual que você digitou
                             let existingArea = areasData.find(a => a.id === rawId);
                             let preservedNps = existingArea ? existingArea.realNps : null;
 
@@ -882,7 +886,7 @@
 
                             if(validRows > 0) {
                                 html += `<li class="px-6 py-4 flex justify-between items-center">
-                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Criada como: ${sheetName}</p></div>
+                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Lida do Excel</p></div>
                                             <span class="text-sm text-gray-500">${validRows} comentário(s)</span>
                                         </li>`;
                                 totalComments += validRows;
@@ -895,7 +899,8 @@
                     
                     const btn = document.getElementById('import-btn');
                     btn.innerText = `Sincronizar ${totalComments} comentário(s) na Nuvem`;
-                    btn.className = "w-full bg-primary text-white rounded py-2 text-sm font-bold hover:bg-blue-800 cursor-pointer transition-colors";
+                    // Botão PISCANDO E VERDE para chamar atenção!
+                    btn.className = "w-full bg-accent text-white rounded py-3 text-sm font-bold hover:bg-green-600 cursor-pointer shadow-lg animate-pulse";
                     btn.onclick = executeImport; 
 
                 } catch(err) {
@@ -910,10 +915,13 @@
             if(!pendingImportData) return;
             const btn = document.getElementById('import-btn');
             btn.innerText = "Salvando no Supabase...";
-            btn.classList.add('opacity-50', 'cursor-wait');
+            btn.classList.replace('bg-accent', 'bg-blue-600');
+            btn.classList.replace('animate-pulse', 'opacity-50');
+            btn.classList.add('cursor-wait');
 
-            // Troca as áreas completamente pelas novas áreas dinâmicas importadas
-            areasData = pendingImportData;
+            // Substitui todas as áreas
+            areasData.length = 0;
+            pendingImportData.forEach(p => areasData.push(p));
             
             await saveStateToSupabase();
             
@@ -924,10 +932,10 @@
             document.querySelector('input[type="file"]').value = '';
             
             btn.innerText = "Aguardando arquivo...";
-            btn.className = "w-full bg-primary text-white rounded py-2 text-sm font-medium opacity-50 cursor-not-allowed";
+            btn.className = "w-full bg-gray-300 text-gray-500 rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed shadow";
             btn.onclick = null;
             
-            alert("Sucesso! Planilha salva na Nuvem e Áreas atualizadas.");
+            alert("Sucesso! Planilha salva na Nuvem. Todos os usuários já podem ver a atualização.");
             navigate('dashboard');
         }
 
@@ -945,7 +953,7 @@
                     u.areas.forEach(aId => {
                         const areaObj = areasData.find(a=>a.id === aId);
                         if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${areaObj.name}</span>`;
-                        else tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${aId}</span>`; // Caso a area tenha sido deletada na importação
+                        else tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${aId}</span>`;
                     });
                 }
                 
