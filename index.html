@@ -190,80 +190,77 @@
         </nav>
     </header>
 
-    <main class="flex-1 overflow-auto relative bg-bglight flex flex-col">
-        <!-- FAIXA DE CICLO FECHADO -->
-        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow-md mb-4 z-10 relative">
+    <main class="flex-1 overflow-auto bg-bglight flex flex-col relative">
+
+        <!-- BANNER GLOBAL (Aparece se o ciclo não for o vigente) -->
+        <div id="read-only-banner-global" class="hidden bg-warning text-white text-center text-sm font-bold py-2 px-4 shadow-md w-full shrink-0 z-40">
             <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
         </div>
 
         <!-- DASHBOARD -->
-        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full relative z-10">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4">
-                <div class="bg-primary absolute top-0 left-0 w-full h-[22rem] -z-10 transition-all duration-300"></div>
-                <div>
-                    <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
-                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
+        <div id="view-dashboard" class="page-view flex-col w-full hidden flex-1">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-24 shrink-0">
+                <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-end text-white gap-4">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
+                        <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
+                    </div>
+                    <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border-none text-white rounded-xl px-4 py-2 text-sm outline-none shadow-md font-semibold w-full sm:w-auto cursor-pointer hover:bg-blue-700 transition-colors">
+                    </select>
                 </div>
-                <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border-none text-white rounded-xl px-4 py-2 text-sm outline-none shadow-md font-semibold w-full sm:w-auto cursor-pointer hover:bg-blue-700 transition-colors">
-                </select>
-            </div>
-
-            <!-- CARDS TOPO -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
-                <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Comentários</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
-                </div>
-                <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Concluídos</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0% do ciclo</div>
-                </div>
-                <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Em Atraso</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-danger mb-1" id="dash-total-late">0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
-                </div>
-                <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Sem Plano</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
-                </div>
-            </div>
-
-            <div class="mt-8 mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Áreas de Atuação</h3>
-                <p class="text-sm text-gray-500">Selecione um card para gerenciar os planos da área correspondente.</p>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pb-12" id="dashboard-areas-grid"></div>
+            <div class="-mt-16 max-w-7xl mx-auto w-full px-4 sm:px-8 pb-12 relative z-10 flex-1">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
+                    <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Comentários</div>
+                        <div class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
+                    </div>
+                    <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Concluídos</div>
+                        <div class="text-3xl sm:text-4xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0% do ciclo</div>
+                    </div>
+                    <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Em Atraso</div>
+                        <div class="text-3xl sm:text-4xl font-bold text-danger mb-1" id="dash-total-late">0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
+                    </div>
+                    <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Sem Plano</div>
+                        <div class="text-3xl sm:text-4xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Áreas de Atuação</h3>
+                    <p class="text-sm text-gray-500">Selecione um card para gerenciar os planos da área correspondente.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6" id="dashboard-areas-grid"></div>
+            </div>
         </div>
 
-        <!-- VISÃO GLOBAL DE COMENTÁRIOS (Correção de Margem) -->
-        <div id="view-global-comments" class="page-view flex-col w-full hidden flex-1 relative z-10">
-            <!-- Barra Azul reduzida para não sobrepor -->
-            <div class="bg-primary w-full absolute top-0 left-0 -z-10 h-32 transition-all duration-300"></div>
-            
-            <div class="w-full px-4 sm:px-8 pt-6 pb-4">
+        <!-- VISÃO GLOBAL DE COMENTÁRIOS -->
+        <div id="view-global-comments" class="page-view flex-col w-full hidden flex-1">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-24 shrink-0">
                 <div class="max-w-7xl mx-auto text-white">
                     <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
                     <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-white" id="global-title">Comentários</h2>
                     <p class="text-blue-100 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
                 </div>
             </div>
-            <!-- Começa no cinza limpo -->
-            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-4" id="global-comments-list"></div>
+            <div class="-mt-16 max-w-7xl mx-auto w-full px-4 sm:px-8 pb-12 relative z-10 flex-1" id="global-comments-list"></div>
         </div>
 
         <!-- VISÃO: DETALHE DA ÁREA -->
-        <div id="view-area-detail" class="page-view flex-col w-full hidden z-10 relative">
-            <div class="bg-primary w-full absolute top-0 left-0 -z-10 h-48 transition-all duration-300"></div>
-            <div class="w-full px-4 sm:px-8 pt-6 pb-6">
+        <div id="view-area-detail" class="page-view flex-col w-full hidden flex-1">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-24 shrink-0">
                 <div class="max-w-7xl mx-auto">
                     <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-start mb-4 text-white gap-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start mb-2 text-white gap-4">
                         <h2 class="text-3xl font-bold text-white" id="detail-title">Área</h2>
                         <div class="flex items-center gap-4">
                             <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2 border border-blue-600 shadow-sm">
@@ -277,7 +274,7 @@
                 </div>
             </div>
 
-            <div class="-mt-2 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12">
+            <div class="-mt-16 max-w-7xl mx-auto w-full px-4 sm:px-8 pb-12 relative z-10 flex-1">
                 <div class="flex overflow-x-auto pb-2 mb-4 no-scrollbar">
                     <div class="flex gap-2" id="filter-buttons">
                         <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Todos</button>
@@ -291,86 +288,94 @@
         </div>
 
         <!-- VISÃO: ÁREAS SIMPLES -->
-        <div id="view-areas" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full z-10 relative">
-            <div class="bg-primary w-full absolute top-0 left-0 -z-10 h-32 transition-all duration-300"></div>
-            <div class="mb-10 text-white">
-                <h2 class="text-3xl font-bold mb-2">Áreas de Atuação</h2>
-                <p class="text-blue-100 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
+        <div id="view-areas" class="page-view flex-col w-full hidden flex-1">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20 shrink-0">
+                <div class="max-w-7xl mx-auto text-white">
+                    <h2 class="text-3xl font-bold mb-2">Áreas de Atuação</h2>
+                    <p class="text-blue-100 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
+                </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pb-12" id="areas-list-grid"></div>
+            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 pb-12 relative z-10 flex-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6" id="areas-list-grid"></div>
+            </div>
         </div>
 
         <!-- VISÃO: IMPORTAR -->
-        <div id="view-import" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full z-10 relative">
-            <div class="bg-primary w-full absolute top-0 left-0 -z-10 h-32 transition-all duration-300"></div>
-            <div class="mb-10 text-white">
-                <h2 class="text-3xl font-bold mb-2 text-white">Importar e Configurar Ciclos</h2>
-                <p class="text-blue-100 text-sm">Suba o Excel, defina o ciclo vigente ou remova ciclos antigos.</p>
+        <div id="view-import" class="page-view flex-col w-full hidden flex-1">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20 shrink-0">
+                <div class="max-w-7xl mx-auto text-white">
+                    <h2 class="text-3xl font-bold mb-2">Importar e Configurar Ciclos</h2>
+                    <p class="text-blue-100 text-sm">Suba o Excel, defina o ciclo vigente ou remova ciclos antigos.</p>
+                </div>
             </div>
             
-            <div class="flex flex-col md:flex-row gap-6 pb-12">
-                <div class="w-full md:w-1/3 bg-white rounded-2xl shadow-md p-6 h-fit card-shadow">
-                    <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mb-4">1. Gerenciar Ciclos</h3>
-                    <div class="mb-4 bg-blue-50 border border-blue-100 p-4 rounded-xl">
-                        <label class="block text-sm font-semibold text-gray-800 mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
-                        <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border-none rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary bg-white shadow-sm mb-2"></select>
-                        <p class="text-[10px] text-gray-500 font-medium leading-tight">Apenas o ciclo selecionado acima permitirá edição. Os demais ficarão trancados (Leitura).</p>
-                    </div>
+            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 pb-12 relative z-10 flex-1">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 bg-white rounded-2xl shadow-md p-6 h-fit card-shadow">
+                        <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mb-4">1. Gerenciar Ciclos</h3>
+                        <div class="mb-4 bg-blue-50 border border-blue-100 p-4 rounded-xl">
+                            <label class="block text-sm font-semibold text-gray-800 mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
+                            <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border-none rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary bg-white shadow-sm mb-2"></select>
+                            <p class="text-[10px] text-gray-500 font-medium leading-tight">Apenas o ciclo selecionado acima permitirá edição. Os demais ficarão trancados (Leitura).</p>
+                        </div>
 
-                    <div class="mb-6 flex gap-2">
-                        <select id="import-delete-select" class="w-2/3 border-none bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-danger shadow-sm"></select>
-                        <button onclick="deleteSelectedCycle()" class="w-1/3 bg-red-100 hover:bg-red-600 hover:text-white text-red-600 rounded-lg py-2 text-xs font-bold transition-colors shadow-sm">
-                            <i class="fas fa-trash"></i> Excluir
+                        <div class="mb-6 flex gap-2">
+                            <select id="import-delete-select" class="w-2/3 border-none bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-danger shadow-sm"></select>
+                            <button onclick="deleteSelectedCycle()" class="w-1/3 bg-red-100 hover:bg-red-600 hover:text-white text-red-600 rounded-lg py-2 text-xs font-bold transition-colors shadow-sm">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </div>
+                        
+                        <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mt-8 mb-4">2. Importar Novo Excel</h3>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Atualizar ciclo existente</label>
+                            <select id="import-cycle-select" class="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-secondary"></select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
+                            <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26" class="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
+                            <input type="file" id="import-file-input" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100 shadow-sm cursor-pointer">
+                        </div>
+                        <button id="import-btn" class="w-full bg-gray-300 text-gray-500 rounded-xl py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow-sm">
+                            Importar 0 comentário(s)
                         </button>
                     </div>
                     
-                    <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mt-8 mb-4">2. Importar Novo Excel</h3>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Atualizar ciclo existente</label>
-                        <select id="import-cycle-select" class="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-secondary"></select>
+                    <div class="w-full md:w-2/3 bg-white rounded-2xl shadow-md max-h-[600px] overflow-y-auto card-shadow">
+                        <div class="px-6 py-4 border-b sticky top-0 bg-white z-10">
+                            <h3 class="font-bold text-gray-800 text-lg">Prévia por aba</h3>
+                        </div>
+                        <div id="import-preview-empty" class="p-12 flex flex-col items-center justify-center text-gray-400 h-64">
+                            <i class="fas fa-file-excel text-5xl mb-4 text-gray-300"></i>
+                            <p class="text-sm font-medium">Selecione um arquivo para ver as abas.</p>
+                        </div>
+                        <div id="import-preview-list" class="hidden"></div>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
-                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26" class="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary">
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
-                        <input type="file" id="import-file-input" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100 shadow-sm cursor-pointer">
-                    </div>
-                    <button id="import-btn" class="w-full bg-gray-300 text-gray-500 rounded-xl py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow-sm">
-                        Importar 0 comentário(s)
-                    </button>
-                </div>
-                
-                <div class="w-full md:w-2/3 bg-white rounded-2xl shadow-md max-h-[600px] overflow-y-auto card-shadow">
-                    <div class="px-6 py-4 border-b sticky top-0 bg-white z-10">
-                        <h3 class="font-bold text-gray-800 text-lg">Prévia por aba</h3>
-                    </div>
-                    <div id="import-preview-empty" class="p-12 flex flex-col items-center justify-center text-gray-400 h-64">
-                        <i class="fas fa-file-excel text-5xl mb-4 text-gray-300"></i>
-                        <p class="text-sm font-medium">Selecione um arquivo para ver as abas.</p>
-                    </div>
-                    <div id="import-preview-list" class="hidden"></div>
                 </div>
             </div>
         </div>
         
         <!-- VISÃO: ADMIN -->
-        <div id="view-admin" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full z-10 relative">
-            <div class="bg-primary w-full absolute top-0 left-0 -z-10 h-32 transition-all duration-300"></div>
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
-                <div class="text-white">
-                    <h2 class="text-3xl font-bold mb-2">Painel de Administração</h2>
-                    <p class="text-blue-100 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
+        <div id="view-admin" class="page-view flex-col w-full hidden flex-1">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20 shrink-0">
+                <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 text-white">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2">Painel de Administração</h2>
+                        <p class="text-blue-100 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
+                    </div>
+                    <button onclick="openAdminModal()" class="bg-accent text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-green-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"><i class="fas fa-user-plus"></i> Novo Usuário</button>
                 </div>
-                <button onclick="openAdminModal()" class="bg-accent text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-green-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"><i class="fas fa-user-plus"></i> Novo Usuário</button>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-12" id="adminTableBody">
-                <!-- Cards Renderizados -->
+            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 pb-12 relative z-10 flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="adminTableBody">
+                    <!-- Cards Renderizados -->
+                </div>
             </div>
         </div>
-
     </main>
 
     <!-- Modal Admin (Criar/Editar User) -->
@@ -398,7 +403,7 @@
                 <div id="admin-pwd-container" class="mt-4 pt-4 border-t border-blue-200">
                     <label class="block text-xs font-bold text-gray-600 mb-1">Senha Provisória</label>
                     <input type="text" id="admin-user-password" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary text-gray-800 shadow-sm" placeholder="Ex: 1234">
-                    <p class="text-[10px] text-gray-500 mt-1 italic">Dica: Se a senha for <span class="font-bold">1234</span> ou <span class="font-bold">123456</span>, o usuário será obrigado a trocar no primeiro acesso.</p>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">Se a senha for <span class="font-bold">1234</span>, o usuário será obrigado a trocar no primeiro acesso.</p>
                 </div>
             </div>
 
@@ -471,7 +476,7 @@
                         <option value="Concluído">Concluído</option>
                     </select>
                 </div>
-                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold rounded-xl py-3.5 transition-all shadow-md hover:shadow-lg mb-4">Salvar Plano de Ação</button>
+                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold rounded-xl py-3.5 transition-all shadow-md hover:shadow-lg">Salvar Plano de Ação</button>
             </form>
         </div>
     </div>
@@ -479,7 +484,7 @@
     <!-- SCRIPT PRINCIPAL -->
     <script>
         let supabaseClient;
-        let isDbConnected = true;
+        let isDbConnected = true; // Trava de segurança mestre
 
         try {
             const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
@@ -511,12 +516,13 @@
             try {
                 if (!supabaseClient) throw new Error("Supabase não carregou.");
                 const fetchPromise = supabaseClient.from('app_state').select('*').eq('id', 1).single();
+                // Aumentado o timeout para 15 segundos para evitar que conexões lentas apaguem os dados locais
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 15000));
                 
                 const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
                 if (error) throw error;
                 
-                isDbConnected = true;
+                isDbConnected = true; // Confirmação que o BD baixou tudo certo
 
                 if (data) {
                     let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
@@ -524,7 +530,7 @@
                         ...u, 
                         authType: u.authType || 'password', 
                         password: u.password || '1234',
-                        areas: Array.isArray(u.areas) ? u.areas : [] 
+                        areas: Array.isArray(u.areas) ? u.areas : [] // Proteção contra arrays corrompidos
                     })) : defaultAdmin;
                     
                     let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
@@ -550,9 +556,10 @@
                 }
             } catch (err) {
                 console.error("Aviso CRÍTICO: Falha ao sincronizar com Supabase.", err);
-                isDbConnected = false; 
+                isDbConnected = false; // TRAVA DE SEGURANÇA: Impede que o sistema salve coisas vazias por cima.
                 adminUsers = defaultAdmin;
                 appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
+                alert("⚠️ Atenção: A conexão com o banco de dados falhou ou a internet está lenta. Recarregue a página. Não tente salvar dados agora para evitar perda do histórico.");
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
                 updateCycleDropdowns(); 
@@ -671,7 +678,7 @@
         function finishLogin(email) {
             loggedEmail = email;
             document.getElementById('logged-user-display').innerText = email;
-            updateUIPermissions();
+            updateNavMenu('dashboard');
             
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
             if(user && user.authType === 'email') document.getElementById('btn-change-pwd').classList.add('hidden');
@@ -733,30 +740,35 @@
             }
         }
 
-        // ======= PERMISSÕES E MENU =======
-        function updateUIPermissions() {
+        // ======= MENU NAVEGAÇÃO E PERMISSÕES =======
+        function updateNavMenu(activeViewId) {
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             const isAdmin = user && user.areas.includes('all');
             
-            const adminNav = document.getElementById('nav-admin');
-            const importNav = document.getElementById('nav-import');
+            ['dashboard', 'areas', 'import', 'admin'].forEach(id => {
+                const btn = document.getElementById(`nav-${id}`);
+                if (!btn) return;
+                
+                if ((id === 'admin' || id === 'import') && !isAdmin) {
+                    btn.style.display = 'none';
+                } else {
+                    btn.style.display = 'inline-block';
+                    if (id === activeViewId) {
+                        btn.className = "opacity-100 border-b-2 border-white pb-1 text-white font-bold transition-all";
+                    } else {
+                        btn.className = "opacity-70 hover:opacity-100 pb-1 text-white transition-all";
+                    }
+                }
+            });
+            
             const syncStatus = document.getElementById('sync-status');
             const logoOverlay = document.getElementById('header-logo-overlay');
-            
-            if(isAdmin) {
-                adminNav.classList.remove('hidden');
-                importNav.classList.remove('hidden');
-                adminNav.classList.add('sm:inline-block');
-                importNav.classList.add('sm:inline-block');
-                syncStatus.classList.replace('hidden', 'inline-block');
-                if(logoOverlay) logoOverlay.classList.replace('hidden', 'flex');
+            if (isAdmin) {
+                if (syncStatus) syncStatus.style.display = 'inline-block';
+                if (logoOverlay) logoOverlay.style.display = 'flex';
             } else {
-                adminNav.classList.add('hidden');
-                importNav.classList.add('hidden');
-                adminNav.classList.remove('sm:inline-block');
-                importNav.classList.remove('sm:inline-block');
-                syncStatus.classList.replace('inline-block', 'hidden');
-                if(logoOverlay) logoOverlay.classList.replace('flex', 'hidden');
+                if (syncStatus) syncStatus.style.display = 'none';
+                if (logoOverlay) logoOverlay.style.display = 'none';
             }
         }
 
@@ -767,16 +779,15 @@
             return user.areas.includes(areaId);
         }
 
-        // ======= NUVEM =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
             if(!isDbConnected) {
-                alert("⚠️ Salvamento bloqueado: A conexão com o banco de dados falhou durante o carregamento inicial. Recarregue a página.");
+                alert("⚠️ Salvamento bloqueado: A conexão com o banco de dados falhou durante o carregamento inicial. Recarregue a página antes de salvar.");
                 return;
             }
 
             const syncUI = document.getElementById('sync-status');
-            if(syncUI && !syncUI.classList.contains('hidden')) {
+            if(syncUI && syncUI.style.display !== 'none') {
                 syncUI.innerHTML = '<i class="fas fa-sync fa-spin"></i> <span class="hidden sm:inline">Salvando...</span>';
                 syncUI.className = 'inline-block text-xs bg-yellow-600 text-white px-2 py-1 rounded transition-colors shadow';
             }
@@ -787,20 +798,19 @@
                 
                 if(error) throw error;
 
-                if(syncUI && !syncUI.classList.contains('hidden')) {
+                if(syncUI && syncUI.style.display !== 'none') {
                     syncUI.innerHTML = '<i class="fas fa-check"></i> <span class="hidden sm:inline">Atualizado</span>';
-                    syncUI.className = 'hidden sm:inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow';
+                    syncUI.className = 'inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow';
                 }
             } catch(err) {
                 console.error("Erro na API:", err);
-                if(syncUI && !syncUI.classList.contains('hidden')) {
+                if(syncUI && syncUI.style.display !== 'none') {
                     syncUI.innerHTML = '<i class="fas fa-times"></i> <span class="hidden sm:inline">Erro no BD</span>';
-                    syncUI.className = 'hidden sm:inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
+                    syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
                 }
             }
         }
 
-        // ======= HISTÓRICO =======
         function updateCycleDropdowns() {
             const dashSelect = document.getElementById('dashboard-cycle-select');
             const importSelect = document.getElementById('import-cycle-select');
@@ -818,7 +828,7 @@
                 vigenteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 deleteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
             } else {
-                [...appState.cycles].forEach(c => {
+                appState.cycles.forEach(c => {
                     let selAct = c.name === appState.activeCycleName ? 'selected' : '';
                     let selVig = c.name === appState.vigenteCycle ? 'selected' : '';
                     
@@ -835,6 +845,7 @@
             appState.activeCycleName = newCycleName;
             document.getElementById('import-cycle-select').value = newCycleName;
             
+            // Re-render
             const activeView = Array.from(document.querySelectorAll('.page-view')).find(el => !el.classList.contains('hidden'))?.id.replace('view-', '');
             if(activeView) navigate(activeView);
         }
@@ -873,7 +884,6 @@
             }
         }
 
-        // ======= NAVEGAÇÃO =======
         function navigate(viewId) {
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             const isAdmin = user && user.areas.includes('all');
@@ -884,29 +894,17 @@
             }
 
             document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
-            
-            ['dashboard', 'areas', 'import', 'admin', 'area-detail', 'global-comments'].forEach(id => {
-                const btn = document.getElementById(`nav-${id}`);
-                if(btn) {
-                    if((id === 'admin' || id === 'import') && !isAdmin) {
-                        btn.className = "hidden";
-                    } else {
-                        btn.className = (id === viewId) 
-                            ? "opacity-100 border-b-2 border-white pb-1 text-white inline-block font-bold transition-all" 
-                            : "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white transition-all";
-                    }
-                }
-            });
-            
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
 
+            updateNavMenu(viewId === 'global-comments' || viewId === 'area-detail' ? 'dashboard' : viewId);
+
             const isVigente = appState.activeCycleName === appState.vigenteCycle;
-            const bannerDash = document.getElementById('read-only-banner-dash');
+            const bannerGlobal = document.getElementById('read-only-banner-global');
             
-            if(!isVigente && (viewId === 'dashboard')) {
-                if(bannerDash) bannerDash.classList.remove('hidden');
+            if(!isVigente && (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'global-comments')) {
+                if(bannerGlobal) bannerGlobal.classList.remove('hidden');
             } else {
-                if(bannerDash) bannerDash.classList.add('hidden');
+                if(bannerGlobal) bannerGlobal.classList.add('hidden');
             }
 
             if(viewId === 'dashboard') renderDashboard();
@@ -914,7 +912,6 @@
             if(viewId === 'admin') renderAdminTable();
         }
 
-        // ======= LÓGICA DE DADOS =======
         function parseBrDate(dStr) {
             if(!dStr) return null;
             dStr = String(dStr).trim();
@@ -1472,6 +1469,9 @@
             navigate('dashboard');
         }
 
+        // --- PAINEL ADMIN ---
+        let editingUserEmail = null;
+
         function renderAdminTable() {
             const container = document.getElementById('adminTableBody');
             container.innerHTML = '';
@@ -1546,7 +1546,7 @@
             if(!user) user = {email: '', authType: 'password', password: '', areas: []};
             
             document.getElementById('admin-user-email').value = user.email;
-            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões & Senha" : "Novo Usuário";
+            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões" : "Novo Usuário";
             
             let authToSelect = user.authType || 'password';
             let rb = document.querySelector(`input[name="auth_type"][value="${authToSelect}"]`);
@@ -1593,10 +1593,8 @@
         async function saveAdminModal() {
             const email = document.getElementById('admin-user-email').value.trim();
             const authType = document.querySelector('input[name="auth_type"]:checked').value;
-            const password = document.getElementById('admin-user-password').value.trim();
             
             if(!email) return alert("O e-mail é obrigatório.");
-            if(authType === 'password' && !password && !editingUserEmail) return alert("A senha provisória é obrigatória para novos usuários.");
 
             const isAll = document.getElementById('admin-check-all').checked;
             let selectedAreas = [];
@@ -1611,10 +1609,9 @@
                 let u = adminUsers.find(u => u.email === editingUserEmail);
                 u.email = email;
                 u.authType = authType;
-                if(password) u.password = password; 
                 u.areas = selectedAreas;
             } else {
-                adminUsers.push({email: email, authType: authType, password: password || '1234', areas: selectedAreas});
+                adminUsers.push({email: email, authType: authType, password: '1234', areas: selectedAreas});
             }
             
             await saveStateToSupabase();
