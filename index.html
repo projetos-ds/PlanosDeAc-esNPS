@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
-    <!-- Favicon Dinâmico -->
     <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Bibliotecas -->
+    <!-- Bibliotecas: Ler Excel e Supabase -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -47,7 +46,6 @@
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
-    <!-- Uploader Oculto para Logo -->
     <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
 
     <!-- TELA DE LOGIN -->
@@ -62,11 +60,11 @@
                 </div>
             </div>
             <h2 class="text-2xl font-bold mb-2 text-gray-800">Acesso Restrito</h2>
-            <p class="text-sm text-gray-500 mb-8">Digite seu e-mail corporativo para acessar os Planos de Ação do NPS.</p>
+            <p class="text-sm text-gray-500 mb-8">Digite seu e-mail corporativo para acessar os Planos de Ação.</p>
             
             <input type="email" id="login-email" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left" placeholder="exemplo@fasttennis.com.br">
             
-            <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ Acesso negado. Este e-mail não possui permissão no sistema.</div>
+            <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ Acesso negado. E-mail sem permissão.</div>
             
             <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors">Entrar no Sistema</button>
         </div>
@@ -76,7 +74,7 @@
     <div id="loading-overlay" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center text-white">
         <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
         <h2 class="text-xl font-bold">Conectando à Nuvem...</h2>
-        <p class="text-blue-200 mt-2 text-sm">Sincronizando dados no Supabase</p>
+        <p class="text-blue-200 mt-2 text-sm">Sincronizando dados do Supabase</p>
     </div>
 
     <!-- SISTEMA PRINCIPAL -->
@@ -94,11 +92,9 @@
         <nav class="flex items-center gap-6 text-sm font-medium">
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
-            
             <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
             <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
             
-            <!-- STATUS DE SINCRONIZAÇÃO (Visível apenas para Admin) -->
             <div id="sync-status" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow" title="Status da conexão com a nuvem">
                 <i class="fas fa-check"></i> Nuvem atualizada
             </div>
@@ -121,7 +117,7 @@
             <div class="flex justify-between items-end mb-8 text-white">
                 <div>
                     <h2 class="text-3xl font-bold mb-2">Visão geral do ciclo</h2>
-                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos de ação de cada head.</p>
+                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos de ação.</p>
                 </div>
                 <select class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none">
                     <option>Ciclo Atual</option>
@@ -151,7 +147,8 @@
                 </div>
             </div>
 
-            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-12">Áreas de Atuação</h3>
+            <!-- Ajuste de espaçamento conforme solicitado -->
+            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-20">Áreas de Atuação</h3>
             <div class="grid grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
         </div>
 
@@ -159,7 +156,7 @@
         <div id="view-areas" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
                 <h2 class="text-3xl font-bold mb-2">Áreas</h2>
-                <p class="text-blue-100 text-sm">Cada head entra na sua área, lê os comentários do ciclo e cria os planos de ação cabíveis.</p>
+                <p class="text-blue-100 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
             </div>
             <div class="grid grid-cols-4 gap-4 pb-12" id="areas-list-grid"></div>
         </div>
@@ -168,7 +165,7 @@
         <div id="view-import" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
                 <h2 class="text-3xl font-bold mb-2">Importar planilha do ciclo</h2>
-                <p class="text-blue-100 text-sm">Suba o arquivo Excel. As áreas serão criadas automaticamente a partir das abas da planilha.</p>
+                <p class="text-blue-100 text-sm">O sistema mapeará dinamicamente as áreas de acordo com as abas do Excel.</p>
             </div>
             
             <div class="flex gap-6 pb-12">
@@ -190,7 +187,7 @@
                 
                 <div class="w-2/3 bg-white rounded-lg shadow border border-gray-100 max-h-[500px] overflow-y-auto">
                     <div class="px-6 py-4 border-b sticky top-0 bg-white z-10">
-                        <h3 class="font-bold text-gray-800 text-lg">Prévia das Abas do seu Excel</h3>
+                        <h3 class="font-bold text-gray-800 text-lg">Prévia das Abas do Excel</h3>
                     </div>
                     <div id="import-preview-empty" class="p-12 flex flex-col items-center justify-center text-gray-400">
                         <i class="fas fa-file-excel text-4xl mb-3"></i>
@@ -242,7 +239,6 @@
                 </div>
             </div>
 
-            <!-- FILTROS REPARADOS -->
             <div class="flex justify-between items-center mb-6">
                 <div class="flex gap-2" id="filter-buttons">
                     <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Todos</button>
@@ -333,9 +329,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO SUPABASE -->
     <script>
-        // ======= 1. CONFIGURAÇÃO SUPABASE =======
         let supabaseClient;
         try {
             const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
@@ -343,11 +337,8 @@
             if (window.supabase) {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
-        } catch(e) {
-            console.error("Erro ao inicializar Supabase:", e);
-        }
+        } catch(e) { console.error("Erro ao inicializar Supabase:", e); }
 
-        // ======= 2. VARIÁVEIS GLOBAIS =======
         let loggedEmail = null; 
         let areasData = [];
         let adminUsers = [];
@@ -356,10 +347,10 @@
         let pendingImportData = null;
 
         const defaultAdmin = [
+            { email: 'daniela@fasttennis.com.br', areas: ['all'] },
             { email: 'ladeira@fasttennis.com.br', areas: ['all'] }
         ];
 
-        // ======= 3. INICIALIZAÇÃO (LOGIN & NUVEM) =======
         window.addEventListener('DOMContentLoaded', async () => {
             try {
                 if (!supabaseClient) throw new Error("Supabase não carregou.");
@@ -368,7 +359,6 @@
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
                 
                 const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
-                
                 if (error) throw error;
                 
                 if (data) {
@@ -376,10 +366,15 @@
                     let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
                     
                     adminUsers = (Array.isArray(aUsers) && aUsers.length > 0) ? aUsers : defaultAdmin;
-                    areasData = (Array.isArray(aData)) ? aData : [];
+                    
+                    // Defesa: assegura que items é array e remove nulos
+                    areasData = (Array.isArray(aData)) ? aData.map(a => {
+                        a.items = Array.isArray(a.items) ? a.items : [];
+                        return a;
+                    }) : [];
                 }
             } catch (err) {
-                console.warn("Aviso: Falha ao sincronizar com Nuvem. Carregando dados base.");
+                console.warn("Aviso: Falha ao sincronizar. Carregando dados locais.", err);
                 adminUsers = defaultAdmin;
                 areasData = [];
             } finally {
@@ -400,7 +395,6 @@
             }
         });
 
-        // ======= SISTEMA DE LOGIN =======
         function handleLogin() {
             const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
             if(!emailInput) return;
@@ -457,10 +451,8 @@
             return user.areas.includes(areaId);
         }
 
-        // ======= 4. FUNÇÕES DO SISTEMA E NUVEM =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
-            
             const syncUI = document.getElementById('sync-status');
             if(syncUI && !syncUI.classList.contains('hidden')) {
                 syncUI.innerHTML = '<i class="fas fa-sync fa-spin"></i> Salvando...';
@@ -484,7 +476,7 @@
                     syncUI.innerHTML = '<i class="fas fa-times"></i> Erro ao salvar';
                     syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
                     syncUI.title = err.message + " (Verifique a permissão SQL)";
-                    alert("O Supabase bloqueou o salvamento. Tem certeza que rodou o código SQL com 'WITH CHECK (true)'?");
+                    alert("Atenção: O Supabase bloqueou a gravação! Verifique se você rodou o código SQL com WITH CHECK (true).");
                 }
             }
         }
@@ -547,6 +539,19 @@
             if(viewId === 'admin') renderAdminTable();
         }
 
+        function parseBrDate(dStr) {
+            if(!dStr) return null;
+            dStr = String(dStr).trim();
+            if(dStr.includes('/')) {
+                let parts = dStr.split('/');
+                if(parts.length === 3) {
+                    let year = parts[2].length === 2 ? '20' + parts[2] : parts[2];
+                    return new Date(`${year}-${parts[1]}-${parts[0]}T12:00:00`);
+                }
+            }
+            return new Date(dStr);
+        }
+
         function calculateGlobalStats() {
             let tComments = 0, tDone = 0, tLate = 0, tNoPlan = 0;
             const today = new Date();
@@ -554,12 +559,12 @@
             
             areasData.forEach(area => {
                 let areaLate = 0, areaNoPlan = 0;
-                area.items.forEach(item => {
+                let items = area.items || [];
+                items.forEach(item => {
                     if(!item.plan || item.plan.trim() === '') areaNoPlan++;
-                    if(item.status !== 'Concluído' && item.date) {
-                        const d = new Date(item.date);
-                        d.setHours(0,0,0,0);
-                        if(d < today) areaLate++;
+                    if(item.status !== 'Concluído' && item.date && item.date.trim() !== '') {
+                        let itemDate = parseBrDate(item.date);
+                        if(itemDate && !isNaN(itemDate) && itemDate < today) areaLate++;
                     }
                 });
                 
@@ -591,7 +596,7 @@
                 const progress = area.comments > 0 ? Math.round((area.done / area.comments) * 100) : 0;
                 
                 let npsBadge = '';
-                if (area.realNps === null || area.realNps === undefined) {
+                if (area.realNps === null || area.realNps === undefined || area.realNps === '') {
                     npsBadge = `<span class="bg-gray-100 text-gray-400 text-xs font-semibold px-2 py-1 rounded">NPS —</span>`;
                 } else {
                     let colorClass = '';
@@ -661,7 +666,7 @@
             currentAreaId = areaId;
             const area = areasData.find(a => a.id === areaId);
             document.getElementById('detail-title').innerText = area.name;
-            document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps !== null ? area.realNps : '—'}`;
+            document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps !== null && area.realNps !== '' ? area.realNps : '—'}`;
             document.getElementById('detail-stats').innerText = `${area.done}/${area.comments} concluídos`;
             setFilter('Todos');
             navigate('area-detail');
@@ -675,15 +680,20 @@
             const today = new Date();
             today.setHours(0,0,0,0);
             
-            let filteredItems = area.items.filter(item => {
+            let items = area.items || [];
+            
+            let filteredItems = items.filter(item => {
                 if(currentFilter === 'Todos') return true;
                 if(currentFilter === 'Em aberto') return item.status !== 'Concluído';
                 if(currentFilter === 'Sem plano') return (!item.plan || item.plan.trim() === '');
                 if(currentFilter === 'Atrasados') {
                     if(!item.date || item.status === 'Concluído') return false;
-                    const itemDate = new Date(item.date);
-                    itemDate.setHours(0,0,0,0); 
-                    return itemDate < today;
+                    let itemDate = parseBrDate(item.date);
+                    if(itemDate && !isNaN(itemDate)) {
+                        itemDate.setHours(0,0,0,0);
+                        return itemDate < today;
+                    }
+                    return false;
                 }
                 return true;
             });
@@ -697,7 +707,6 @@
                 let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
                 let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
-                // Prévia do Plano e Ação no Card
                 let planPreview = item.plan && item.plan.trim() !== ''
                     ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100">
                          <span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>
@@ -712,7 +721,6 @@
                        </div>`
                     : '';
 
-                // Usando aspas seguras para o ID gerado dinamicamente
                 container.innerHTML += `
                     <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel('${item.id}')">
                         <div class="flex justify-between items-start mb-3">
@@ -741,13 +749,14 @@
                 return;
             }
             const area = areasData.find(a => a.id === currentAreaId);
-            const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps !== null ? area.realNps : 'Nenhum'})`);
+            const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps !== null && area.realNps !== '' ? area.realNps : 'Nenhum'})`);
             if(newVal !== null && newVal.trim() !== '') {
                 area.realNps = parseInt(newVal);
                 document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps}`;
                 
                 await saveStateToSupabase();
                 calculateGlobalStats();
+                if(!document.getElementById('view-dashboard').classList.contains('hidden')) renderDashboard();
             }
         }
 
@@ -769,7 +778,20 @@
             document.getElementById('form-plano').value = item.plan || '';
             document.getElementById('form-acao').value = item.action || '';
             document.getElementById('form-responsavel').value = item.owner || '';
-            document.getElementById('form-data').value = item.date || '';
+            
+            // Formatando a data do Excel para o input type date (YYYY-MM-DD)
+            let dateVal = '';
+            if(item.date && item.date.includes('/')) {
+                let p = item.date.split('/');
+                if(p.length === 3) {
+                    let y = p[2].length === 2 ? '20'+p[2] : p[2];
+                    dateVal = `${y}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+                }
+            } else if (item.date && item.date.includes('-')) {
+                dateVal = item.date;
+            }
+            
+            document.getElementById('form-data').value = dateVal;
             document.getElementById('form-status').value = item.status;
             
             document.getElementById('slide-over-backdrop').classList.remove('hidden');
@@ -788,12 +810,21 @@
 
             const area = areasData.find(a=>a.id===currentAreaId);
             const itemIdStr = document.getElementById('form-item-id').value;
-            const item = area.items.find(i=>i.id == itemIdStr); // usa == pois string vs number
+            const item = area.items.find(i=>i.id == itemIdStr); 
             
             item.plan = document.getElementById('form-plano').value;
             item.action = document.getElementById('form-acao').value;
             item.owner = document.getElementById('form-responsavel').value;
-            item.date = document.getElementById('form-data').value;
+            
+            // Reformatando do input date para DD/MM/YYYY para ficar bonito no card
+            let inputDate = document.getElementById('form-data').value;
+            if(inputDate && inputDate.includes('-')) {
+                let p = inputDate.split('-');
+                item.date = `${p[2]}/${p[1]}/${p[0]}`;
+            } else {
+                item.date = inputDate;
+            }
+            
             item.status = document.getElementById('form-status').value;
             
             area.done = area.items.filter(i => i.status === 'Concluído').length;
@@ -808,13 +839,13 @@
             renderCommentsList();
         }
 
-        // --- SISTEMA DE LEITURA E GERAÇÃO DINÂMICA DE ÁREAS PELO EXCEL ---
+        // --- SISTEMA ROBUSTO DE LEITURA EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
             document.getElementById('import-preview-empty').classList.add('hidden');
             previewList.classList.remove('hidden');
-            previewList.innerHTML = '<div class="p-8 text-center text-gray-500">Lendo arquivo e extraindo comentários... <i class="fas fa-spinner fa-spin"></i></div>';
+            previewList.innerHTML = '<div class="p-8 text-center text-gray-500">Aguarde, escaneando e extraindo comentários do Excel... <i class="fas fa-spinner fa-spin ml-2"></i></div>';
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -828,7 +859,8 @@
 
                     workbook.SheetNames.forEach(sheetName => {
                         const ws = workbook.Sheets[sheetName];
-                        const rows = XLSX.utils.sheet_to_json(ws);
+                        // MODO SCANNER: Array de Arrays. raw: false garante que as datas venham formatadas como string (ex: 10/08/2026)
+                        const rows = XLSX.utils.sheet_to_json(ws, {header: 1, defval: '', raw: false});
                         
                         if(sheetName.toLowerCase().includes('cópia') || sheetName.toLowerCase().includes('página') || sheetName.toLowerCase().includes('rede de cliente')) return;
                         
@@ -836,41 +868,60 @@
                         
                         let validRows = 0;
                         let tempItems = [];
-
-                        rows.forEach(row => {
-                            const getK = (keys) => {
-                                for(let k of keys) {
-                                    let found = Object.keys(row).find(rk => rk.trim().toUpperCase() === k.toUpperCase());
-                                    if(found && row[found] !== undefined) return row[found];
-                                }
-                                return '';
-                            };
-                            
-                            let comment = getK(['COMENTÁRIO', 'Comment', 'COMENTÁRIO ']);
-                            if(comment && String(comment).trim() !== '') {
-                                validRows++;
-                                let status = getK(['STATUS']) || 'A iniciar';
-                                let isDone = status.toLowerCase().includes('concluído') || status.toLowerCase().includes('concluido');
-                                
-                                tempItems.push({
-                                    id: 'item_' + Date.now().toString() + '_' + Math.floor(Math.random()*1000).toString(),
-                                    location: getK(['UNIDADE', 'ÁREA', 'Unidades', 'UNIDADE/CLIENTE']) || 'Não identificada',
-                                    user: getK(['CLIENTE/FRANQUEADO', 'CLIENTE', 'NOME', 'FRANQUEADO', 'Name']) || 'Anônimo',
-                                    topic: getK(['TEMA', 'ETAPA']) || 'Feedback',
-                                    npsTotal: getK(['AVALIAÇÃO NPS', 'NOTA NPS', 'NPS', 'Evaluation']) || '-',
-                                    npsArea: getK(['NOTA DA ÁREA', 'NOTA  DA ÁREA']) || '-',
-                                    comment: String(comment).trim(),
-                                    status: isDone ? 'Concluído' : (status.toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
-                                    plan: getK(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO']) || '',
-                                    action: '',
-                                    owner: '',
-                                    date: getK(['CRONOGRAMA', 'DATA PREVISTA PARA CONCLUSÃO DO PLANO DE AÇÃO', 'DATA PREVISTA']) || '',
-                                    pesquisa: getK(['PESQUISA', 'Pesquisa', 'ETAPA']) || '-'
-                                });
-                            }
-                        });
+                        let headerRowIndex = -1;
+                        let headers = [];
                         
-                        if(validRows > 0 || rows.length > 0) {
+                        // Scanner das primeiras 20 linhas para encontrar onde começam os títulos da tabela
+                        for(let i=0; i<Math.min(20, rows.length); i++) {
+                            let rowValues = rows[i] || [];
+                            let rowStr = rowValues.join(' ').toUpperCase();
+                            if(rowStr.includes('COMENT') || rowStr.includes('NPS') || rowStr.includes('STATUS')) {
+                                headerRowIndex = i;
+                                headers = rowValues.map(v => String(v).trim().toUpperCase());
+                                break;
+                            }
+                        }
+
+                        if(headerRowIndex !== -1) {
+                            for(let i = headerRowIndex + 1; i < rows.length; i++) {
+                                let rowData = rows[i] || [];
+                                if(rowData.length === 0 || rowData.every(c => c === '')) continue;
+                                
+                                const getVal = (possibleNames) => {
+                                    for(let name of possibleNames) {
+                                        let idx = headers.findIndex(h => h === name || h.includes(name));
+                                        if(idx !== -1 && rowData[idx] !== undefined && rowData[idx] !== '') return rowData[idx];
+                                    }
+                                    return '';
+                                };
+                                
+                                let comment = getVal(['COMENTÁRIO', 'COMENTARIO', 'COMMENT']);
+                                
+                                if(comment && String(comment).trim() !== '') {
+                                    validRows++;
+                                    let status = getVal(['STATUS']) || 'A iniciar';
+                                    let isDone = String(status).toLowerCase().includes('concluído') || String(status).toLowerCase().includes('concluido');
+                                    
+                                    tempItems.push({
+                                        id: 'item_' + Date.now().toString() + '_' + Math.floor(Math.random()*10000).toString(),
+                                        location: getVal(['UNIDADE', 'ÁREA', 'UNIDADES']) || 'Não identificada',
+                                        user: getVal(['FRANQUEADO', 'CLIENTE', 'NOME', 'NAME']) || 'Anônimo',
+                                        topic: getVal(['TEMA', 'ETAPA', 'ASSUNTO']) || 'Feedback',
+                                        npsTotal: getVal(['AVALIAÇÃO NPS', 'NOTA NPS', 'NPS', 'EVALUATION']) || '-',
+                                        npsArea: getVal(['NOTA DA ÁREA', 'NOTA ÁREA']) || '-',
+                                        comment: String(comment).trim(),
+                                        status: isDone ? 'Concluído' : (String(status).toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
+                                        plan: getVal(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO', 'PLANO']) || '',
+                                        action: getVal(['AÇÃO EXECUTADA', 'AÇÃO', 'ACAO']) || '',
+                                        owner: getVal(['RESPONSÁVEL', 'RESPONSAVEL']) || '',
+                                        date: getVal(['CRONOGRAMA', 'DATA PREVISTA', 'PRAZO', 'CONCLUSÃO']) || '',
+                                        pesquisa: getVal(['PESQUISA', 'ETAPA']) || '-'
+                                    });
+                                }
+                            }
+                        }
+                        
+                        if(validRows > 0) {
                             let existingArea = areasData.find(a => a.id === rawId);
                             let preservedNps = existingArea ? existingArea.realNps : null;
 
@@ -884,13 +935,15 @@
                                 items: tempItems
                             });
 
-                            if(validRows > 0) {
-                                html += `<li class="px-6 py-4 flex justify-between items-center">
-                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Lida do Excel</p></div>
-                                            <span class="text-sm text-gray-500">${validRows} comentário(s)</span>
-                                        </li>`;
-                                totalComments += validRows;
-                            }
+                            html += `<li class="px-6 py-4 flex justify-between items-center border-l-4 border-accent bg-green-50 mb-1">
+                                        <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Importada com Sucesso</p></div>
+                                        <span class="text-sm font-bold text-gray-600">${validRows} comentário(s)</span>
+                                    </li>`;
+                            totalComments += validRows;
+                        } else if(rows.length > 0) {
+                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50 mb-1">
+                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Sem comentários encontrados)</p></div>
+                                    </li>`;
                         }
                     });
                     
@@ -898,14 +951,13 @@
                     pendingImportData = newAreasData;
                     
                     const btn = document.getElementById('import-btn');
-                    btn.innerText = `Sincronizar ${totalComments} comentário(s) na Nuvem`;
-                    // Botão PISCANDO E VERDE para chamar atenção!
-                    btn.className = "w-full bg-accent text-white rounded py-3 text-sm font-bold hover:bg-green-600 cursor-pointer shadow-lg animate-pulse";
+                    btn.innerText = `CONFIRMAR E SINCRONIZAR ${totalComments} COMENTÁRIOS NA NUVEM`;
+                    btn.className = "w-full bg-accent text-white rounded py-4 text-sm font-bold hover:bg-green-600 cursor-pointer shadow-lg animate-pulse border-2 border-green-700";
                     btn.onclick = executeImport; 
 
                 } catch(err) {
                     console.error(err);
-                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro ao ler Excel. Certifique-se de ser um arquivo válido.</div>';
+                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro crítico ao ler Excel. Tente remover formatações mescladas complexas do arquivo e tente de novo.</div>';
                 }
             };
             reader.readAsArrayBuffer(input.files[0]);
@@ -914,9 +966,10 @@
         async function executeImport() {
             if(!pendingImportData) return;
             const btn = document.getElementById('import-btn');
-            btn.innerText = "Salvando no Supabase...";
+            btn.innerText = "Sincronizando com Supabase...";
             btn.classList.replace('bg-accent', 'bg-blue-600');
             btn.classList.replace('animate-pulse', 'opacity-50');
+            btn.classList.remove('border-green-700');
             btn.classList.add('cursor-wait');
 
             // Substitui todas as áreas
@@ -935,7 +988,7 @@
             btn.className = "w-full bg-gray-300 text-gray-500 rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed shadow";
             btn.onclick = null;
             
-            alert("Sucesso! Planilha salva na Nuvem. Todos os usuários já podem ver a atualização.");
+            alert("Sucesso! Planilha sincronizada com a Nuvem. A Dashboard de todos os usuários foi atualizada.");
             navigate('dashboard');
         }
 
