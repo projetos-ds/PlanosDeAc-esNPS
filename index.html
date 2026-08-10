@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
-    <!-- Favicon Dinâmico -->
     <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -41,7 +40,6 @@
         .area-card:hover .hover-bar { background-color: #22c55e; width: 100%; }
         .hover-bar { transition: width 0.3s ease, background-color 0.3s ease; width: 0; height: 3px; }
         .filter-btn.active { background-color: #1e40af; color: white; border-color: #1e40af; }
-        
         #loading-overlay { display: flex; }
         .hidden-loader { display: none !important; }
     </style>
@@ -50,11 +48,10 @@
 
     <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
 
-    <!-- TELA DE LOGIN (Barreira de Acesso) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
         <div class="bg-white p-10 rounded-xl shadow-2xl w-[400px] text-center relative">
             <div class="mb-6 flex justify-center">
-                <!-- LOGO EDITÁVEL NO LOGIN -->
                 <div class="relative group cursor-pointer" onclick="triggerLogoUpload()" title="Clique para alterar a logo">
                     <div class="bg-primary px-3 py-2 rounded-lg flex items-center justify-center h-16 w-auto min-w-[120px] overflow-hidden">
                         <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
@@ -74,22 +71,20 @@
         </div>
     </div>
 
-    <!-- Tela de Carregamento do Supabase -->
+    <!-- Tela de Carregamento -->
     <div id="loading-overlay" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center text-white">
         <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
         <h2 class="text-xl font-bold">Conectando à Nuvem...</h2>
-        <p class="text-blue-200 mt-2 text-sm">Carregando base de dados</p>
+        <p class="text-blue-200 mt-2 text-sm">Sincronizando dados no Supabase</p>
     </div>
 
     <!-- SISTEMA PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-6 py-4 flex-shrink-0">
         <div class="flex items-center gap-4">
-            <!-- LOGO NO CABEÇALHO -->
             <div class="relative group cursor-pointer" onclick="triggerLogoUpload()" title="Clique para alterar a logo">
                 <div class="px-2 py-1.5 rounded flex items-center justify-center overflow-hidden hover:bg-blue-800 transition-all h-12 w-auto min-w-[120px]">
                     <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
                 </div>
-                <!-- Overlay oculto para não-admins -->
                 <div id="header-logo-overlay" class="hidden absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 items-center justify-center font-bold transition-opacity">Trocar Logo</div>
             </div>
             <h1 class="font-bold text-lg tracking-wide uppercase">Planos de Ação - NPS</h1>
@@ -98,25 +93,21 @@
         <nav class="flex items-center gap-6 text-sm font-medium">
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
-            
-            <!-- IMPORTAR PLANILHA: Inicia oculto, apenas ADMIN vê -->
             <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
-            
-            <!-- ADMIN: Inicia oculto -->
             <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
             
-            <div class="ml-6 border-l border-blue-400 pl-6 flex items-center gap-3">
-                <div class="text-right">
-                    <div class="text-xs text-blue-300 uppercase tracking-wide">Logado como</div>
+            <!-- STATUS DE SINCRONIZAÇÃO (Visível apenas para Admin) -->
+            <div id="sync-status" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors" title="Status da conexão com a nuvem">
+                <i class="fas fa-check"></i> Nuvem atualizada
+            </div>
+            
+            <div class="ml-2 border-l border-blue-400 pl-4 flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <div class="text-[10px] text-blue-300 uppercase tracking-wide">Logado como</div>
                     <div id="logged-user-display" class="font-bold text-white text-xs">...</div>
                 </div>
                 <button onclick="logout()" class="bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded text-xs transition-colors" title="Sair do sistema"><i class="fas fa-sign-out-alt"></i></button>
             </div>
-            
-            <!-- Simulador de Login oculto (pode remover depois) -->
-            <select id="userRole" class="hidden">
-                <option value="ladeira@fasttennis.com.br">ladeira@fasttennis.com.br</option>
-            </select>
         </nav>
     </header>
 
@@ -131,7 +122,7 @@
                     <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos de ação de cada head.</p>
                 </div>
                 <select class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none">
-                    <option>Junho/Julho 26</option>
+                    <option>Ciclo Atual</option>
                 </select>
             </div>
 
@@ -158,7 +149,6 @@
                 </div>
             </div>
 
-            <!-- ESPAÇAMENTO AUMENTADO AQUI (mt-16) -->
             <h3 class="text-xl font-bold text-gray-800 mb-1 mt-16">Áreas</h3>
             <div class="grid grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
         </div>
@@ -176,15 +166,15 @@
         <div id="view-import" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
                 <h2 class="text-3xl font-bold mb-2">Importar planilha do ciclo</h2>
-                <p class="text-blue-100 text-sm">Suba o arquivo Excel. Os dados serão sincronizados com o Supabase.</p>
+                <p class="text-blue-100 text-sm">Suba o arquivo Excel. As áreas do sistema serão atualizadas dinamicamente de acordo com as abas da planilha.</p>
             </div>
             
             <div class="flex gap-6 pb-12">
                 <div class="w-1/3 bg-white rounded-lg shadow p-6 border border-gray-100 h-fit">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ciclo existente (Substituir Dados Atuais)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ação</label>
                         <select class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
-                            <option>Junho/Julho 26</option>
+                            <option>Substituir Dados Atuais</option>
                         </select>
                     </div>
                     <div class="mb-6">
@@ -263,21 +253,21 @@
 
     <!-- Modal Admin Permissões -->
     <div id="admin-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-lg p-6 w-[500px] shadow-xl">
+        <div class="bg-white rounded-lg p-6 w-[500px] shadow-xl max-h-[90vh] flex flex-col">
             <h3 class="font-bold text-lg text-gray-800 mb-4" id="admin-modal-title">Editar Permissões</h3>
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">E-mail do Usuário</label>
                 <input type="email" id="admin-user-email" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary">
             </div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Áreas Permitidas para Edição</label>
-            <div class="border rounded p-3 bg-gray-50 max-h-60 overflow-y-auto mb-6">
+            <div class="border rounded p-3 bg-gray-50 flex-1 overflow-y-auto mb-6">
                 <label class="flex items-center gap-2 mb-2 pb-2 border-b cursor-pointer">
                     <input type="checkbox" id="admin-check-all" class="w-4 h-4 text-primary" onchange="toggleAllAdminAreas(this)">
                     <span class="font-bold text-gray-800 text-sm">Administrador Geral (Todas as Áreas)</span>
                 </label>
                 <div id="admin-areas-checkboxes" class="flex flex-col gap-2"></div>
             </div>
-            <div class="flex justify-end gap-3">
+            <div class="flex justify-end gap-3 shrink-0">
                 <button onclick="closeAdminModal()" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50 text-sm font-medium">Cancelar</button>
                 <button onclick="saveAdminModal()" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-800 text-sm font-medium">Salvar Usuário</button>
             </div>
@@ -338,7 +328,9 @@
         </div>
     </div>
 
+    <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO SUPABASE -->
     <script>
+        // ======= 1. CONFIGURAÇÃO SUPABASE =======
         let supabaseClient;
         try {
             const SUPABASE_URL = 'https://ylbwviniubgmwtljmtbc.supabase.co';
@@ -350,6 +342,7 @@
             console.error("Erro ao inicializar Supabase:", e);
         }
 
+        // ======= 2. VARIÁVEIS GLOBAIS =======
         let loggedEmail = null; 
         let areasData = [];
         let adminUsers = [];
@@ -357,25 +350,10 @@
         let currentFilter = 'Todos';
         let pendingImportData = null;
 
-        const defaultAreas = [
-            { id: 'implantacao', name: 'Implantação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'plug', name: 'Plug Marketing', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'rh', name: 'RH', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'fastedu', name: 'Fast Educação', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'suporte', name: 'Suporte da área de Negócios', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'fornecedores', name: 'Fornecedores Homologados', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'persports', name: 'Per Sports | Fon.de Uniformes', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'playfast', name: 'Play Fast', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'operacao', name: 'Operação Própria', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-            { id: 'fastatende', name: 'Fast Atende', realNps: null, comments: 0, done: 0, late: 0, items: [] },
-        ];
-        
-        const defaultAdmin = [
-            { email: 'ladeira@fasttennis.com.br', areas: ['all'] },
-            { email: 'joao@fasttennis.com.br', areas: ['implantacao'] },
-            { email: 'lorena@fasttennis.com.br', areas: ['playfast'] }
-        ];
+        // Admin e Área base caso esteja vazio no banco
+        const defaultAdmin = [{ email: 'ladeira@fasttennis.com.br', areas: ['all'] }];
 
+        // ======= 3. INICIALIZAÇÃO (LOGIN & NUVEM) =======
         window.addEventListener('DOMContentLoaded', async () => {
             try {
                 if (!supabaseClient) throw new Error("Supabase não carregou.");
@@ -391,29 +369,13 @@
                     let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
                     let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
                     
-                    if(Array.isArray(aUsers) && aUsers.length > 0) adminUsers = aUsers;
-                    else adminUsers = defaultAdmin;
-                    
-                    if(Array.isArray(aData) && aData.length > 0) {
-                        areasData = defaultAreas.map(defArea => {
-                            let existing = aData.find(a => a.id === defArea.id);
-                            if (existing) {
-                                existing.name = defArea.name; 
-                                return existing;
-                            }
-                            return defArea;
-                        });
-                    } else {
-                        areasData = defaultAreas;
-                    }
-                } else {
-                    areasData = defaultAreas;
-                    adminUsers = defaultAdmin;
+                    adminUsers = (Array.isArray(aUsers) && aUsers.length > 0) ? aUsers : defaultAdmin;
+                    areasData = (Array.isArray(aData)) ? aData : [];
                 }
             } catch (err) {
-                console.warn("Aviso: Falha ao sincronizar. Carregando dados locais.");
-                areasData = defaultAreas;
+                console.warn("Aviso: Falha ao sincronizar.", err.message);
                 adminUsers = defaultAdmin;
+                areasData = [];
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
                 
@@ -460,7 +422,6 @@
             location.reload();
         }
 
-        // Exibe ou oculta opções de Admin
         function updateUIPermissions() {
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             const isAdmin = user && user.areas.includes('all');
@@ -468,15 +429,18 @@
             const adminNav = document.getElementById('nav-admin');
             const importNav = document.getElementById('nav-import');
             const logoOverlay = document.getElementById('header-logo-overlay');
+            const syncStatus = document.getElementById('sync-status');
             
             if(isAdmin) {
                 adminNav.classList.remove('hidden');
                 importNav.classList.remove('hidden');
-                logoOverlay.classList.replace('hidden', 'flex'); // Mostra hover de trocar logo
+                syncStatus.classList.replace('hidden', 'inline-block');
+                logoOverlay.classList.replace('hidden', 'flex'); 
             } else {
                 adminNav.classList.add('hidden');
                 importNav.classList.add('hidden');
-                logoOverlay.classList.replace('flex', 'hidden'); // Esconde hover
+                syncStatus.classList.replace('inline-block', 'hidden');
+                logoOverlay.classList.replace('flex', 'hidden'); 
             }
         }
 
@@ -487,15 +451,34 @@
             return user.areas.includes(areaId);
         }
 
-        // ======= FUNÇÕES DO SISTEMA (DASHBOARD & SALVAMENTO) =======
+        // ======= 4. FUNÇÕES DO SISTEMA E NUVEM =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
+            
+            const syncUI = document.getElementById('sync-status');
+            if(syncUI && !syncUI.classList.contains('hidden')) {
+                syncUI.innerHTML = '<i class="fas fa-sync fa-spin"></i> Salvando...';
+                syncUI.className = 'inline-block text-xs bg-yellow-600 text-white px-2 py-1 rounded transition-colors';
+            }
+
             try {
-                await supabaseClient.from('app_state')
+                const { error } = await supabaseClient.from('app_state')
                     .update({ areas_data: areasData, admin_users: adminUsers })
                     .eq('id', 1);
+                
+                if(error) throw error;
+
+                if(syncUI && !syncUI.classList.contains('hidden')) {
+                    syncUI.innerHTML = '<i class="fas fa-check"></i> Nuvem atualizada';
+                    syncUI.className = 'inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors';
+                }
             } catch(err) {
                 console.error("Erro na API:", err);
+                if(syncUI && !syncUI.classList.contains('hidden')) {
+                    syncUI.innerHTML = '<i class="fas fa-times"></i> Erro ao salvar';
+                    syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors';
+                    syncUI.title = err.message;
+                }
             }
         }
 
@@ -508,7 +491,6 @@
             }
         };
 
-        // Permite trocar a logo se estiver no Login, ou se for Admin
         function triggerLogoUpload() {
             const isLoginScreen = !document.getElementById('login-screen').classList.contains('hidden');
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
@@ -529,7 +511,7 @@
                     const base64 = e.target.result;
                     document.getElementById('logo-img').src = base64;
                     document.getElementById('login-logo-img').src = base64;
-                    document.getElementById('favicon').href = base64; // Troca o favicon também!
+                    document.getElementById('favicon').href = base64; 
                     localStorage.setItem('fastTennisLogo', base64);
                 };
                 reader.readAsDataURL(file);
@@ -548,10 +530,7 @@
             document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
             ['dashboard', 'areas', 'import', 'admin'].forEach(id => {
                 const btn = document.getElementById(`nav-${id}`);
-                if(btn) {
-                    btn.className = (id === viewId) ? "opacity-100 border-b-2 border-white pb-1" : "opacity-70 hover:opacity-100 pb-1";
-                    if(id === 'admin' || id === 'import') updateUIPermissions(); 
-                }
+                if(btn) btn.className = (id === viewId) ? "opacity-100 border-b-2 border-white pb-1" : "opacity-70 hover:opacity-100 pb-1";
             });
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
             document.getElementById('hero-bg').style.height = (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'admin') ? '18rem' : '12rem';
@@ -595,11 +574,17 @@
             calculateGlobalStats();
             const grid = document.getElementById('dashboard-areas-grid');
             grid.innerHTML = '';
+            
+            if(areasData.length === 0) {
+                grid.innerHTML = '<div class="col-span-4 text-center py-10 text-gray-500">Nenhum ciclo importado. Vá em Importar Planilha para começar.</div>';
+                return;
+            }
+
             areasData.forEach(area => {
                 const progress = area.comments > 0 ? Math.round((area.done / area.comments) * 100) : 0;
                 
                 let npsBadge = '';
-                if (area.realNps === null) {
+                if (area.realNps === null || area.realNps === undefined) {
                     npsBadge = `<span class="bg-gray-100 text-gray-400 text-xs font-semibold px-2 py-1 rounded">NPS —</span>`;
                 } else {
                     let colorClass = '';
@@ -638,6 +623,12 @@
         function renderAreasList() {
             const grid = document.getElementById('areas-list-grid');
             grid.innerHTML = '';
+            
+            if(areasData.length === 0) {
+                grid.innerHTML = '<div class="col-span-4 text-center py-10 text-gray-500">Nenhum ciclo importado.</div>';
+                return;
+            }
+
             areasData.forEach(area => {
                 grid.innerHTML += `
                     <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 flex justify-between items-center cursor-pointer hover:border-accent hover:shadow-md" onclick="openArea('${area.id}')">
@@ -699,14 +690,34 @@
                 let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
                 let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
+                // PRÉVIA DO PLANO DE AÇÃO NO CARD
+                let planPreview = item.plan && item.plan.trim() !== ''
+                    ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100">
+                         <span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>
+                         ${item.plan}
+                       </div>`
+                    : '';
+                
+                let actionPreview = item.action && item.action.trim() !== ''
+                    ? `<div class="mt-2 bg-green-50/50 p-3 rounded text-sm text-gray-700 border border-green-100">
+                         <span class="font-bold text-green-700 text-[10px] uppercase block mb-1">Ação Executada:</span>
+                         ${item.action}
+                       </div>`
+                    : '';
+
                 container.innerHTML += `
-                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent" onclick="openPanel(${item.id})">
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel(${item.id})">
                         <div class="flex justify-between items-start mb-3">
                             <div class="text-xs text-gray-500 font-medium"><span class="text-gray-800 font-bold">${item.location}</span> · ${item.user} · ${item.topic}</div>
                             <div class="text-danger font-bold text-sm"><span class="text-gray-400 text-xs font-normal">NOTA ÁREA ${item.npsArea}</span> ${item.npsTotal}</div>
                         </div>
-                        <p class="text-gray-800 text-sm mb-6">${item.comment}</p>
-                        <div class="flex border-t pt-3">
+                        <p class="text-gray-800 text-sm mb-2">${item.comment}</p>
+                        
+                        <!-- Prévia Injetada -->
+                        ${planPreview}
+                        ${actionPreview}
+
+                        <div class="flex border-t pt-4 mt-4">
                             <div class="w-1/3"><div class="text-gray-400 text-xs font-semibold mb-1">STATUS</div>
                                 <div class="inline-flex items-center gap-1.5 border px-2 py-0.5 rounded-full text-xs font-medium ${sColor}"><div class="w-1.5 h-1.5 rounded-full ${bColor}"></div>${item.status}</div>
                             </div>
@@ -723,7 +734,7 @@
                 return;
             }
             const area = areasData.find(a => a.id === currentAreaId);
-            const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps || 'Nenhum'})`);
+            const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps !== null ? area.realNps : 'Nenhum'})`);
             if(newVal !== null && newVal.trim() !== '') {
                 area.realNps = parseInt(newVal);
                 document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps}`;
@@ -790,7 +801,7 @@
             renderCommentsList();
         }
 
-        // --- INGESTÃO DE EXCEL ---
+        // --- SISTEMA DE LEITURA E GERAÇÃO DINÂMICA DE ÁREAS PELO EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -806,9 +817,7 @@
                     
                     let html = '<ul class="divide-y divide-gray-100">';
                     let totalComments = 0;
-
-                    let newAreasData = JSON.parse(JSON.stringify(areasData));
-                    newAreasData.forEach(a => { a.items = []; a.comments = 0; a.done = 0; a.late = 0; });
+                    let newAreasData = [];
 
                     workbook.SheetNames.forEach(sheetName => {
                         const ws = workbook.Sheets[sheetName];
@@ -816,49 +825,64 @@
                         
                         if(sheetName.toLowerCase().includes('cópia') || sheetName.toLowerCase().includes('página') || sheetName.toLowerCase().includes('rede de cliente')) return;
                         
-                        const match = newAreasData.find(a => sheetName.toLowerCase().includes(a.name.toLowerCase().replace(' | fon.de uniformes', '')));
+                        // ID de área dinâmico a partir do nome da aba (Remove acentos, espaços e chars especiais)
+                        let rawId = sheetName.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                        if(rawId.includes('persports')) rawId = 'persports'; // Ajuste especifico da sua planilha
                         
-                        if(match) {
-                            let validRows = 0;
-                            rows.forEach(row => {
-                                const getK = (keys) => {
-                                    for(let k of keys) {
-                                        let found = Object.keys(row).find(rk => rk.trim().toUpperCase() === k.toUpperCase());
-                                        if(found && row[found] !== undefined) return row[found];
-                                    }
-                                    return '';
-                                };
-                                
-                                let comment = getK(['COMENTÁRIO', 'Comment', 'COMENTÁRIO ']);
-                                if(comment && String(comment).trim() !== '') {
-                                    validRows++;
-                                    let status = getK(['STATUS']) || 'A iniciar';
-                                    let isDone = status.toLowerCase().includes('concluído') || status.toLowerCase().includes('concluido');
-                                    
-                                    match.items.push({
-                                        id: Date.now() + Math.random(),
-                                        location: getK(['UNIDADE', 'ÁREA', 'Unidades', 'UNIDADE/CLIENTE']) || 'Não identificada',
-                                        user: getK(['CLIENTE/FRANQUEADO', 'CLIENTE', 'NOME', 'FRANQUEADO', 'Name']) || 'Anônimo',
-                                        topic: getK(['TEMA', 'ETAPA']) || 'Feedback',
-                                        npsTotal: getK(['AVALIAÇÃO NPS', 'NOTA NPS', 'NPS', 'Evaluation']) || '-',
-                                        npsArea: getK(['NOTA DA ÁREA', 'NOTA  DA ÁREA']) || '-',
-                                        comment: String(comment).trim(),
-                                        status: isDone ? 'Concluído' : (status.toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
-                                        plan: getK(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO']) || '',
-                                        action: '',
-                                        owner: '',
-                                        date: getK(['CRONOGRAMA', 'DATA PREVISTA PARA CONCLUSÃO DO PLANO DE AÇÃO', 'DATA PREVISTA']) || '',
-                                        pesquisa: getK(['PESQUISA', 'Pesquisa', 'ETAPA']) || '-'
-                                    });
+                        let validRows = 0;
+                        let tempItems = [];
+
+                        rows.forEach(row => {
+                            const getK = (keys) => {
+                                for(let k of keys) {
+                                    let found = Object.keys(row).find(rk => rk.trim().toUpperCase() === k.toUpperCase());
+                                    if(found && row[found] !== undefined) return row[found];
                                 }
+                                return '';
+                            };
+                            
+                            let comment = getK(['COMENTÁRIO', 'Comment', 'COMENTÁRIO ']);
+                            if(comment && String(comment).trim() !== '') {
+                                validRows++;
+                                let status = getK(['STATUS']) || 'A iniciar';
+                                let isDone = status.toLowerCase().includes('concluído') || status.toLowerCase().includes('concluido');
+                                
+                                tempItems.push({
+                                    id: Date.now() + Math.random(),
+                                    location: getK(['UNIDADE', 'ÁREA', 'Unidades', 'UNIDADE/CLIENTE']) || 'Não identificada',
+                                    user: getK(['CLIENTE/FRANQUEADO', 'CLIENTE', 'NOME', 'FRANQUEADO', 'Name']) || 'Anônimo',
+                                    topic: getK(['TEMA', 'ETAPA']) || 'Feedback',
+                                    npsTotal: getK(['AVALIAÇÃO NPS', 'NOTA NPS', 'NPS', 'Evaluation']) || '-',
+                                    npsArea: getK(['NOTA DA ÁREA', 'NOTA  DA ÁREA']) || '-',
+                                    comment: String(comment).trim(),
+                                    status: isDone ? 'Concluído' : (status.toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
+                                    plan: getK(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO']) || '',
+                                    action: '',
+                                    owner: '',
+                                    date: getK(['CRONOGRAMA', 'DATA PREVISTA PARA CONCLUSÃO DO PLANO DE AÇÃO', 'DATA PREVISTA']) || '',
+                                    pesquisa: getK(['PESQUISA', 'Pesquisa', 'ETAPA']) || '-'
+                                });
+                            }
+                        });
+                        
+                        if(validRows > 0 || rows.length > 0) {
+                            // Procura se a área já existia no banco para manter o NPS manual que você digitou
+                            let existingArea = areasData.find(a => a.id === rawId);
+                            let preservedNps = existingArea ? existingArea.realNps : null;
+
+                            newAreasData.push({
+                                id: rawId,
+                                name: sheetName,
+                                realNps: preservedNps,
+                                comments: validRows,
+                                done: tempItems.filter(i => i.status === 'Concluído').length,
+                                late: 0,
+                                items: tempItems
                             });
-                            
-                            match.comments = validRows;
-                            match.done = match.items.filter(i => i.status === 'Concluído').length;
-                            
+
                             if(validRows > 0) {
                                 html += `<li class="px-6 py-4 flex justify-between items-center">
-                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Importado para: ${match.name}</p></div>
+                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Criada como: ${sheetName}</p></div>
                                             <span class="text-sm text-gray-500">${validRows} comentário(s)</span>
                                         </li>`;
                                 totalComments += validRows;
@@ -876,7 +900,7 @@
 
                 } catch(err) {
                     console.error(err);
-                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro ao ler Excel.</div>';
+                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro ao ler Excel. Certifique-se de ser um arquivo válido.</div>';
                 }
             };
             reader.readAsArrayBuffer(input.files[0]);
@@ -888,7 +912,8 @@
             btn.innerText = "Salvando no Supabase...";
             btn.classList.add('opacity-50', 'cursor-wait');
 
-            areasData.splice(0, areasData.length, ...pendingImportData);
+            // Troca as áreas completamente pelas novas áreas dinâmicas importadas
+            areasData = pendingImportData;
             
             await saveStateToSupabase();
             
@@ -902,7 +927,7 @@
             btn.className = "w-full bg-primary text-white rounded py-2 text-sm font-medium opacity-50 cursor-not-allowed";
             btn.onclick = null;
             
-            alert("Sucesso! Planilha salva na Nuvem.");
+            alert("Sucesso! Planilha salva na Nuvem e Áreas atualizadas.");
             navigate('dashboard');
         }
 
@@ -920,6 +945,7 @@
                     u.areas.forEach(aId => {
                         const areaObj = areasData.find(a=>a.id === aId);
                         if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${areaObj.name}</span>`;
+                        else tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${aId}</span>`; // Caso a area tenha sido deletada na importação
                     });
                 }
                 
@@ -994,7 +1020,6 @@
             
             closeAdminModal();
             renderAdminTable();
-            updateUserRoleDropdown();
         }
     </script>
 </body>
