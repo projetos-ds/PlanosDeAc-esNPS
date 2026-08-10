@@ -24,7 +24,7 @@
                         accent: '#22c55e', 
                         danger: '#ef4444', 
                         warning: '#f59e0b', 
-                        bglight: '#f8fafc' 
+                        bglight: '#f1f5f9' /* Ajustado para um cinza azulado super claro que destaca as sombras */
                     }
                 }
             }
@@ -37,6 +37,9 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Sombras mais suaves e flutuantes inspiradas na referência */
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: none; }
+        .card-shadow-hover:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04); transform: translateY(-2px); }
         .area-card:hover .area-title { color: #22c55e; }
         .area-card:hover .hover-bar { background-color: #22c55e; width: 100%; }
         .hover-bar { transition: width 0.3s ease, background-color 0.3s ease; width: 0; height: 3px; }
@@ -50,7 +53,7 @@
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
-        <div class="bg-white p-10 rounded-xl shadow-2xl w-[90%] max-w-[400px] text-center relative">
+        <div class="bg-white p-10 rounded-2xl shadow-2xl w-[90%] max-w-[400px] text-center relative card-shadow">
             <div class="mb-8 flex justify-center">
                 <div class="flex items-center justify-center h-16 w-full max-w-[200px]">
                     <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full w-full object-contain">
@@ -59,40 +62,40 @@
             <h2 class="text-2xl font-bold mb-2 text-primary">Acesso Restrito</h2>
             <p class="text-sm text-gray-500 mb-8">Faça login para acessar os Planos de Ação.</p>
             
-            <input type="email" id="login-email" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left text-gray-800" placeholder="E-mail corporativo" oninput="checkAuthType()">
+            <input type="email" id="login-email" class="w-full bg-gray-50 border-none px-4 py-3 rounded-xl mb-3 outline-none focus:ring-2 focus:ring-secondary text-left text-gray-800" placeholder="E-mail corporativo" oninput="checkAuthType()">
             
             <div id="login-password-container">
-                <input type="password" id="login-password" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left text-gray-800" placeholder="Senha" onkeypress="if(event.key === 'Enter') handleLogin()">
+                <input type="password" id="login-password" class="w-full bg-gray-50 border-none px-4 py-3 rounded-xl mb-4 outline-none focus:ring-2 focus:ring-secondary text-left text-gray-800" placeholder="Senha" onkeypress="if(event.key === 'Enter') handleLogin()">
             </div>
             
             <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ E-mail ou senha incorretos.</div>
             
-            <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors shadow">Entrar no Sistema</button>
+            <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition-all shadow-md hover:shadow-lg">Entrar no Sistema</button>
         </div>
     </div>
 
     <!-- TELA DE TROCA DE SENHA OBRIGATÓRIA -->
     <div id="change-pwd-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[400px]">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-[90%] max-w-[400px] card-shadow">
             <h3 class="font-bold text-2xl text-primary mb-2" id="pwd-modal-title">Definir Nova Senha</h3>
             <p class="text-sm text-gray-500 mb-6" id="pwd-modal-desc">Por segurança, você precisa definir uma senha pessoal.</p>
 
             <input type="hidden" id="change-pwd-email">
-            <input type="password" id="new-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary text-gray-800" placeholder="Digite a nova senha">
-            <input type="password" id="confirm-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary text-gray-800" placeholder="Confirme a nova senha">
+            <input type="password" id="new-pwd" class="w-full bg-gray-50 border-none px-4 py-3 rounded-xl mb-3 outline-none focus:ring-2 focus:ring-secondary text-gray-800" placeholder="Digite a nova senha">
+            <input type="password" id="confirm-pwd" class="w-full bg-gray-50 border-none px-4 py-3 rounded-xl mb-4 outline-none focus:ring-2 focus:ring-secondary text-gray-800" placeholder="Confirme a nova senha">
 
             <div id="pwd-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 px-3 rounded">As senhas não conferem.</div>
 
             <div class="flex justify-end gap-3 mt-6">
-                <button id="pwd-cancel-btn" onclick="closeChangePwdModal()" class="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-50 text-sm font-medium">Cancelar</button>
-                <button onclick="saveNewPassword()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-800 text-sm font-bold shadow transition-colors">Salvar e Entrar</button>
+                <button id="pwd-cancel-btn" onclick="closeChangePwdModal()" class="px-4 py-2 text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-sm font-medium transition-colors">Cancelar</button>
+                <button onclick="saveNewPassword()" class="px-6 py-2 bg-primary text-white rounded-xl hover:bg-blue-800 text-sm font-bold shadow-md hover:shadow-lg transition-all">Salvar e Entrar</button>
             </div>
         </div>
     </div>
 
     <!-- TELA DE BRANDING / DESIGN -->
     <div id="branding-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[500px]">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-[90%] max-w-[500px] card-shadow">
             <h3 class="font-bold text-2xl text-primary mb-2">Design da Plataforma</h3>
             <p class="text-sm text-gray-500 mb-6">Altere a identidade visual. O design será atualizado para todos.</p>
 
@@ -102,39 +105,39 @@
 
             <div class="space-y-4 mb-8">
                 <!-- Logo Header -->
-                <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Logo do Cabeçalho</p>
                         <p class="text-[10px] text-gray-500">Fundo azul. Use imagem com letras brancas.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-24 bg-primary flex items-center justify-center rounded overflow-hidden p-1 shadow-inner">
+                        <div class="h-10 w-24 bg-primary flex items-center justify-center rounded-lg overflow-hidden p-1 shadow-inner">
                             <img id="preview-header" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-header-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
                     </div>
                 </div>
                 <!-- Logo Login -->
-                <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Logo do Login</p>
                         <p class="text-[10px] text-gray-500">Fundo branco. Use imagem com letras escuras.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-24 bg-white flex items-center justify-center rounded overflow-hidden border p-1 shadow-inner">
+                        <div class="h-10 w-24 bg-white flex items-center justify-center rounded-lg overflow-hidden border border-gray-200 p-1 shadow-inner">
                             <img id="preview-login" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-login-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
                     </div>
                 </div>
                 <!-- Favicon -->
-                <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Favicon</p>
                         <p class="text-[10px] text-gray-500">Ícone pequeno da aba do navegador.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 bg-white flex items-center justify-center rounded overflow-hidden border p-1 shadow-inner">
+                        <div class="h-10 w-10 bg-white flex items-center justify-center rounded-lg overflow-hidden border border-gray-200 p-1 shadow-inner">
                             <img id="preview-favicon" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-favicon').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
@@ -143,8 +146,8 @@
             </div>
 
             <div class="flex justify-end gap-3">
-                <button onclick="closeBrandingModal()" class="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-50 text-sm font-medium">Cancelar</button>
-                <button onclick="saveBranding()" class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-green-600 text-sm font-bold shadow transition-colors">Salvar Design Global</button>
+                <button onclick="closeBrandingModal()" class="px-4 py-2 text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-sm font-medium transition-colors">Cancelar</button>
+                <button onclick="saveBranding()" class="px-6 py-2 bg-accent text-white rounded-xl hover:bg-green-600 text-sm font-bold shadow-md hover:shadow-lg transition-all">Salvar Design Global</button>
             </div>
         </div>
     </div>
@@ -159,7 +162,6 @@
     <!-- HEADER PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0 z-50 shadow-md">
         <div class="flex items-center gap-3 sm:gap-4 shrink-0">
-            <!-- 1 Clique: Home / Duplo Clique: Design -->
             <div class="cursor-pointer user-select-none shrink-0 relative group" onclick="navigate('dashboard')" ondblclick="openBrandingModal()" title="Admin: Duplo clique para Configurar Design">
                 <div class="px-1 py-1 rounded flex items-center justify-center h-10 sm:h-12 w-[100px] sm:w-[140px] overflow-hidden hover:bg-blue-800 transition-colors">
                     <img id="header-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="max-h-full max-w-full object-contain pointer-events-none">
@@ -170,10 +172,10 @@
         </div>
         
         <nav class="flex items-center gap-2 sm:gap-6 text-sm font-medium">
-            <button onclick="navigate('dashboard')" id="nav-dashboard" class="hidden sm:inline-block opacity-100 border-b-2 border-white pb-1 text-white">Visão geral</button>
-            <button onclick="navigate('areas')" id="nav-areas" class="hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white">Áreas</button>
-            <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1 text-white">Importar planilha</button>
-            <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1 text-white"><i class="fas fa-cog mr-1"></i> Admin</button>
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="hidden sm:inline-block opacity-100 border-b-2 border-white pb-1 text-white transition-opacity">Visão geral</button>
+            <button onclick="navigate('areas')" id="nav-areas" class="hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white transition-opacity">Áreas</button>
+            <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1 text-white transition-opacity">Importar planilha</button>
+            <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1 text-white transition-opacity"><i class="fas fa-cog mr-1"></i> Admin</button>
             
             <div id="sync-status" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow" title="Status da conexão com a nuvem">
                 <i class="fas fa-check"></i> <span class="hidden sm:inline text-white">Atualizado</span>
@@ -191,82 +193,81 @@
     </header>
 
     <main class="flex-1 overflow-auto bg-bglight flex flex-col relative">
+        <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 h-[22rem] transition-all duration-300" id="hero-bg"></div>
 
-        <!-- VISÃO: DASHBOARD -->
-        <div id="view-dashboard" class="page-view flex-col w-full hidden">
-            <!-- Novo layout do Fundo Azul: Envolve o topo e não quebra -->
-            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20">
-                <div class="max-w-7xl mx-auto">
-                    <!-- Banner de Bloqueio -->
-                    <div id="read-only-banner-dash" class="hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow mb-6">
-                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end text-white gap-4">
-                        <div>
-                            <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
-                            <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
-                        </div>
-                        <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold w-full sm:w-auto focus:ring-1 focus:ring-white">
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Cards Sobrepostos (-mt-12 puxa para cima do fundo azul) -->
-            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 z-10 relative">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-                    <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
-                    </div>
-                    <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Concluídos</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0%</div>
-                    </div>
-                    <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Em Atraso</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-danger mb-1" id="dash-total-late">0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
-                    </div>
-                    <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Sem Plano</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
-                    </div>
-                </div>
-
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Áreas de Atuação</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-areas-grid"></div>
-            </div>
+        <!-- FAIXA DE CICLO FECHADO -->
+        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow-md mb-4 z-10 relative">
+            <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
         </div>
 
-        <!-- VISÃO: GLOBAL DE COMENTÁRIOS -->
-        <div id="view-global-comments" class="page-view flex-col w-full hidden">
-            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20">
+        <!-- DASHBOARD -->
+        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full relative z-10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end text-white gap-4 mb-10">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
+                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
+                </div>
+                <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border-none text-white rounded-xl px-4 py-2 text-sm outline-none shadow-md font-semibold w-full sm:w-auto cursor-pointer hover:bg-blue-700 transition-colors">
+                </select>
+            </div>
+
+            <!-- CARDS TOPO (COM SHADOWS SUAVES) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
+                <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Comentários</div>
+                    <div class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
+                </div>
+                <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Concluídos</div>
+                    <div class="text-3xl sm:text-4xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0% do ciclo</div>
+                </div>
+                <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Em Atraso</div>
+                    <div class="text-3xl sm:text-4xl font-bold text-danger mb-1" id="dash-total-late">0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
+                </div>
+                <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Sem Plano</div>
+                    <div class="text-3xl sm:text-4xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
+                </div>
+            </div>
+
+            <!-- ESPAÇAMENTO AUMENTADO CONFORME PRINT -->
+            <div class="mt-8 mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Áreas de Atuação</h3>
+                <p class="text-sm text-gray-500">Selecione um card para gerenciar os planos da área correspondente.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pb-12" id="dashboard-areas-grid"></div>
+        </div>
+
+        <!-- VISÃO GLOBAL DE COMENTÁRIOS -->
+        <div id="view-global-comments" class="page-view flex-col w-full hidden z-10 relative">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-16">
                 <div class="max-w-7xl mx-auto text-white">
-                    <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
+                    <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
                     <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-white" id="global-title">Comentários</h2>
                     <p class="text-blue-100 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
                 </div>
             </div>
-            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 z-10 relative" id="global-comments-list"></div>
+            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12" id="global-comments-list"></div>
         </div>
 
         <!-- VISÃO: DETALHE DA ÁREA -->
-        <div id="view-area-detail" class="page-view flex-col w-full hidden">
-            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20">
+        <div id="view-area-detail" class="page-view flex-col w-full hidden z-10 relative">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-16">
                 <div class="max-w-7xl mx-auto">
-                    <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
+                    <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
                     
                     <div class="flex flex-col sm:flex-row justify-between items-start mb-2 text-white gap-4">
                         <h2 class="text-3xl font-bold text-white" id="detail-title">Área</h2>
                         <div class="flex items-center gap-4">
-                            <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2 border border-blue-600">
+                            <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2 border border-blue-600 shadow-sm">
                                 <span id="detail-nps-display" class="font-bold">NPS -</span> 
-                                <button onclick="editNps()" class="text-blue-300 hover:text-white" title="Editar NPS Real"><i class="fas fa-pencil-alt text-xs"></i></button>
+                                <button onclick="editNps()" class="text-blue-300 hover:text-white transition-colors" title="Editar NPS Real"><i class="fas fa-pencil-alt text-xs"></i></button>
                                 <span class="text-blue-300 mx-1">·</span> 
                                 <span id="detail-stats">0/0 concluídos</span>
                             </div>
@@ -275,13 +276,13 @@
                 </div>
             </div>
 
-            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 z-10 relative">
+            <div class="-mt-10 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12">
                 <div class="flex overflow-x-auto pb-2 mb-4 no-scrollbar">
                     <div class="flex gap-2" id="filter-buttons">
-                        <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap">Todos</button>
-                        <button onclick="setFilter('Em aberto')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap">Em aberto</button>
-                        <button onclick="setFilter('Sem plano')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap">Sem plano</button>
-                        <button onclick="setFilter('Atrasados')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap">Atrasados</button>
+                        <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Todos</button>
+                        <button onclick="setFilter('Em aberto')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Em aberto</button>
+                        <button onclick="setFilter('Sem plano')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Sem plano</button>
+                        <button onclick="setFilter('Atrasados')" class="filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Atrasados</button>
                     </div>
                 </div>
                 <div class="flex flex-col gap-4" id="comments-list"></div>
@@ -289,55 +290,62 @@
         </div>
 
         <!-- VISÃO: ÁREAS SIMPLES -->
-        <div id="view-areas" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold mb-2 text-primary">Áreas</h2>
-                <p class="text-gray-500 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
+        <div id="view-areas" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full z-10 relative">
+            <div class="mb-10 text-white">
+                <h2 class="text-3xl font-bold mb-2">Áreas de Atuação</h2>
+                <p class="text-blue-100 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-12" id="areas-list-grid"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pb-12" id="areas-list-grid"></div>
         </div>
 
         <!-- VISÃO: IMPORTAR -->
-        <div id="view-import" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold mb-2 text-primary">Importar e Configurar Ciclos</h2>
-                <p class="text-gray-500 text-sm">Suba o Excel e defina qual ciclo ficará aberto para edição.</p>
+        <div id="view-import" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full z-10 relative">
+            <div class="mb-10 text-white">
+                <h2 class="text-3xl font-bold mb-2">Importar e Configurar Ciclos</h2>
+                <p class="text-blue-100 text-sm">Suba o Excel, defina o ciclo vigente ou remova ciclos antigos.</p>
             </div>
             
             <div class="flex flex-col md:flex-row gap-6 pb-12">
-                <div class="w-full md:w-1/3 bg-white rounded-lg shadow-md p-6 border border-gray-100 h-fit">
+                <div class="w-full md:w-1/3 bg-white rounded-2xl shadow-md p-6 h-fit card-shadow">
                     <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mb-4">1. Gerenciar Ciclos</h3>
-                    <div class="mb-4 bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                    <div class="mb-4 bg-blue-50 border border-blue-100 p-4 rounded-xl">
                         <label class="block text-sm font-semibold text-gray-800 mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
-                        <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary bg-white"></select>
-                        <p class="text-[10px] text-gray-500 mt-2 font-medium"><i class="fas fa-info-circle text-warning"></i> Dica: Para destrancar um ciclo antigo, basta selecioná-lo aqui.</p>
+                        <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border-none rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary bg-white shadow-sm mb-2"></select>
+                        <p class="text-[10px] text-gray-500 font-medium leading-tight">Apenas o ciclo selecionado acima permitirá edição. Os demais ficarão trancados (Leitura).</p>
+                    </div>
+
+                    <div class="mb-6 flex gap-2">
+                        <select id="import-delete-select" class="w-2/3 border-none bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-danger shadow-sm"></select>
+                        <button onclick="deleteSelectedCycle()" class="w-1/3 bg-red-100 hover:bg-red-600 hover:text-white text-red-600 rounded-lg py-2 text-xs font-bold transition-colors shadow-sm">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
                     </div>
                     
                     <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mt-8 mb-4">2. Importar Novo Excel</h3>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Atualizar ciclo existente</label>
-                        <select id="import-cycle-select" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary bg-gray-50"></select>
+                        <select id="import-cycle-select" class="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-secondary"></select>
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
-                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-white">
+                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26" class="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary">
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
-                        <input type="file" id="import-file-input" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100 bg-white">
+                        <input type="file" id="import-file-input" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100 shadow-sm cursor-pointer">
                     </div>
-                    <button id="import-btn" class="w-full bg-gray-300 text-gray-500 rounded-lg py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow-sm">
+                    <button id="import-btn" class="w-full bg-gray-300 text-gray-500 rounded-xl py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow-sm">
                         Importar 0 comentário(s)
                     </button>
                 </div>
                 
-                <div class="w-full md:w-2/3 bg-white rounded-lg shadow-md border border-gray-100 max-h-[500px] overflow-y-auto">
+                <div class="w-full md:w-2/3 bg-white rounded-2xl shadow-md max-h-[600px] overflow-y-auto card-shadow">
                     <div class="px-6 py-4 border-b sticky top-0 bg-white z-10">
                         <h3 class="font-bold text-gray-800 text-lg">Prévia por aba</h3>
                     </div>
-                    <div id="import-preview-empty" class="p-12 flex flex-col items-center justify-center text-gray-400">
-                        <i class="fas fa-file-excel text-4xl mb-3"></i>
-                        <p class="text-sm">Selecione um arquivo para ver as abas.</p>
+                    <div id="import-preview-empty" class="p-12 flex flex-col items-center justify-center text-gray-400 h-64">
+                        <i class="fas fa-file-excel text-5xl mb-4 text-gray-300"></i>
+                        <p class="text-sm font-medium">Selecione um arquivo para ver as abas.</p>
                     </div>
                     <div id="import-preview-list" class="hidden"></div>
                 </div>
@@ -345,33 +353,32 @@
         </div>
         
         <!-- VISÃO: ADMIN -->
-        <div id="view-admin" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
-                <div>
-                    <h2 class="text-3xl font-bold mb-2 text-primary">Painel de Administração</h2>
-                    <p class="text-gray-500 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
+        <div id="view-admin" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full z-10 relative">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+                <div class="text-white">
+                    <h2 class="text-3xl font-bold mb-2">Painel de Administração</h2>
+                    <p class="text-blue-100 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
                 </div>
-                <button onclick="openAdminModal()" class="bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-green-600 transition-colors shadow-md flex items-center gap-2"><i class="fas fa-user-plus"></i> Novo Usuário</button>
+                <button onclick="openAdminModal()" class="bg-accent text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-green-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"><i class="fas fa-user-plus"></i> Novo Usuário</button>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12" id="adminTableBody">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-12" id="adminTableBody">
                 <!-- Cards Renderizados -->
             </div>
         </div>
-
     </main>
 
     <!-- Modal Admin (Criar/Editar User) -->
     <div id="admin-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[250] hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl p-6 w-[90%] max-w-[500px] shadow-2xl max-h-[90vh] flex flex-col">
+        <div class="bg-white rounded-2xl p-6 w-[90%] max-w-[500px] shadow-2xl max-h-[90vh] flex flex-col card-shadow">
             <h3 class="font-bold text-xl text-primary mb-4 border-b pb-2" id="admin-modal-title">Novo Usuário</h3>
             
             <div class="mb-4">
                 <label class="block text-sm font-bold text-gray-700 mb-1">E-mail do Usuário</label>
-                <input type="email" id="admin-user-email" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-secondary bg-white text-gray-800">
+                <input type="email" id="admin-user-email" class="w-full bg-gray-50 border-none rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-secondary text-gray-800">
             </div>
 
-            <div class="mb-4 bg-blue-50 border border-blue-100 p-4 rounded-lg">
+            <div class="mb-4 bg-blue-50 p-4 rounded-xl">
                 <label class="block text-sm font-bold text-primary mb-3">Tipo de Autenticação</label>
                 <div class="flex gap-6">
                     <label class="flex items-center gap-2 cursor-pointer">
@@ -385,13 +392,13 @@
                 </div>
                 <div id="admin-pwd-container" class="mt-4 pt-4 border-t border-blue-200">
                     <label class="block text-xs font-bold text-gray-600 mb-1">Senha Provisória</label>
-                    <input type="text" id="admin-user-password" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-secondary text-gray-800" placeholder="Ex: 1234">
-                    <p class="text-[10px] text-gray-500 mt-1 italic">Dica: Se a senha for <span class="font-bold">1234</span>, o usuário será obrigado a trocar no primeiro acesso.</p>
+                    <input type="text" id="admin-user-password" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary text-gray-800 shadow-sm" placeholder="Ex: 1234">
+                    <p class="text-[10px] text-gray-500 mt-1 italic">Se a senha for <span class="font-bold">1234</span>, o usuário será obrigado a trocar no primeiro acesso.</p>
                 </div>
             </div>
 
             <label class="block text-sm font-bold text-gray-700 mb-2">Áreas Permitidas para Edição</label>
-            <div class="border rounded-lg p-4 bg-gray-50 flex-1 overflow-y-auto mb-6">
+            <div class="border border-gray-100 rounded-xl p-4 bg-gray-50 flex-1 overflow-y-auto mb-6 shadow-inner">
                 <label class="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200 cursor-pointer">
                     <input type="checkbox" id="admin-check-all" class="w-4 h-4 text-primary" onchange="toggleAllAdminAreas(this)">
                     <span class="font-bold text-gray-800 text-sm">Administrador Geral (Acesso Total)</span>
@@ -402,8 +409,8 @@
             <div class="flex justify-between items-center shrink-0 mt-2">
                 <button onclick="deleteUser()" id="admin-delete-btn" class="text-danger text-sm font-bold hover:underline hidden"><i class="fas fa-trash"></i> Excluir Conta</button>
                 <div class="flex gap-3 ml-auto">
-                    <button onclick="closeAdminModal()" class="px-5 py-2.5 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm font-bold">Cancelar</button>
-                    <button onclick="saveAdminModal()" class="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-blue-800 text-sm font-bold shadow-md">Salvar Usuário</button>
+                    <button onclick="closeAdminModal()" class="px-5 py-2.5 text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-sm font-bold transition-colors shadow-sm">Cancelar</button>
+                    <button onclick="saveAdminModal()" class="px-6 py-2.5 bg-primary text-white rounded-xl hover:bg-blue-800 text-sm font-bold shadow-md hover:shadow-lg transition-all">Salvar Usuário</button>
                 </div>
             </div>
         </div>
@@ -414,52 +421,47 @@
     <div id="slide-over-panel" class="fixed inset-y-0 right-0 w-full sm:w-[450px] bg-white shadow-2xl z-[250] transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="flex justify-between items-center px-6 py-4 border-b">
             <h3 class="font-bold text-lg text-primary">Plano de ação</h3>
-            <button onclick="closePanel()" class="text-gray-400 hover:text-gray-600 rounded-full p-1 border hover:bg-gray-50 w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            <button onclick="closePanel()" class="text-gray-400 hover:text-gray-600 rounded-full p-1 border hover:bg-gray-50 w-8 h-8 flex items-center justify-center transition-colors"><i class="fas fa-times"></i></button>
         </div>
-        <div class="flex-1 overflow-y-auto p-6">
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-sm">
-                <div class="flex flex-wrap gap-x-4 gap-y-2 text-gray-500 mb-2">
-                    <span id="panel-etapa" class="font-bold text-gray-700">Etapa</span>
-                    <span id="panel-unidade">Unidade</span>
+        <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <div class="bg-white border border-gray-100 shadow-sm rounded-xl p-5 mb-6 text-sm">
+                <div class="flex flex-wrap gap-x-4 gap-y-2 text-gray-500 mb-3">
+                    <span id="panel-etapa" class="font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded text-xs">Etapa</span>
+                    <span id="panel-unidade" class="text-xs bg-gray-100 px-2 py-0.5 rounded">Unidade</span>
                 </div>
-                <div class="text-gray-500 mb-2" id="panel-pesquisa">Fase</div>
-                <div class="flex gap-4 text-gray-500 mb-3">
+                <div class="text-gray-500 mb-3 text-xs" id="panel-pesquisa">Fase</div>
+                <div class="flex gap-4 text-gray-500 mb-4 border-b pb-3">
                     <span id="panel-nps" class="font-bold text-danger">NPS</span>
                     <span id="panel-nps-area">Nota da área</span>
                 </div>
-                <p class="text-gray-800 font-medium" id="panel-comment">Comentário</p>
+                <p class="text-gray-800 font-medium leading-relaxed" id="panel-comment">Comentário</p>
             </div>
 
             <form id="actionPlanForm" onsubmit="event.preventDefault(); savePlan();">
                 <input type="hidden" id="form-item-id">
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Plano de ação Previsto</label>
-                    <textarea id="form-plano" rows="4" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
+                <div class="mb-5">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Plano de Ação Previsto</label>
+                    <textarea id="form-plano" rows="4" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary shadow-sm resize-none"></textarea>
                 </div>
-                <!-- Oculto Ação Executada -->
-                <div class="mb-4 hidden">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Ação executada</label>
-                    <textarea id="form-acao" rows="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <div class="flex flex-col sm:flex-row gap-4 mb-5">
                     <div class="w-full sm:w-1/2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Responsável</label>
-                        <input type="text" id="form-responsavel" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Responsável</label>
+                        <input type="text" id="form-responsavel" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary shadow-sm">
                     </div>
                     <div class="w-full sm:w-1/2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Data prevista</label>
-                        <input type="date" id="form-data" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Data Prevista</label>
+                        <input type="date" id="form-data" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary shadow-sm">
                     </div>
                 </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                    <select id="form-status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary font-medium">
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Status</label>
+                    <select id="form-status" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-secondary font-medium shadow-sm cursor-pointer">
                         <option value="A iniciar">A iniciar</option>
                         <option value="Em andamento">Em andamento</option>
                         <option value="Concluído">Concluído</option>
                     </select>
                 </div>
-                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold rounded-lg py-3 transition-colors shadow mb-4">Salvar plano de ação</button>
+                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold rounded-xl py-3.5 transition-all shadow-md hover:shadow-lg">Salvar Plano de Ação</button>
             </form>
         </div>
     </div>
@@ -774,23 +776,28 @@
             const dashSelect = document.getElementById('dashboard-cycle-select');
             const importSelect = document.getElementById('import-cycle-select');
             const vigenteSelect = document.getElementById('import-vigente-select');
+            const deleteSelect = document.getElementById('import-delete-select');
             
             dashSelect.innerHTML = '';
             importSelect.innerHTML = '';
             vigenteSelect.innerHTML = '';
+            deleteSelect.innerHTML = '';
             
             if(appState.cycles.length === 0) {
-                dashSelect.innerHTML = '<option value="">Nenhum ciclo criado</option>';
+                dashSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 importSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 vigenteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
+                deleteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
             } else {
-                appState.cycles.forEach(c => {
+                // Manter a ordem de criação ou alfabética (no caso reverso para os mais recentes)
+                [...appState.cycles].reverse().forEach(c => {
                     let selAct = c.name === appState.activeCycleName ? 'selected' : '';
                     let selVig = c.name === appState.vigenteCycle ? 'selected' : '';
                     
                     dashSelect.innerHTML += `<option value="${c.name}" ${selAct}>${c.name}</option>`;
                     importSelect.innerHTML += `<option value="${c.name}" ${selAct}>${c.name}</option>`;
-                    vigenteSelect.innerHTML += `<option value="${c.name}" ${selVig}>${c.name} ${c.name===appState.vigenteCycle ? '(Aberto)' : '(Fechado)'}</option>`;
+                    deleteSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                    vigenteSelect.innerHTML += `<option value="${c.name}" ${selVig}>${c.name} ${c.name===appState.vigenteCycle ? '(VIGENTE)' : '(Fechado)'}</option>`;
                 });
             }
         }
@@ -815,6 +822,7 @@
 
         async function setVigenteCycle() {
             const sel = document.getElementById('import-vigente-select').value;
+            if(!sel) return;
             appState.vigenteCycle = sel;
             await saveStateToSupabase();
             updateCycleDropdowns();
@@ -826,6 +834,27 @@
                 if(bannerDash) bannerDash.classList.remove('hidden');
             }
             alert("Ciclo Vigente alterado com sucesso! Apenas este ciclo permitirá edições.");
+        }
+
+        async function deleteSelectedCycle() {
+            const sel = document.getElementById('import-delete-select').value;
+            if(!sel) return;
+            
+            if(confirm(`ATENÇÃO: Tem certeza que deseja EXCLUIR PERMANENTEMENTE o "${sel}"?\nTodos os comentários e planos deste ciclo serão apagados do Supabase.`)) {
+                appState.cycles = appState.cycles.filter(c => c.name !== sel);
+                
+                if(appState.activeCycleName === sel) {
+                    appState.activeCycleName = appState.cycles.length > 0 ? appState.cycles[appState.cycles.length-1].name : null;
+                }
+                if(appState.vigenteCycle === sel) {
+                    appState.vigenteCycle = appState.activeCycleName;
+                }
+                
+                await saveStateToSupabase();
+                updateCycleDropdowns();
+                alert(`Ciclo "${sel}" excluído com sucesso.`);
+                navigate('dashboard');
+            }
         }
 
         function navigate(viewId) {
@@ -846,8 +875,8 @@
                         btn.className = "hidden";
                     } else {
                         btn.className = (id === viewId) 
-                            ? "opacity-100 border-b-2 border-white pb-1 text-white inline-block font-bold" 
-                            : "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white";
+                            ? "opacity-100 border-b-2 border-white pb-1 text-white inline-block font-bold transition-all" 
+                            : "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white transition-all";
                     }
                 }
             });
@@ -938,7 +967,7 @@
                 }
 
                 grid.innerHTML += `
-                    <div class="area-card bg-white rounded-lg shadow-sm border border-gray-100 cursor-pointer flex flex-col justify-between h-full" onclick="openArea('${area.id}')">
+                    <div class="area-card bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 cursor-pointer flex flex-col justify-between h-full card-shadow card-shadow-hover transition-all" onclick="openArea('${area.id}')">
                         <div class="p-5 flex-1">
                             <div class="flex justify-between items-center mb-6">
                                 <h4 class="area-title font-bold text-gray-800 transition-colors">${area.name}</h4>
@@ -958,7 +987,7 @@
                                 <div><div class="text-gray-400 text-[10px] sm:text-xs">Atrasados</div><div class="font-semibold text-danger">${area.late}</div></div>
                             </div>
                         </div>
-                        <div class="hover-bar bg-accent"></div>
+                        <div class="hover-bar bg-accent rounded-b-xl"></div>
                     </div>`;
             });
         }
@@ -1010,22 +1039,22 @@
                         let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
                         let planPreview = item.plan && item.plan.trim() !== ''
-                            ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100"><span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>${item.plan}</div>` : '';
+                            ? `<div class="mt-4 bg-blue-50/50 p-4 rounded-xl text-sm text-gray-700 border border-blue-100 shadow-inner"><span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>${item.plan}</div>` : '';
 
                         itemsHtml += `
-                            <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel('${item.id}', '${area.id}')">
+                            <div class="bg-white rounded-xl border border-gray-200 p-5 cursor-pointer hover:border-accent transition-colors card-shadow card-shadow-hover" onclick="openPanel('${item.id}', '${area.id}')">
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="text-xs text-gray-500 font-medium"><span class="text-gray-800 font-bold">${item.location}</span> · ${item.user} · ${item.topic}</div>
                                     <div class="text-danger font-bold text-sm"><span class="text-gray-400 text-xs font-normal">NOTA ÁREA ${item.npsArea}</span> ${item.npsTotal}</div>
                                 </div>
-                                <p class="text-gray-800 text-sm mb-2">${item.comment}</p>
+                                <p class="text-gray-800 text-sm mb-2 font-medium">${item.comment}</p>
                                 ${planPreview}
                                 <div class="flex border-t pt-4 mt-4">
                                     <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">STATUS</div>
                                         <div class="inline-flex items-center gap-1.5 border px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${sColor}"><div class="w-1.5 h-1.5 rounded-full ${bColor}"></div>${item.status}</div>
                                     </div>
-                                    <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">PRAZO</div><div class="text-xs sm:text-sm">${item.date || '—'}</div></div>
-                                    <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">RESPONSÁVEL</div><div class="text-xs sm:text-sm truncate pr-2">${item.owner || '—'}</div></div>
+                                    <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">PRAZO</div><div class="text-xs sm:text-sm font-semibold">${item.date || '—'}</div></div>
+                                    <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">RESPONSÁVEL</div><div class="text-xs sm:text-sm font-semibold truncate pr-2">${item.owner || '—'}</div></div>
                                 </div>
                             </div>`;
                     });
@@ -1035,7 +1064,7 @@
             });
 
             if(totalFound === 0) {
-                container.innerHTML = `<div class="text-center py-10 bg-white rounded-lg border text-gray-500 mt-4">Nenhum comentário encontrado para o filtro: ${filterType}.</div>`;
+                container.innerHTML = `<div class="text-center py-10 bg-white rounded-xl border text-gray-500 mt-4 card-shadow font-medium">Nenhum comentário encontrado para o filtro: ${filterType}.</div>`;
             }
 
             navigate('global-comments');
@@ -1047,15 +1076,15 @@
             grid.innerHTML = '';
             
             if(activeData.length === 0) {
-                grid.innerHTML = '<div class="col-span-1 md:col-span-4 text-center py-10 text-gray-500">Nenhum ciclo importado.</div>';
+                grid.innerHTML = '<div class="col-span-1 md:col-span-4 text-center py-10 text-gray-500 font-medium">Nenhum ciclo importado.</div>';
                 return;
             }
 
             activeData.forEach(area => {
                 grid.innerHTML += `
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 flex justify-between items-center cursor-pointer hover:border-accent hover:shadow-md" onclick="openArea('${area.id}')">
-                        <h4 class="font-bold text-gray-800">${area.name}</h4>
-                        <span class="text-accent text-sm font-medium">Abrir &rarr;</span>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex justify-between items-center cursor-pointer hover:border-accent hover:shadow-md transition-all card-shadow card-shadow-hover" onclick="openArea('${area.id}')">
+                        <h4 class="font-bold text-gray-800 text-lg">${area.name}</h4>
+                        <span class="text-accent text-sm font-bold bg-green-50 px-3 py-1 rounded-full border border-green-100">Abrir &rarr;</span>
                     </div>`;
             });
         }
@@ -1063,7 +1092,7 @@
         function setFilter(filterType) {
             currentFilter = filterType;
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = "filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap";
+                btn.className = "filter-btn bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none";
                 if(btn.innerText === filterType) {
                     btn.classList.add('active');
                     btn.classList.remove('bg-white', 'text-gray-600');
@@ -1111,7 +1140,7 @@
             });
 
             if(filteredItems.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 bg-white rounded-lg border text-gray-500">Nenhum comentário atende a este filtro.</div>`;
+                container.innerHTML = `<div class="text-center py-10 bg-white rounded-xl border text-gray-500 card-shadow font-medium">Nenhum comentário atende a este filtro.</div>`;
                 return;
             }
 
@@ -1120,15 +1149,15 @@
                 let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
                 let planPreview = item.plan && item.plan.trim() !== ''
-                    ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100"><span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>${item.plan}</div>` : '';
+                    ? `<div class="mt-4 bg-blue-50/50 p-4 rounded-xl text-sm text-gray-700 border border-blue-100 shadow-inner"><span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>${item.plan}</div>` : '';
 
                 container.innerHTML += `
-                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel('${item.id}')">
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors card-shadow card-shadow-hover" onclick="openPanel('${item.id}')">
                         <div class="flex justify-between items-start mb-3">
                             <div class="text-xs text-gray-500 font-medium"><span class="text-gray-800 font-bold">${item.location}</span> · ${item.user} · ${item.topic}</div>
                             <div class="text-danger font-bold text-sm"><span class="text-gray-400 text-xs font-normal">NOTA ÁREA ${item.npsArea}</span> ${item.npsTotal}</div>
                         </div>
-                        <p class="text-gray-800 text-sm mb-2">${item.comment}</p>
+                        <p class="text-gray-800 text-sm mb-2 font-medium">${item.comment}</p>
                         
                         ${planPreview}
 
@@ -1136,8 +1165,8 @@
                             <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">STATUS</div>
                                 <div class="inline-flex items-center gap-1.5 border px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${sColor}"><div class="w-1.5 h-1.5 rounded-full ${bColor}"></div>${item.status}</div>
                             </div>
-                            <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">PRAZO</div><div class="text-xs sm:text-sm">${item.date || '—'}</div></div>
-                            <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">RESPONSÁVEL</div><div class="text-xs sm:text-sm truncate pr-2">${item.owner || '—'}</div></div>
+                            <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">PRAZO</div><div class="text-xs sm:text-sm font-semibold">${item.date || '—'}</div></div>
+                            <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">RESPONSÁVEL</div><div class="text-xs sm:text-sm font-semibold truncate pr-2">${item.owner || '—'}</div></div>
                         </div>
                     </div>`;
             });
@@ -1182,10 +1211,10 @@
             const item = activeData.find(a=>a.id===targetAreaId).items.find(i=>i.id===itemId);
             document.getElementById('form-item-id').value = item.id;
             
-            document.getElementById('panel-etapa').innerText = `Área: ${activeData.find(a=>a.id===targetAreaId).name}`;
-            document.getElementById('panel-unidade').innerText = `Unidade: ${item.location}`;
-            document.getElementById('panel-nps').innerText = `Nota NPS: ${item.npsTotal}`;
-            document.getElementById('panel-nps-area').innerText = `Nota da área: ${item.npsArea}`;
+            document.getElementById('panel-etapa').innerText = `${activeData.find(a=>a.id===targetAreaId).name}`;
+            document.getElementById('panel-unidade').innerText = `${item.location}`;
+            document.getElementById('panel-nps').innerText = `NPS: ${item.npsTotal}`;
+            document.getElementById('panel-nps-area').innerText = `Área: ${item.npsArea}`;
             document.getElementById('panel-pesquisa').innerText = `Fase de Pesquisa: ${item.pesquisa}`;
             document.getElementById('panel-comment').innerText = item.comment;
 
@@ -1327,7 +1356,6 @@
                                         comment: String(comment).trim(),
                                         status: isDone ? 'Concluído' : (String(status).toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
                                         plan: getVal(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO', 'PLANO']) || '',
-                                        action: getVal(['AÇÃO EXECUTADA', 'AÇÃO', 'ACAO']) || '',
                                         owner: getVal(['RESPONSÁVEL', 'RESPONSAVEL']) || '',
                                         date: getVal(['CRONOGRAMA', 'DATA PREVISTA', 'PRAZO', 'CONCLUSÃO']) || '',
                                         pesquisa: getVal(['PESQUISA', 'ETAPA']) || '-'
@@ -1352,16 +1380,12 @@
                             });
 
                             if(validRows > 0) {
-                                html += `<li class="px-6 py-4 flex justify-between items-center border-l-4 border-accent bg-green-50 mb-1">
-                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Importada com Sucesso</p></div>
-                                            <span class="text-sm font-bold text-gray-600">${validRows} comentário(s)</span>
+                                html += `<li class="px-6 py-4 flex justify-between items-center border-l-4 border-accent bg-green-50 mb-1 rounded-r">
+                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-[10px] text-accent font-bold uppercase">&rarr; Importada com Sucesso</p></div>
+                                            <span class="text-sm font-bold text-gray-600 bg-white px-2 py-1 rounded shadow-sm">${validRows} comentário(s)</span>
                                         </li>`;
                                 totalComments += validRows;
                             }
-                        } else if(rows.length > 0) {
-                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50 mb-1">
-                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Sem comentários encontrados)</p></div>
-                                    </li>`;
                         }
                     });
                     
@@ -1370,12 +1394,12 @@
                     
                     const btn = document.getElementById('import-btn');
                     btn.innerText = `CONFIRMAR E SALVAR ${totalComments} COMENTÁRIOS`;
-                    btn.className = "w-full bg-accent text-white rounded py-4 text-sm font-bold hover:bg-green-600 cursor-pointer shadow-lg animate-pulse border-2 border-green-700 mt-4";
+                    btn.className = "w-full bg-accent text-white rounded-xl py-4 text-sm font-bold hover:bg-green-600 cursor-pointer shadow-lg animate-pulse border-2 border-green-700 mt-4 transition-all";
                     btn.onclick = executeImport; 
 
                 } catch(err) {
                     console.error(err);
-                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro crítico ao ler Excel. Tente remover formatações mescladas complexas.</div>';
+                    previewList.innerHTML = '<div class="p-8 text-center text-danger font-bold">Erro crítico ao ler Excel. Tente remover formatações mescladas complexas.</div>';
                 }
             };
             reader.readAsArrayBuffer(input.files[0]);
@@ -1421,7 +1445,7 @@
             document.getElementById('import-new-cycle').value = '';
             
             btn.innerText = "Importar comentário(s)";
-            btn.className = "w-full bg-blue-400 text-white rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow mt-4";
+            btn.className = "w-full bg-blue-400 text-white rounded-xl py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow-sm mt-4";
             btn.onclick = null;
             
             updateCycleDropdowns();
@@ -1429,9 +1453,6 @@
             alert("Sucesso! Planilha adicionada ao Histórico do Supabase.");
             navigate('dashboard');
         }
-
-        // --- PAINEL ADMIN COM CARDS ---
-        let editingUserEmail = null;
 
         function renderAdminTable() {
             const container = document.getElementById('adminTableBody');
@@ -1442,152 +1463,40 @@
             adminUsers.forEach(u => {
                 let tags = '';
                 if(u.areas.includes('all')) {
-                    tags = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold shadow-sm">ADM Geral</span>`;
+                    tags = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-[10px] font-bold uppercase shadow-sm">ADM Geral</span>`;
                 } else {
                     u.areas.forEach(aId => {
                         const areaObj = activeData.find(a=>a.id === aId);
-                        if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded text-[10px] font-semibold">${areaObj.name}</span>`;
-                        else tags += `<span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded text-[10px] font-semibold">${aId}</span>`;
+                        if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded text-[10px] font-bold shadow-sm">${areaObj.name}</span>`;
+                        else tags += `<span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded text-[10px] font-bold shadow-sm">${aId}</span>`;
                     });
                 }
                 
                 let authBadge = u.authType === 'email' 
-                    ? `<span class="text-purple-600 text-xs font-bold bg-purple-50 px-2 py-1 rounded border border-purple-100"><i class="fas fa-envelope"></i> Só E-mail</span>`
-                    : `<span class="text-gray-600 text-xs font-bold bg-gray-100 px-2 py-1 rounded border border-gray-200"><i class="fas fa-lock"></i> E-mail + Senha</span>`;
+                    ? `<span class="text-purple-600 text-[10px] font-bold bg-purple-50 px-2 py-1 rounded border border-purple-100 shadow-sm"><i class="fas fa-envelope"></i> Só E-mail</span>`
+                    : `<span class="text-gray-600 text-[10px] font-bold bg-gray-100 px-2 py-1 rounded border border-gray-200 shadow-sm"><i class="fas fa-lock"></i> E-mail + Senha</span>`;
                 
                 let pwdWarn = (u.password === '1234' || u.password === '123456') && u.authType === 'password' 
-                    ? '<span class="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded text-[10px] font-bold border border-yellow-200">SENHA PADRÃO</span>' : '';
+                    ? '<span class="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded text-[9px] font-bold border border-yellow-200 shadow-sm mt-1 inline-block">SENHA PADRÃO</span>' : '';
 
                 container.innerHTML += `
-                    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow relative flex flex-col">
+                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative flex flex-col card-shadow card-shadow-hover">
                         <div class="flex justify-between items-start mb-3">
                             <div class="w-full">
-                                <h4 class="font-bold text-gray-800 truncate text-sm" title="${u.email}">${u.email}</h4>
-                                <div class="flex items-center gap-2 mt-2">${authBadge} ${pwdWarn}</div>
+                                <h4 class="font-bold text-gray-800 truncate text-sm mb-1" title="${u.email}">${u.email}</h4>
+                                <div class="flex flex-col items-start gap-1 mt-2">${authBadge} ${pwdWarn}</div>
                             </div>
                         </div>
                         <div class="mb-5 mt-2 flex-1">
                             <p class="text-[10px] text-gray-400 uppercase font-bold mb-2">Permissões de Edição</p>
-                            <div class="flex flex-wrap gap-1">${tags || '<span class="text-gray-400 text-xs">Sem áreas (Apenas visualização)</span>'}</div>
+                            <div class="flex flex-wrap gap-1">${tags || '<span class="text-gray-400 text-xs italic">Sem áreas (Apenas Leitura)</span>'}</div>
                         </div>
-                        <div class="flex gap-2 border-t pt-3 mt-auto">
-                            <button class="flex-1 bg-gray-50 hover:bg-blue-50 text-blue-600 border border-gray-200 py-1.5 rounded text-xs font-bold transition-colors" onclick="openAdminModal('${u.email}')"><i class="fas fa-edit"></i> Editar</button>
-                            ${u.authType === 'password' ? `<button class="flex-1 bg-gray-50 hover:bg-yellow-50 text-warning border border-gray-200 py-1.5 rounded text-xs font-bold transition-colors" onclick="resetUserPassword('${u.email}')" title="Resetar para a senha 1234"><i class="fas fa-key"></i> Reset</button>` : ''}
+                        <div class="flex gap-2 border-t pt-4 mt-auto border-gray-100">
+                            <button class="flex-1 bg-gray-50 hover:bg-blue-50 text-blue-600 border border-gray-200 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm" onclick="openAdminModal('${u.email}')"><i class="fas fa-edit"></i> Editar</button>
+                            ${u.authType === 'password' ? `<button class="flex-1 bg-gray-50 hover:bg-yellow-50 text-warning border border-gray-200 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm" onclick="resetUserPassword('${u.email}')" title="Resetar para a senha 1234"><i class="fas fa-key"></i> Reset</button>` : ''}
                         </div>
                     </div>`;
             });
-        }
-
-        async function resetUserPassword(email) {
-            if(confirm(`Tem certeza que deseja resetar a senha de ${email} para a padrão (1234)? O usuário será forçado a trocar no próximo acesso.`)) {
-                const user = adminUsers.find(u => u.email === email);
-                if(user) {
-                    user.password = '1234';
-                    await saveStateToSupabase();
-                    renderAdminTable();
-                    alert("Senha resetada com sucesso!");
-                }
-            }
-        }
-
-        function togglePwdField(val) {
-            const pwdContainer = document.getElementById('admin-pwd-container');
-            if(val === 'email') pwdContainer.classList.add('hidden');
-            else pwdContainer.classList.remove('hidden');
-        }
-
-        function openAdminModal(email = null) {
-            editingUserEmail = email;
-            const container = document.getElementById('admin-areas-checkboxes');
-            container.innerHTML = '';
-            
-            let user = email ? adminUsers.find(u=>u.email===email) : {email: '', authType: 'password', password: '', areas: []};
-            
-            document.getElementById('admin-user-email').value = user.email;
-            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões & Senha" : "Novo Usuário";
-            
-            document.querySelector(`input[name="auth_type"][value="${user.authType}"]`).checked = true;
-            togglePwdField(user.authType);
-            
-            const deleteBtn = document.getElementById('admin-delete-btn');
-            if(email && adminUsers.length > 1) deleteBtn.classList.remove('hidden');
-            else deleteBtn.classList.add('hidden');
-            
-            let isAll = user.areas.includes('all');
-            document.getElementById('admin-check-all').checked = isAll;
-
-            const activeData = getActiveCycleData();
-            if(activeData.length === 0) {
-                container.innerHTML = "<p class='text-xs text-gray-500'>Importe um ciclo de Planilha primeiro para ver a lista de áreas disponíveis.</p>";
-            } else {
-                activeData.forEach(area => {
-                    const checked = isAll || user.areas.includes(area.id) ? 'checked' : '';
-                    const disabled = isAll ? 'disabled' : '';
-                    container.innerHTML += `
-                        <label class="flex items-center gap-2 cursor-pointer ml-2">
-                            <input type="checkbox" value="${area.id}" class="admin-area-chk w-4 h-4 text-secondary" ${checked} ${disabled}>
-                            <span class="text-gray-700 text-sm">${area.name}</span>
-                        </label>`;
-                });
-            }
-
-            document.getElementById('admin-modal').classList.remove('hidden');
-        }
-
-        function toggleAllAdminAreas(chk) {
-            const boxes = document.querySelectorAll('.admin-area-chk');
-            boxes.forEach(b => {
-                b.checked = chk.checked;
-                b.disabled = chk.checked;
-            });
-        }
-
-        function closeAdminModal() {
-            document.getElementById('admin-modal').classList.add('hidden');
-        }
-
-        async function saveAdminModal() {
-            const email = document.getElementById('admin-user-email').value.trim();
-            const authType = document.querySelector('input[name="auth_type"]:checked').value;
-            const password = document.getElementById('admin-user-password').value.trim();
-            
-            if(!email) return alert("O e-mail é obrigatório.");
-            if(authType === 'password' && !password && !editingUserEmail) return alert("A senha provisória é obrigatória para novos usuários.");
-
-            const isAll = document.getElementById('admin-check-all').checked;
-            let selectedAreas = [];
-            
-            if(isAll) {
-                selectedAreas = ['all'];
-            } else {
-                document.querySelectorAll('.admin-area-chk:checked').forEach(b => selectedAreas.push(b.value));
-            }
-
-            if(editingUserEmail) {
-                let u = adminUsers.find(u => u.email === editingUserEmail);
-                u.email = email;
-                u.authType = authType;
-                if(password) u.password = password; 
-                u.areas = selectedAreas;
-            } else {
-                adminUsers.push({email: email, authType: authType, password: password || '1234', areas: selectedAreas});
-            }
-            
-            await saveStateToSupabase();
-            closeAdminModal();
-            renderAdminTable();
-            if(editingUserEmail === loggedEmail && email !== loggedEmail) logout();
-        }
-
-        async function deleteUser() {
-            if(!editingUserEmail) return;
-            if(confirm(`Tem certeza que deseja excluir o usuário ${editingUserEmail}?`)) {
-                adminUsers = adminUsers.filter(u => u.email !== editingUserEmail);
-                await saveStateToSupabase();
-                closeAdminModal();
-                renderAdminTable();
-                if(editingUserEmail === loggedEmail) logout();
-            }
         }
     </script>
 </body>
