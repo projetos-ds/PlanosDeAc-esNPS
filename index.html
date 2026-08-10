@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
+    <!-- Favicon Dinâmico -->
     <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Bibliotecas: Ler Excel e Supabase -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -73,11 +75,14 @@
     <div id="change-pwd-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[400px]">
             <h3 class="font-bold text-2xl text-primary mb-2" id="pwd-modal-title">Definir Nova Senha</h3>
-            <p class="text-sm text-gray-500 mb-6" id="pwd-modal-desc">Por segurança, defina uma senha pessoal.</p>
+            <p class="text-sm text-gray-500 mb-6" id="pwd-modal-desc">Por segurança, você precisa definir uma senha pessoal.</p>
+
             <input type="hidden" id="change-pwd-email">
             <input type="password" id="new-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary text-gray-800" placeholder="Digite a nova senha">
             <input type="password" id="confirm-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary text-gray-800" placeholder="Confirme a nova senha">
+
             <div id="pwd-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 px-3 rounded">As senhas não conferem.</div>
+
             <div class="flex justify-end gap-3 mt-6">
                 <button id="pwd-cancel-btn" onclick="closeChangePwdModal()" class="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-50 text-sm font-medium">Cancelar</button>
                 <button onclick="saveNewPassword()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-800 text-sm font-bold shadow transition-colors">Salvar e Entrar</button>
@@ -85,7 +90,7 @@
         </div>
     </div>
 
-    <!-- TELA DE BRANDING / DESIGN (NOVIDADE QUE CORRIGE O ERRO DO CONSOLE) -->
+    <!-- TELA DE BRANDING / DESIGN -->
     <div id="branding-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[500px]">
             <h3 class="font-bold text-2xl text-primary mb-2">Design da Plataforma</h3>
@@ -96,37 +101,40 @@
             <input type="file" id="upload-favicon" class="hidden" accept="image/*" onchange="previewImage(event, 'preview-favicon', 'favicon')">
 
             <div class="space-y-4 mb-8">
+                <!-- Logo Header -->
                 <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Logo do Cabeçalho</p>
                         <p class="text-[10px] text-gray-500">Fundo azul. Use imagem com letras brancas.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-24 bg-primary flex items-center justify-center rounded overflow-hidden p-1">
+                        <div class="h-10 w-24 bg-primary flex items-center justify-center rounded overflow-hidden p-1 shadow-inner">
                             <img id="preview-header" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-header-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
                     </div>
                 </div>
+                <!-- Logo Login -->
                 <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Logo do Login</p>
                         <p class="text-[10px] text-gray-500">Fundo branco. Use imagem com letras escuras.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-24 bg-white flex items-center justify-center rounded overflow-hidden border p-1">
+                        <div class="h-10 w-24 bg-white flex items-center justify-center rounded overflow-hidden border p-1 shadow-inner">
                             <img id="preview-login" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-login-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
                     </div>
                 </div>
+                <!-- Favicon -->
                 <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Favicon</p>
                         <p class="text-[10px] text-gray-500">Ícone pequeno da aba do navegador.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 bg-white flex items-center justify-center rounded overflow-hidden border p-1">
+                        <div class="h-10 w-10 bg-white flex items-center justify-center rounded overflow-hidden border p-1 shadow-inner">
                             <img id="preview-favicon" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-favicon').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
@@ -144,16 +152,16 @@
     <!-- Tela de Carregamento -->
     <div id="loading-overlay" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center text-white">
         <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
-        <h2 class="text-xl font-bold">Conectando à Nuvem...</h2>
+        <h2 class="text-xl font-bold text-white">Conectando à Nuvem...</h2>
         <p class="text-blue-200 mt-2 text-sm">Sincronizando dados do Supabase</p>
     </div>
 
-    <!-- SISTEMA PRINCIPAL -->
-    <header class="bg-primary text-white flex items-center justify-between px-4 sm:px-6 py-4 flex-shrink-0 z-50 shadow-md">
+    <!-- HEADER PRINCIPAL -->
+    <header class="bg-primary text-white flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0 z-50 shadow-md">
         <div class="flex items-center gap-3 sm:gap-4 shrink-0">
-            <!-- LOGO: 1 Clique Home, Duplo Clique Admin Branding -->
-            <div class="cursor-pointer user-select-none shrink-0 relative group" onclick="navigate('dashboard')" ondblclick="openBrandingModal()" title="Duplo clique p/ Configurar Design (Admin)">
-                <div class="px-1 py-1 rounded flex items-center justify-center h-10 sm:h-12 w-[100px] sm:w-[140px] overflow-hidden">
+            <!-- 1 Clique: Home / Duplo Clique: Design -->
+            <div class="cursor-pointer user-select-none shrink-0 relative group" onclick="navigate('dashboard')" ondblclick="openBrandingModal()" title="Admin: Duplo clique para Configurar Design">
+                <div class="px-1 py-1 rounded flex items-center justify-center h-10 sm:h-12 w-[100px] sm:w-[140px] overflow-hidden hover:bg-blue-800 transition-colors">
                     <img id="header-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="max-h-full max-w-full object-contain pointer-events-none">
                 </div>
                 <div id="header-logo-overlay" class="hidden absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 items-center justify-center font-bold transition-opacity">Design</div>
@@ -182,74 +190,81 @@
         </nav>
     </header>
 
-    <main class="flex-1 overflow-auto relative bg-bglight flex flex-col">
-        <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 h-64 transition-all duration-300" id="hero-bg"></div>
+    <main class="flex-1 overflow-auto bg-bglight flex flex-col relative">
 
-        <!-- FAIXA DE CICLO FECHADO -->
-        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow mb-4">
-            <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-        </div>
-
-        <!-- DASHBOARD -->
-        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4">
-                <div>
-                    <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
-                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
-                </div>
-                <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold w-full sm:w-auto">
-                </select>
-            </div>
-
-            <!-- CARDS -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-                <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários</div>
-                    <div class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
-                </div>
-                <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Concluídos</div>
-                    <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0%</div>
-                </div>
-                <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Em Atraso</div>
-                    <div class="text-2xl sm:text-3xl font-bold text-danger mb-1" id="dash-total-late">0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
-                </div>
-                <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Sem Plano</div>
-                    <div class="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
-                    <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
+        <!-- VISÃO: DASHBOARD -->
+        <div id="view-dashboard" class="page-view flex-col w-full hidden">
+            <!-- Novo layout do Fundo Azul: Envolve o topo e não quebra -->
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Banner de Bloqueio -->
+                    <div id="read-only-banner-dash" class="hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow mb-6">
+                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end text-white gap-4">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
+                            <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
+                        </div>
+                        <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold w-full sm:w-auto focus:ring-1 focus:ring-white">
+                        </select>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Cards Sobrepostos (-mt-12 puxa para cima do fundo azul) -->
+            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 z-10 relative">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                    <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
+                    </div>
+                    <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Concluídos</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0%</div>
+                    </div>
+                    <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Em Atraso</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-danger mb-1" id="dash-total-late">0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
+                    </div>
+                    <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Sem Plano</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
+                    </div>
+                </div>
 
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Áreas de Atuação</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Áreas de Atuação</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-areas-grid"></div>
+            </div>
         </div>
 
-        <!-- VISÃO GLOBAL DE COMENTÁRIOS -->
+        <!-- VISÃO: GLOBAL DE COMENTÁRIOS -->
         <div id="view-global-comments" class="page-view flex-col w-full hidden">
-            <div class="bg-primary w-full px-4 sm:px-8 pt-8 pb-16">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20">
                 <div class="max-w-7xl mx-auto text-white">
-                    <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1"><i class="fas fa-arrow-left"></i> Voltar para Dashboard</button>
+                    <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
                     <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-white" id="global-title">Comentários</h2>
                     <p class="text-blue-100 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
                 </div>
             </div>
-            <div class="-mt-8 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12" id="global-comments-list"></div>
+            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 z-10 relative" id="global-comments-list"></div>
         </div>
 
-        <!-- DETALHE DA ÁREA -->
+        <!-- VISÃO: DETALHE DA ÁREA -->
         <div id="view-area-detail" class="page-view flex-col w-full hidden">
-            <div class="bg-primary w-full px-4 sm:px-8 pt-8 pb-20">
+            <div class="bg-primary w-full px-4 sm:px-8 pt-6 pb-20">
                 <div class="max-w-7xl mx-auto">
-                    <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1"><i class="fas fa-arrow-left"></i> Voltar</button>
-                    <div class="flex flex-col sm:flex-row justify-between items-start mb-4 text-white gap-4">
+                    <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start mb-2 text-white gap-4">
                         <h2 class="text-3xl font-bold text-white" id="detail-title">Área</h2>
                         <div class="flex items-center gap-4">
-                            <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2">
+                            <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2 border border-blue-600">
                                 <span id="detail-nps-display" class="font-bold">NPS -</span> 
                                 <button onclick="editNps()" class="text-blue-300 hover:text-white" title="Editar NPS Real"><i class="fas fa-pencil-alt text-xs"></i></button>
                                 <span class="text-blue-300 mx-1">·</span> 
@@ -260,7 +275,7 @@
                 </div>
             </div>
 
-            <div class="-mt-10 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12">
+            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 z-10 relative">
                 <div class="flex overflow-x-auto pb-2 mb-4 no-scrollbar">
                     <div class="flex gap-2" id="filter-buttons">
                         <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap">Todos</button>
@@ -273,7 +288,7 @@
             </div>
         </div>
 
-        <!-- ÁREAS SIMPLES -->
+        <!-- VISÃO: ÁREAS SIMPLES -->
         <div id="view-areas" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
             <div class="mb-8">
                 <h2 class="text-3xl font-bold mb-2 text-primary">Áreas</h2>
@@ -282,7 +297,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-12" id="areas-list-grid"></div>
         </div>
 
-        <!-- IMPORTAR -->
+        <!-- VISÃO: IMPORTAR -->
         <div id="view-import" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
             <div class="mb-8">
                 <h2 class="text-3xl font-bold mb-2 text-primary">Importar e Configurar Ciclos</h2>
@@ -290,33 +305,33 @@
             </div>
             
             <div class="flex flex-col md:flex-row gap-6 pb-12">
-                <div class="w-full md:w-1/3 bg-white rounded-lg shadow p-6 border border-gray-100 h-fit">
+                <div class="w-full md:w-1/3 bg-white rounded-lg shadow-md p-6 border border-gray-100 h-fit">
                     <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mb-4">1. Gerenciar Ciclos</h3>
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-primary mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
-                        <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border border-blue-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary bg-blue-50"></select>
-                        <p class="text-[10px] text-gray-500 mt-1">Os outros ciclos ficarão trancados para edição.</p>
+                    <div class="mb-4 bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                        <label class="block text-sm font-semibold text-gray-800 mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
+                        <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary bg-white"></select>
+                        <p class="text-[10px] text-gray-500 mt-2 font-medium"><i class="fas fa-info-circle text-warning"></i> Dica: Para destrancar um ciclo antigo, basta selecioná-lo aqui.</p>
                     </div>
                     
                     <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mt-8 mb-4">2. Importar Novo Excel</h3>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Atualizar ciclo existente</label>
-                        <select id="import-cycle-select" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary bg-gray-50"></select>
+                        <select id="import-cycle-select" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary bg-gray-50"></select>
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
-                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26 (Junho e Julho/2026)" class="w-full border rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-gray-50">
+                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-white">
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
-                        <input type="file" id="import-file-input" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100">
+                        <input type="file" id="import-file-input" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100 bg-white">
                     </div>
-                    <button id="import-btn" class="w-full bg-blue-400 text-white rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow">
+                    <button id="import-btn" class="w-full bg-gray-300 text-gray-500 rounded-lg py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow-sm">
                         Importar 0 comentário(s)
                     </button>
                 </div>
                 
-                <div class="w-full md:w-2/3 bg-white rounded-lg shadow border border-gray-100 max-h-[500px] overflow-y-auto">
+                <div class="w-full md:w-2/3 bg-white rounded-lg shadow-md border border-gray-100 max-h-[500px] overflow-y-auto">
                     <div class="px-6 py-4 border-b sticky top-0 bg-white z-10">
                         <h3 class="font-bold text-gray-800 text-lg">Prévia por aba</h3>
                     </div>
@@ -329,9 +344,9 @@
             </div>
         </div>
         
-        <!-- ADMIN REPAGINADO (CARDS) -->
+        <!-- VISÃO: ADMIN -->
         <div id="view-admin" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
-            <div class="flex justify-between items-end mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                 <div>
                     <h2 class="text-3xl font-bold mb-2 text-primary">Painel de Administração</h2>
                     <p class="text-gray-500 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
@@ -340,7 +355,7 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12" id="adminTableBody">
-                <!-- Cards de Usuário Renderizados aqui -->
+                <!-- Cards Renderizados -->
             </div>
         </div>
 
@@ -353,7 +368,7 @@
             
             <div class="mb-4">
                 <label class="block text-sm font-bold text-gray-700 mb-1">E-mail do Usuário</label>
-                <input type="email" id="admin-user-email" class="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-secondary bg-gray-50 text-gray-800">
+                <input type="email" id="admin-user-email" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-secondary bg-white text-gray-800">
             </div>
 
             <div class="mb-4 bg-blue-50 border border-blue-100 p-4 rounded-lg">
@@ -371,7 +386,7 @@
                 <div id="admin-pwd-container" class="mt-4 pt-4 border-t border-blue-200">
                     <label class="block text-xs font-bold text-gray-600 mb-1">Senha Provisória</label>
                     <input type="text" id="admin-user-password" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-secondary text-gray-800" placeholder="Ex: 1234">
-                    <p class="text-[10px] text-gray-500 mt-1 italic">Dica: Se a senha for <span class="font-bold">1234</span> ou <span class="font-bold">123456</span>, o usuário será obrigado a trocar no primeiro acesso.</p>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">Dica: Se a senha for <span class="font-bold">1234</span>, o usuário será obrigado a trocar no primeiro acesso.</p>
                 </div>
             </div>
 
@@ -384,7 +399,7 @@
                 <div id="admin-areas-checkboxes" class="flex flex-col gap-3"></div>
             </div>
             
-            <div class="flex justify-between items-center shrink-0">
+            <div class="flex justify-between items-center shrink-0 mt-2">
                 <button onclick="deleteUser()" id="admin-delete-btn" class="text-danger text-sm font-bold hover:underline hidden"><i class="fas fa-trash"></i> Excluir Conta</button>
                 <div class="flex gap-3 ml-auto">
                     <button onclick="closeAdminModal()" class="px-5 py-2.5 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm font-bold">Cancelar</button>
@@ -402,7 +417,7 @@
             <button onclick="closePanel()" class="text-gray-400 hover:text-gray-600 rounded-full p-1 border hover:bg-gray-50 w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
         </div>
         <div class="flex-1 overflow-y-auto p-6">
-            <div class="bg-gray-50 border rounded p-4 mb-6 text-sm">
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-sm">
                 <div class="flex flex-wrap gap-x-4 gap-y-2 text-gray-500 mb-2">
                     <span id="panel-etapa" class="font-bold text-gray-700">Etapa</span>
                     <span id="panel-unidade">Unidade</span>
@@ -419,7 +434,7 @@
                 <input type="hidden" id="form-item-id">
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Plano de ação Previsto</label>
-                    <textarea id="form-plano" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
+                    <textarea id="form-plano" rows="4" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
                 </div>
                 <!-- Oculto Ação Executada -->
                 <div class="mb-4 hidden">
@@ -512,7 +527,7 @@
                     }
                 }
             } catch (err) {
-                console.warn("Aviso: Falha ao sincronizar. Usando base vazia.", err);
+                console.warn("Aviso: Falha ao sincronizar. Usando base vazia.");
                 adminUsers = defaultAdmin;
                 appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
             } finally {
@@ -552,13 +567,15 @@
                 document.getElementById('preview-favicon').src = appSettings.favicon;
             }
         }
-        function triggerLogoUpload() {
+        function openBrandingModal() {
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             if (user && user.areas.includes('all')) {
                 document.getElementById('branding-modal').classList.remove('hidden');
                 if(appSettings.headerLogo) document.getElementById('preview-header').src = appSettings.headerLogo;
                 if(appSettings.loginLogo) document.getElementById('preview-login').src = appSettings.loginLogo;
                 if(appSettings.favicon) document.getElementById('preview-favicon').src = appSettings.favicon;
+            } else {
+                alert("Acesso Negado: Apenas administradores podem acessar as Configurações de Design.");
             }
         }
         function closeBrandingModal() { document.getElementById('branding-modal').classList.add('hidden'); }
@@ -767,8 +784,7 @@
                 importSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 vigenteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
             } else {
-                // Inverter para mostrar os mais recentes primeiro
-                [...appState.cycles].reverse().forEach(c => {
+                appState.cycles.forEach(c => {
                     let selAct = c.name === appState.activeCycleName ? 'selected' : '';
                     let selVig = c.name === appState.vigenteCycle ? 'selected' : '';
                     
@@ -785,10 +801,11 @@
             document.getElementById('import-cycle-select').value = newCycleName;
             
             const isVigente = appState.activeCycleName === appState.vigenteCycle;
-            const banner = document.getElementById('read-only-banner-dash');
-            if(banner) {
-                if(!isVigente) banner.classList.remove('hidden');
-                else banner.classList.add('hidden');
+            const bannerDash = document.getElementById('read-only-banner-dash');
+            
+            if(bannerDash) {
+                if(!isVigente) bannerDash.classList.remove('hidden');
+                else bannerDash.classList.add('hidden');
             }
 
             renderDashboard();
@@ -802,9 +819,11 @@
             await saveStateToSupabase();
             updateCycleDropdowns();
             
-            const banner = document.getElementById('read-only-banner-dash');
-            if(appState.activeCycleName === appState.vigenteCycle && banner) {
-                banner.classList.add('hidden');
+            const bannerDash = document.getElementById('read-only-banner-dash');
+            if(appState.activeCycleName === appState.vigenteCycle) {
+                if(bannerDash) bannerDash.classList.add('hidden');
+            } else {
+                if(bannerDash) bannerDash.classList.remove('hidden');
             }
             alert("Ciclo Vigente alterado com sucesso! Apenas este ciclo permitirá edições.");
         }
@@ -836,12 +855,12 @@
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
 
             const isVigente = appState.activeCycleName === appState.vigenteCycle;
-            const banner = document.getElementById('read-only-banner-dash');
+            const bannerDash = document.getElementById('read-only-banner-dash');
             
             if(!isVigente && (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'global-comments')) {
-                if(banner) banner.classList.remove('hidden');
+                if(bannerDash) bannerDash.classList.remove('hidden');
             } else {
-                if(banner) banner.classList.add('hidden');
+                if(bannerDash) bannerDash.classList.add('hidden');
             }
 
             if(viewId === 'dashboard') renderDashboard();
@@ -1237,7 +1256,6 @@
             }
         }
 
-        // --- IMPORTAÇÃO EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -1412,7 +1430,7 @@
             navigate('dashboard');
         }
 
-        // --- PAINEL ADMIN COM CARDS (NOVO) ---
+        // --- PAINEL ADMIN COM CARDS ---
         let editingUserEmail = null;
 
         function renderAdminTable() {
