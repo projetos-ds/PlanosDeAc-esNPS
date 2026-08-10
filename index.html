@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Bibliotecas: Ler Excel e Supabase -->
+    <!-- Bibliotecas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -43,7 +43,6 @@
         .filter-btn.active { background-color: #1e40af; color: white; border-color: #1e40af; }
         #loading-overlay { display: flex; }
         .hidden-loader { display: none !important; }
-        .user-select-none { user-select: none; -webkit-user-select: none; }
     </style>
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
@@ -51,23 +50,23 @@
     <!-- Uploader Oculto para Logo -->
     <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
 
-    <!-- TELA DE LOGIN COM SENHA -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
         <div class="bg-white p-10 rounded-xl shadow-2xl w-[400px] text-center relative">
             <div class="mb-6 flex justify-center">
-                <div class="bg-primary px-3 py-2 rounded-lg flex items-center justify-center h-16 w-auto min-w-[120px] overflow-hidden">
-                    <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain">
+                <div class="relative group cursor-pointer" onclick="triggerLogoUpload()" title="Clique para alterar a logo">
+                    <div class="bg-primary px-3 py-2 rounded-lg flex items-center justify-center h-16 w-auto min-w-[120px] overflow-hidden">
+                        <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
+                    </div>
+                    <div class="absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition-opacity">Trocar Logo</div>
                 </div>
             </div>
             <h2 class="text-2xl font-bold mb-2 text-gray-800">Acesso Restrito</h2>
-            <p class="text-sm text-gray-500 mb-8">Faça login para acessar os Planos de Ação.</p>
+            <p class="text-sm text-gray-500 mb-8">Digite seu e-mail corporativo para acessar os Planos de Ação do NPS.</p>
             
-            <input type="email" id="login-email" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left" placeholder="E-mail corporativo">
+            <input type="email" id="login-email" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left" placeholder="exemplo@fasttennis.com.br">
             
-            <!-- NOVO CAMPO DE SENHA -->
-            <input type="password" id="login-password" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left" placeholder="Senha">
-            
-            <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ E-mail ou senha incorretos.</div>
+            <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ Acesso negado. Este e-mail não possui permissão no sistema.</div>
             
             <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors">Entrar no Sistema</button>
         </div>
@@ -77,17 +76,17 @@
     <div id="loading-overlay" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center text-white">
         <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
         <h2 class="text-xl font-bold">Conectando à Nuvem...</h2>
-        <p class="text-blue-200 mt-2 text-sm">Sincronizando dados do Supabase</p>
+        <p class="text-blue-200 mt-2 text-sm">Sincronizando dados no Supabase</p>
     </div>
 
     <!-- SISTEMA PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-6 py-4 flex-shrink-0">
         <div class="flex items-center gap-4">
-            <!-- LOGO: 1 CLIQUE = HOME | 2 CLIQUES = TROCAR -->
-            <div class="cursor-pointer user-select-none" onclick="navigate('dashboard')" ondblclick="triggerLogoUpload()" title="Clique duplo para alterar a logo (Admin)">
+            <div class="relative group cursor-pointer" onclick="triggerLogoUpload()" title="Clique para alterar a logo">
                 <div class="px-2 py-1.5 rounded flex items-center justify-center overflow-hidden hover:bg-blue-800 transition-all h-12 w-auto min-w-[120px]">
-                    <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain pointer-events-none">
+                    <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmZmZmYiIGZvbnQtd2VpZ2h0PSJib2xkIj5GYXN0IFRlbm5pczwvdGV4dD48L3N2Zz4='">
                 </div>
+                <div id="header-logo-overlay" class="hidden absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 items-center justify-center font-bold transition-opacity">Trocar Logo</div>
             </div>
             <h1 class="font-bold text-lg tracking-wide uppercase">Planos de Ação - NPS</h1>
         </div>
@@ -95,9 +94,11 @@
         <nav class="flex items-center gap-6 text-sm font-medium">
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="opacity-100 border-b-2 border-white pb-1">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="opacity-70 hover:opacity-100 pb-1">Áreas</button>
+            
             <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
             <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
             
+            <!-- STATUS DE SINCRONIZAÇÃO (Visível apenas para Admin) -->
             <div id="sync-status" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow" title="Status da conexão com a nuvem">
                 <i class="fas fa-check"></i> Nuvem atualizada
             </div>
@@ -120,11 +121,10 @@
             <div class="flex justify-between items-end mb-8 text-white">
                 <div>
                     <h2 class="text-3xl font-bold mb-2">Visão geral do ciclo</h2>
-                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos de ação.</p>
+                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos de ação de cada head.</p>
                 </div>
-                <!-- SELETOR DE CICLO NO DASHBOARD -->
-                <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold">
-                    <!-- Preenchido via JS -->
+                <select class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none">
+                    <option>Ciclo Atual</option>
                 </select>
             </div>
 
@@ -151,7 +151,7 @@
                 </div>
             </div>
 
-            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-20">Áreas de Atuação</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-1 mt-12">Áreas de Atuação</h3>
             <div class="grid grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
         </div>
 
@@ -159,52 +159,42 @@
         <div id="view-areas" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
                 <h2 class="text-3xl font-bold mb-2">Áreas</h2>
-                <p class="text-blue-100 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
+                <p class="text-blue-100 text-sm">Cada head entra na sua área, lê os comentários do ciclo e cria os planos de ação cabíveis.</p>
             </div>
             <div class="grid grid-cols-4 gap-4 pb-12" id="areas-list-grid"></div>
         </div>
 
-        <!-- IMPORTAR (NOVO LAYOUT DE CICLOS) -->
+        <!-- IMPORTAR -->
         <div id="view-import" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
                 <h2 class="text-3xl font-bold mb-2">Importar planilha do ciclo</h2>
-                <p class="text-blue-100 text-sm">Suba o arquivo Excel do ciclo vigente com uma aba por área. Os comentários são distribuídos automaticamente.</p>
+                <p class="text-blue-100 text-sm">Suba o arquivo Excel. As áreas serão criadas automaticamente a partir das abas da planilha.</p>
             </div>
             
             <div class="flex gap-6 pb-12">
                 <div class="w-1/3 bg-white rounded-lg shadow p-6 border border-gray-100 h-fit">
-                    
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ciclo existente (Atualizar dados)</label>
-                        <select id="import-cycle-select" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
-                            <!-- Preenchido via JS -->
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ação a ser realizada</label>
+                        <select class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary bg-gray-50 cursor-not-allowed" disabled>
+                            <option>Substituir Dados Atuais (Apaga o ciclo anterior)</option>
                         </select>
                     </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
-                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26 (Junho e Julho/2026)" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
-                        <p class="text-[10px] text-gray-400 mt-1">Padrão de nome: Ciclo MM/AA com os meses de referência.</p>
-                    </div>
-
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
-                        <input type="file" id="import-file-input" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100">
-                        <p class="text-[10px] text-gray-400 mt-1">Formatos aceitos: Excel moderno (.xlsx) e Excel 97-2003.</p>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Selecione o Arquivo (.xlsx)</label>
+                        <input type="file" accept=".xlsx, .xls" onchange="readRealExcel(this)" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-primary hover:file:bg-blue-100">
                     </div>
-
-                    <button id="import-btn" class="w-full bg-blue-400 text-white rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow">
-                        Importar 0 comentário(s)
+                    <button id="import-btn" class="w-full bg-gray-300 text-gray-500 rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow">
+                        Aguardando leitura do arquivo...
                     </button>
                 </div>
                 
                 <div class="w-2/3 bg-white rounded-lg shadow border border-gray-100 max-h-[500px] overflow-y-auto">
                     <div class="px-6 py-4 border-b sticky top-0 bg-white z-10">
-                        <h3 class="font-bold text-gray-800 text-lg">Prévia por aba</h3>
+                        <h3 class="font-bold text-gray-800 text-lg">Prévia das Abas do seu Excel</h3>
                     </div>
                     <div id="import-preview-empty" class="p-12 flex flex-col items-center justify-center text-gray-400">
                         <i class="fas fa-file-excel text-4xl mb-3"></i>
-                        <p class="text-sm">Selecione um arquivo para ver como as abas serão associadas às áreas.</p>
+                        <h3 class="font-medium text-gray-600">Nenhum arquivo selecionado</h3>
                     </div>
                     <div id="import-preview-list" class="hidden"></div>
                 </div>
@@ -214,19 +204,19 @@
         <!-- ADMIN -->
         <div id="view-admin" class="page-view px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
-                <h2 class="text-3xl font-bold mb-2">Painel de Administração</h2>
-                <p class="text-blue-100 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
+                <h2 class="text-3xl font-bold mb-2">Painel de Acessos</h2>
+                <p class="text-blue-100 text-sm">Atribua quais áreas cada membro da equipe pode gerenciar.</p>
             </div>
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-gray-800 text-lg">Gestão de Usuários</h3>
-                    <button onclick="openAdminModal()" class="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-600 transition-colors shadow"><i class="fas fa-plus mr-1"></i> Novo Usuário</button>
+                    <h3 class="font-bold text-gray-800 text-lg">Gestão de Permissões</h3>
+                    <button onclick="openAdminModal()" class="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-600 transition-colors shadow"><i class="fas fa-plus mr-1"></i> Adicionar Usuário</button>
                 </div>
                 <table class="w-full text-left text-sm text-gray-600">
                     <thead class="bg-gray-50 border-b">
                         <tr>
-                            <th class="py-3 px-4 font-semibold text-gray-700">E-mail de Acesso</th>
-                            <th class="py-3 px-4 font-semibold text-gray-700">Permissão (Áreas)</th>
+                            <th class="py-3 px-4 font-semibold text-gray-700">E-mail do Usuário</th>
+                            <th class="py-3 px-4 font-semibold text-gray-700">Permissão de Edição</th>
                             <th class="py-3 px-4 font-semibold text-gray-700 w-24">Ações</th>
                         </tr>
                     </thead>
@@ -252,12 +242,13 @@
                 </div>
             </div>
 
+            <!-- FILTROS REPARADOS -->
             <div class="flex justify-between items-center mb-6">
                 <div class="flex gap-2" id="filter-buttons">
-                    <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm">Todos</button>
-                    <button onclick="setFilter('Em aberto')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm">Em aberto</button>
-                    <button onclick="setFilter('Sem plano')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm">Sem plano</button>
-                    <button onclick="setFilter('Atrasados')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm">Atrasados</button>
+                    <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Todos</button>
+                    <button onclick="setFilter('Em aberto')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Em aberto</button>
+                    <button onclick="setFilter('Sem plano')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Sem plano</button>
+                    <button onclick="setFilter('Atrasados')" class="filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50">Atrasados</button>
                 </div>
             </div>
 
@@ -268,34 +259,22 @@
     <!-- Modal Admin Permissões -->
     <div id="admin-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center">
         <div class="bg-white rounded-lg p-6 w-[500px] shadow-xl max-h-[90vh] flex flex-col">
-            <h3 class="font-bold text-lg text-gray-800 mb-4" id="admin-modal-title">Editar Permissões & Senha</h3>
-            
-            <div class="flex gap-4 mb-4">
-                <div class="w-1/2">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">E-mail do Usuário</label>
-                    <input type="email" id="admin-user-email" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary bg-gray-50">
-                </div>
-                <div class="w-1/2">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Senha (Login)</label>
-                    <input type="text" id="admin-user-password" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary" placeholder="Ex: 123456">
-                </div>
+            <h3 class="font-bold text-lg text-gray-800 mb-4" id="admin-modal-title">Editar Permissões</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">E-mail do Usuário</label>
+                <input type="email" id="admin-user-email" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary">
             </div>
-
             <label class="block text-sm font-semibold text-gray-700 mb-2">Áreas Permitidas para Edição</label>
             <div class="border rounded p-3 bg-gray-50 flex-1 overflow-y-auto mb-6">
                 <label class="flex items-center gap-2 mb-2 pb-2 border-b cursor-pointer">
                     <input type="checkbox" id="admin-check-all" class="w-4 h-4 text-primary" onchange="toggleAllAdminAreas(this)">
-                    <span class="font-bold text-gray-800 text-sm">Administrador Geral (Acesso Total)</span>
+                    <span class="font-bold text-gray-800 text-sm">Administrador Geral (Todas as Áreas)</span>
                 </label>
                 <div id="admin-areas-checkboxes" class="flex flex-col gap-2"></div>
             </div>
-            
-            <div class="flex justify-between items-center shrink-0">
-                <button onclick="deleteUser()" id="admin-delete-btn" class="text-danger text-sm font-semibold hover:underline hidden"><i class="fas fa-trash"></i> Excluir</button>
-                <div class="flex gap-3 ml-auto">
-                    <button onclick="closeAdminModal()" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50 text-sm font-medium">Cancelar</button>
-                    <button onclick="saveAdminModal()" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-800 text-sm font-medium shadow">Salvar Usuário</button>
-                </div>
+            <div class="flex justify-end gap-3 shrink-0">
+                <button onclick="closeAdminModal()" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50 text-sm font-medium">Cancelar</button>
+                <button onclick="saveAdminModal()" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-800 text-sm font-medium shadow">Salvar Usuário</button>
             </div>
         </div>
     </div>
@@ -354,7 +333,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL -->
+    <!-- SCRIPT PRINCIPAL E INTEGRAÇÃO SUPABASE -->
     <script>
         // ======= 1. CONFIGURAÇÃO SUPABASE =======
         let supabaseClient;
@@ -364,28 +343,23 @@
             if (window.supabase) {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
-        } catch(e) { console.error("Erro ao inicializar Supabase:", e); }
+        } catch(e) {
+            console.error("Erro ao inicializar Supabase:", e);
+        }
 
         // ======= 2. VARIÁVEIS GLOBAIS =======
         let loggedEmail = null; 
-        
-        // Estrutura atualizada: array de ciclos
-        let appState = {
-            cycles: [], 
-            activeCycleName: null
-        };
-        
+        let areasData = [];
         let adminUsers = [];
         let currentAreaId = null;
         let currentFilter = 'Todos';
         let pendingImportData = null;
 
         const defaultAdmin = [
-            { email: 'daniela@fasttennis.com.br', password: '123', areas: ['all'] },
-            { email: 'ladeira@fasttennis.com.br', password: '123', areas: ['all'] }
+            { email: 'ladeira@fasttennis.com.br', areas: ['all'] }
         ];
 
-        // ======= 3. INICIALIZAÇÃO =======
+        // ======= 3. INICIALIZAÇÃO (LOGIN & NUVEM) =======
         window.addEventListener('DOMContentLoaded', async () => {
             try {
                 if (!supabaseClient) throw new Error("Supabase não carregou.");
@@ -394,35 +368,22 @@
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
                 
                 const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+                
                 if (error) throw error;
                 
                 if (data) {
-                    let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
-                    // Garante que todo user tenha senha (Migração)
-                    adminUsers = (Array.isArray(aUsers) && aUsers.length > 0) ? aUsers.map(u => ({...u, password: u.password || '123456'})) : defaultAdmin;
-                    
                     let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
+                    let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
                     
-                    // MIGRAR DADOS ANTIGOS PARA O NOVO FORMATO DE CICLOS
-                    if(Array.isArray(aData)) {
-                        appState = {
-                            cycles: [{ name: 'Ciclo Vigente', data: aData }],
-                            activeCycleName: 'Ciclo Vigente'
-                        };
-                    } else if (aData && aData.cycles) {
-                        appState = aData; // Já está no formato novo
-                    } else {
-                        appState = { cycles: [], activeCycleName: null };
-                    }
+                    adminUsers = (Array.isArray(aUsers) && aUsers.length > 0) ? aUsers : defaultAdmin;
+                    areasData = (Array.isArray(aData)) ? aData : [];
                 }
             } catch (err) {
-                console.warn("Aviso: Falha ao sincronizar. Usando base vazia.", err);
+                console.warn("Aviso: Falha ao sincronizar com Nuvem. Carregando dados base.");
                 adminUsers = defaultAdmin;
-                appState = { cycles: [], activeCycleName: null };
+                areasData = [];
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
-                
-                updateCycleDropdowns(); // Preenche os menus de ciclo
                 
                 const savedSession = localStorage.getItem('fastTennisUser');
                 if (savedSession) {
@@ -439,22 +400,12 @@
             }
         });
 
-        // Obtém os dados do ciclo atualmente selecionado
-        function getActiveCycleData() {
-            if(!appState.activeCycleName || appState.cycles.length === 0) return [];
-            const cycle = appState.cycles.find(c => c.name === appState.activeCycleName);
-            return cycle ? cycle.data : [];
-        }
-
-        // ======= SISTEMA DE LOGIN COM SENHA =======
+        // ======= SISTEMA DE LOGIN =======
         function handleLogin() {
             const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
-            const passInput = document.getElementById('login-password').value.trim();
-            
-            if(!emailInput || !passInput) return;
+            if(!emailInput) return;
 
-            const user = adminUsers.find(u => u.email.toLowerCase() === emailInput && u.password === passInput);
-            
+            const user = adminUsers.find(u => u.email.toLowerCase() === emailInput);
             if (user) {
                 localStorage.setItem('fastTennisUser', emailInput);
                 document.getElementById('login-screen').classList.add('hidden');
@@ -483,16 +434,19 @@
             
             const adminNav = document.getElementById('nav-admin');
             const importNav = document.getElementById('nav-import');
+            const logoOverlay = document.getElementById('header-logo-overlay');
             const syncStatus = document.getElementById('sync-status');
             
             if(isAdmin) {
                 adminNav.classList.remove('hidden');
                 importNav.classList.remove('hidden');
                 syncStatus.classList.replace('hidden', 'inline-block');
+                logoOverlay.classList.replace('hidden', 'flex'); 
             } else {
                 adminNav.classList.add('hidden');
                 importNav.classList.add('hidden');
                 syncStatus.classList.replace('inline-block', 'hidden');
+                logoOverlay.classList.replace('flex', 'hidden'); 
             }
         }
 
@@ -503,9 +457,10 @@
             return user.areas.includes(areaId);
         }
 
-        // ======= SALVAMENTO NO SUPABASE (UPSERT) =======
+        // ======= 4. FUNÇÕES DO SISTEMA E NUVEM =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
+            
             const syncUI = document.getElementById('sync-status');
             if(syncUI && !syncUI.classList.contains('hidden')) {
                 syncUI.innerHTML = '<i class="fas fa-sync fa-spin"></i> Salvando...';
@@ -513,9 +468,9 @@
             }
 
             try {
-                // Upsert: Atualiza ou insere se o ID 1 não existir
                 const { error } = await supabaseClient.from('app_state')
-                    .upsert({ id: 1, areas_data: appState, admin_users: adminUsers });
+                    .update({ areas_data: areasData, admin_users: adminUsers })
+                    .eq('id', 1);
                 
                 if(error) throw error;
 
@@ -526,14 +481,14 @@
             } catch(err) {
                 console.error("Erro na API:", err);
                 if(syncUI && !syncUI.classList.contains('hidden')) {
-                    syncUI.innerHTML = '<i class="fas fa-times"></i> Erro (Veja o código SQL)';
+                    syncUI.innerHTML = '<i class="fas fa-times"></i> Erro ao salvar';
                     syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
-                    alert("Atenção: O Supabase bloqueou a gravação! Verifique se você rodou o código SQL com WITH CHECK (true).");
+                    syncUI.title = err.message + " (Verifique a permissão SQL)";
+                    alert("O Supabase bloqueou o salvamento. Tem certeza que rodou o código SQL com 'WITH CHECK (true)'?");
                 }
             }
         }
 
-        // ======= CONTROLE DE LOGO =======
         window.onload = () => {
             const savedLogo = localStorage.getItem('fastTennisLogo');
             if(savedLogo) {
@@ -570,40 +525,6 @@
             }
         }
 
-        // ======= SISTEMA MULTI-CICLOS =======
-        function updateCycleDropdowns() {
-            const dashSelect = document.getElementById('dashboard-cycle-select');
-            const importSelect = document.getElementById('import-cycle-select');
-            
-            dashSelect.innerHTML = '';
-            importSelect.innerHTML = '';
-            
-            if(appState.cycles.length === 0) {
-                dashSelect.innerHTML = '<option value="">Nenhum ciclo criado</option>';
-                importSelect.innerHTML = '<option value="">Nenhum ciclo existente</option>';
-            } else {
-                appState.cycles.forEach(c => {
-                    let sel = c.name === appState.activeCycleName ? 'selected' : '';
-                    dashSelect.innerHTML += `<option value="${c.name}" ${sel}>${c.name}</option>`;
-                    importSelect.innerHTML += `<option value="${c.name}" ${sel}>${c.name}</option>`;
-                });
-            }
-        }
-
-        function changeActiveCycle(newCycleName) {
-            if(!newCycleName) return;
-            appState.activeCycleName = newCycleName;
-            
-            // Opcional: Atualiza o dropdown na tela de importação para combinar
-            document.getElementById('import-cycle-select').value = newCycleName;
-            
-            // Refaz a tela com os dados do ciclo selecionado
-            renderDashboard();
-            if(!document.getElementById('view-areas').classList.contains('hidden')) renderAreasList();
-        }
-
-
-        // ======= NAVEGAÇÃO & DASHBOARD =======
         function navigate(viewId) {
             if (viewId === 'admin' || viewId === 'import') {
                 const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
@@ -626,32 +547,19 @@
             if(viewId === 'admin') renderAdminTable();
         }
 
-        function parseBrDate(dStr) {
-            if(!dStr) return null;
-            dStr = String(dStr).trim();
-            if(dStr.includes('/')) {
-                let parts = dStr.split('/');
-                if(parts.length === 3) {
-                    let year = parts[2].length === 2 ? '20' + parts[2] : parts[2];
-                    return new Date(`${year}-${parts[1]}-${parts[0]}T12:00:00`);
-                }
-            }
-            return new Date(dStr);
-        }
-
-        function calculateGlobalStats(activeData) {
+        function calculateGlobalStats() {
             let tComments = 0, tDone = 0, tLate = 0, tNoPlan = 0;
             const today = new Date();
             today.setHours(0,0,0,0);
             
-            activeData.forEach(area => {
+            areasData.forEach(area => {
                 let areaLate = 0, areaNoPlan = 0;
-                let items = area.items || [];
-                items.forEach(item => {
+                area.items.forEach(item => {
                     if(!item.plan || item.plan.trim() === '') areaNoPlan++;
-                    if(item.status !== 'Concluído' && item.date && item.date.trim() !== '') {
-                        let itemDate = parseBrDate(item.date);
-                        if(itemDate && !isNaN(itemDate) && itemDate < today) areaLate++;
+                    if(item.status !== 'Concluído' && item.date) {
+                        const d = new Date(item.date);
+                        d.setHours(0,0,0,0);
+                        if(d < today) areaLate++;
                     }
                 });
                 
@@ -670,22 +578,20 @@
         }
 
         function renderDashboard() {
-            const activeData = getActiveCycleData();
-            calculateGlobalStats(activeData);
-            
+            calculateGlobalStats();
             const grid = document.getElementById('dashboard-areas-grid');
             grid.innerHTML = '';
             
-            if(activeData.length === 0) {
-                grid.innerHTML = '<div class="col-span-4 text-center py-10 text-gray-500 font-medium">Nenhum dado neste ciclo. Vá em Importar Planilha para carregar os comentários.</div>';
+            if(areasData.length === 0) {
+                grid.innerHTML = '<div class="col-span-4 text-center py-10 text-gray-500 font-medium">Nenhum ciclo ativo na nuvem. Administrador, vá em Importar Planilha para carregar os dados.</div>';
                 return;
             }
 
-            activeData.forEach(area => {
+            areasData.forEach(area => {
                 const progress = area.comments > 0 ? Math.round((area.done / area.comments) * 100) : 0;
                 
                 let npsBadge = '';
-                if (area.realNps === null || area.realNps === undefined || area.realNps === '') {
+                if (area.realNps === null || area.realNps === undefined) {
                     npsBadge = `<span class="bg-gray-100 text-gray-400 text-xs font-semibold px-2 py-1 rounded">NPS —</span>`;
                 } else {
                     let colorClass = '';
@@ -722,16 +628,15 @@
         }
 
         function renderAreasList() {
-            const activeData = getActiveCycleData();
             const grid = document.getElementById('areas-list-grid');
             grid.innerHTML = '';
             
-            if(activeData.length === 0) {
+            if(areasData.length === 0) {
                 grid.innerHTML = '<div class="col-span-4 text-center py-10 text-gray-500">Nenhum ciclo importado.</div>';
                 return;
             }
 
-            activeData.forEach(area => {
+            areasData.forEach(area => {
                 grid.innerHTML += `
                     <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 flex justify-between items-center cursor-pointer hover:border-accent hover:shadow-md" onclick="openArea('${area.id}')">
                         <h4 class="font-bold text-gray-800">${area.name}</h4>
@@ -743,7 +648,7 @@
         function setFilter(filterType) {
             currentFilter = filterType;
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = "filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 shadow-sm";
+                btn.className = "filter-btn bg-white text-gray-600 border px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50";
                 if(btn.innerText === filterType) {
                     btn.classList.add('active');
                     btn.classList.remove('bg-white', 'text-gray-600');
@@ -754,38 +659,31 @@
 
         function openArea(areaId) {
             currentAreaId = areaId;
-            const activeData = getActiveCycleData();
-            const area = activeData.find(a => a.id === areaId);
+            const area = areasData.find(a => a.id === areaId);
             document.getElementById('detail-title').innerText = area.name;
-            document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps !== null && area.realNps !== '' ? area.realNps : '—'}`;
+            document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps !== null ? area.realNps : '—'}`;
             document.getElementById('detail-stats').innerText = `${area.done}/${area.comments} concluídos`;
             setFilter('Todos');
             navigate('area-detail');
         }
 
         function renderCommentsList() {
-            const activeData = getActiveCycleData();
-            const area = activeData.find(a => a.id === currentAreaId);
+            const area = areasData.find(a => a.id === currentAreaId);
             const container = document.getElementById('comments-list');
             container.innerHTML = '';
 
             const today = new Date();
             today.setHours(0,0,0,0);
             
-            let items = area.items || [];
-            
-            let filteredItems = items.filter(item => {
+            let filteredItems = area.items.filter(item => {
                 if(currentFilter === 'Todos') return true;
                 if(currentFilter === 'Em aberto') return item.status !== 'Concluído';
                 if(currentFilter === 'Sem plano') return (!item.plan || item.plan.trim() === '');
                 if(currentFilter === 'Atrasados') {
                     if(!item.date || item.status === 'Concluído') return false;
-                    let itemDate = parseBrDate(item.date);
-                    if(itemDate && !isNaN(itemDate)) {
-                        itemDate.setHours(0,0,0,0);
-                        return itemDate < today;
-                    }
-                    return false;
+                    const itemDate = new Date(item.date);
+                    itemDate.setHours(0,0,0,0); 
+                    return itemDate < today;
                 }
                 return true;
             });
@@ -799,6 +697,7 @@
                 let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
                 let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
+                // Prévia do Plano e Ação no Card
                 let planPreview = item.plan && item.plan.trim() !== ''
                     ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100">
                          <span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>
@@ -813,6 +712,7 @@
                        </div>`
                     : '';
 
+                // Usando aspas seguras para o ID gerado dinamicamente
                 container.innerHTML += `
                     <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel('${item.id}')">
                         <div class="flex justify-between items-start mb-3">
@@ -840,16 +740,14 @@
                 alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS validado.");
                 return;
             }
-            const activeData = getActiveCycleData();
-            const area = activeData.find(a => a.id === currentAreaId);
-            const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps !== null && area.realNps !== '' ? area.realNps : 'Nenhum'})`);
+            const area = areasData.find(a => a.id === currentAreaId);
+            const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps !== null ? area.realNps : 'Nenhum'})`);
             if(newVal !== null && newVal.trim() !== '') {
                 area.realNps = parseInt(newVal);
                 document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps}`;
                 
                 await saveStateToSupabase();
-                calculateGlobalStats(activeData);
-                if(!document.getElementById('view-dashboard').classList.contains('hidden')) renderDashboard();
+                calculateGlobalStats();
             }
         }
 
@@ -858,11 +756,10 @@
                 alert("TRAVA DE SEGURANÇA:\nVocê não tem permissão para editar os planos desta área.");
                 return;
             }
-            const activeData = getActiveCycleData();
-            const item = activeData.find(a=>a.id===currentAreaId).items.find(i=>i.id===itemId);
+            const item = areasData.find(a=>a.id===currentAreaId).items.find(i=>i.id===itemId);
             document.getElementById('form-item-id').value = item.id;
             
-            document.getElementById('panel-etapa').innerText = `Área: ${activeData.find(a=>a.id===currentAreaId).name}`;
+            document.getElementById('panel-etapa').innerText = `Área: ${areasData.find(a=>a.id===currentAreaId).name}`;
             document.getElementById('panel-unidade').innerText = `Unidade: ${item.location}`;
             document.getElementById('panel-nps').innerText = `Nota NPS: ${item.npsTotal}`;
             document.getElementById('panel-nps-area').innerText = `Nota da área: ${item.npsArea}`;
@@ -872,19 +769,7 @@
             document.getElementById('form-plano').value = item.plan || '';
             document.getElementById('form-acao').value = item.action || '';
             document.getElementById('form-responsavel').value = item.owner || '';
-            
-            let dateVal = '';
-            if(item.date && item.date.includes('/')) {
-                let p = item.date.split('/');
-                if(p.length === 3) {
-                    let y = p[2].length === 2 ? '20'+p[2] : p[2];
-                    dateVal = `${y}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
-                }
-            } else if (item.date && item.date.includes('-')) {
-                dateVal = item.date;
-            }
-            
-            document.getElementById('form-data').value = dateVal;
+            document.getElementById('form-data').value = item.date || '';
             document.getElementById('form-status').value = item.status;
             
             document.getElementById('slide-over-backdrop').classList.remove('hidden');
@@ -901,24 +786,16 @@
             btn.innerText = "Salvando na Nuvem...";
             btn.classList.add('opacity-50', 'cursor-wait');
 
-            const activeData = getActiveCycleData();
-            const area = activeData.find(a=>a.id===currentAreaId);
+            const area = areasData.find(a=>a.id===currentAreaId);
             const itemIdStr = document.getElementById('form-item-id').value;
-            const item = area.items.find(i=>i.id == itemIdStr); 
+            const item = area.items.find(i=>i.id == itemIdStr); // usa == pois string vs number
             
             item.plan = document.getElementById('form-plano').value;
             item.action = document.getElementById('form-acao').value;
             item.owner = document.getElementById('form-responsavel').value;
-            
-            let inputDate = document.getElementById('form-data').value;
-            if(inputDate && inputDate.includes('-')) {
-                let p = inputDate.split('-');
-                item.date = `${p[2]}/${p[1]}/${p[0]}`;
-            } else {
-                item.date = inputDate;
-            }
-            
+            item.date = document.getElementById('form-data').value;
             item.status = document.getElementById('form-status').value;
+            
             area.done = area.items.filter(i => i.status === 'Concluído').length;
             
             await saveStateToSupabase();
@@ -931,13 +808,13 @@
             renderCommentsList();
         }
 
-        // --- IMPORTAÇÃO INTELIGENTE DE EXCEL (NOVO CICLO OU ATUALIZAR) ---
+        // --- SISTEMA DE LEITURA E GERAÇÃO DINÂMICA DE ÁREAS PELO EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
             document.getElementById('import-preview-empty').classList.add('hidden');
             previewList.classList.remove('hidden');
-            previewList.innerHTML = '<div class="p-8 text-center text-gray-500">Aguarde, escaneando o arquivo... <i class="fas fa-spinner fa-spin ml-2"></i></div>';
+            previewList.innerHTML = '<div class="p-8 text-center text-gray-500">Lendo arquivo e extraindo comentários... <i class="fas fa-spinner fa-spin"></i></div>';
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -951,7 +828,7 @@
 
                     workbook.SheetNames.forEach(sheetName => {
                         const ws = workbook.Sheets[sheetName];
-                        const rows = XLSX.utils.sheet_to_json(ws, {header: 1, defval: '', raw: false});
+                        const rows = XLSX.utils.sheet_to_json(ws);
                         
                         if(sheetName.toLowerCase().includes('cópia') || sheetName.toLowerCase().includes('página') || sheetName.toLowerCase().includes('rede de cliente')) return;
                         
@@ -959,78 +836,61 @@
                         
                         let validRows = 0;
                         let tempItems = [];
-                        let headerRowIndex = -1;
-                        let headers = [];
-                        
-                        for(let i=0; i<Math.min(20, rows.length); i++) {
-                            let rowValues = rows[i] || [];
-                            let rowStr = rowValues.join(' ').toUpperCase();
-                            if(rowStr.includes('COMENT') || rowStr.includes('NPS') || rowStr.includes('STATUS')) {
-                                headerRowIndex = i;
-                                headers = rowValues.map(v => String(v).trim().toUpperCase());
-                                break;
-                            }
-                        }
 
-                        if(headerRowIndex !== -1) {
-                            for(let i = headerRowIndex + 1; i < rows.length; i++) {
-                                let rowData = rows[i] || [];
-                                if(rowData.length === 0 || rowData.every(c => c === '')) continue;
-                                
-                                const getVal = (possibleNames) => {
-                                    for(let name of possibleNames) {
-                                        let idx = headers.findIndex(h => h === name || h.includes(name));
-                                        if(idx !== -1 && rowData[idx] !== undefined && rowData[idx] !== '') return rowData[idx];
-                                    }
-                                    return '';
-                                };
-                                
-                                let comment = getVal(['COMENTÁRIO', 'COMENTARIO', 'COMMENT']);
-                                
-                                if(comment && String(comment).trim() !== '') {
-                                    validRows++;
-                                    let status = getVal(['STATUS']) || 'A iniciar';
-                                    let isDone = String(status).toLowerCase().includes('concluído') || String(status).toLowerCase().includes('concluido');
-                                    
-                                    tempItems.push({
-                                        id: 'item_' + Date.now().toString() + '_' + Math.floor(Math.random()*10000).toString(),
-                                        location: getVal(['UNIDADE', 'ÁREA', 'UNIDADES']) || 'Não identificada',
-                                        user: getVal(['FRANQUEADO', 'CLIENTE', 'NOME', 'NAME']) || 'Anônimo',
-                                        topic: getVal(['TEMA', 'ETAPA', 'ASSUNTO']) || 'Feedback',
-                                        npsTotal: getVal(['AVALIAÇÃO NPS', 'NOTA NPS', 'NPS', 'EVALUATION']) || '-',
-                                        npsArea: getVal(['NOTA DA ÁREA', 'NOTA ÁREA']) || '-',
-                                        comment: String(comment).trim(),
-                                        status: isDone ? 'Concluído' : (String(status).toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
-                                        plan: getVal(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO', 'PLANO']) || '',
-                                        action: getVal(['AÇÃO EXECUTADA', 'AÇÃO', 'ACAO']) || '',
-                                        owner: getVal(['RESPONSÁVEL', 'RESPONSAVEL']) || '',
-                                        date: getVal(['CRONOGRAMA', 'DATA PREVISTA', 'PRAZO', 'CONCLUSÃO']) || '',
-                                        pesquisa: getVal(['PESQUISA', 'ETAPA']) || '-'
-                                    });
+                        rows.forEach(row => {
+                            const getK = (keys) => {
+                                for(let k of keys) {
+                                    let found = Object.keys(row).find(rk => rk.trim().toUpperCase() === k.toUpperCase());
+                                    if(found && row[found] !== undefined) return row[found];
                                 }
+                                return '';
+                            };
+                            
+                            let comment = getK(['COMENTÁRIO', 'Comment', 'COMENTÁRIO ']);
+                            if(comment && String(comment).trim() !== '') {
+                                validRows++;
+                                let status = getK(['STATUS']) || 'A iniciar';
+                                let isDone = status.toLowerCase().includes('concluído') || status.toLowerCase().includes('concluido');
+                                
+                                tempItems.push({
+                                    id: 'item_' + Date.now().toString() + '_' + Math.floor(Math.random()*1000).toString(),
+                                    location: getK(['UNIDADE', 'ÁREA', 'Unidades', 'UNIDADE/CLIENTE']) || 'Não identificada',
+                                    user: getK(['CLIENTE/FRANQUEADO', 'CLIENTE', 'NOME', 'FRANQUEADO', 'Name']) || 'Anônimo',
+                                    topic: getK(['TEMA', 'ETAPA']) || 'Feedback',
+                                    npsTotal: getK(['AVALIAÇÃO NPS', 'NOTA NPS', 'NPS', 'Evaluation']) || '-',
+                                    npsArea: getK(['NOTA DA ÁREA', 'NOTA  DA ÁREA']) || '-',
+                                    comment: String(comment).trim(),
+                                    status: isDone ? 'Concluído' : (status.toLowerCase().includes('andamento') ? 'Em andamento' : 'A iniciar'),
+                                    plan: getK(['PLANO AÇÃO', 'PLANO DE AÇÃO', 'PLANO E AÇÃO']) || '',
+                                    action: '',
+                                    owner: '',
+                                    date: getK(['CRONOGRAMA', 'DATA PREVISTA PARA CONCLUSÃO DO PLANO DE AÇÃO', 'DATA PREVISTA']) || '',
+                                    pesquisa: getK(['PESQUISA', 'Pesquisa', 'ETAPA']) || '-'
+                                });
                             }
-                        }
+                        });
                         
-                        if(validRows > 0) {
+                        if(validRows > 0 || rows.length > 0) {
+                            let existingArea = areasData.find(a => a.id === rawId);
+                            let preservedNps = existingArea ? existingArea.realNps : null;
+
                             newAreasData.push({
                                 id: rawId,
                                 name: sheetName,
-                                realNps: null, // Novo ciclo zera o NPS manual
+                                realNps: preservedNps,
                                 comments: validRows,
                                 done: tempItems.filter(i => i.status === 'Concluído').length,
                                 late: 0,
                                 items: tempItems
                             });
 
-                            html += `<li class="px-6 py-4 flex justify-between items-center border-l-4 border-accent bg-green-50 mb-1">
-                                        <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Importada com Sucesso</p></div>
-                                        <span class="text-sm font-bold text-gray-600">${validRows} comentário(s)</span>
-                                    </li>`;
-                            totalComments += validRows;
-                        } else if(rows.length > 0) {
-                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50 mb-1">
-                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Sem comentários encontrados)</p></div>
-                                    </li>`;
+                            if(validRows > 0) {
+                                html += `<li class="px-6 py-4 flex justify-between items-center">
+                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Lida do Excel</p></div>
+                                            <span class="text-sm text-gray-500">${validRows} comentário(s)</span>
+                                        </li>`;
+                                totalComments += validRows;
+                            }
                         }
                     });
                     
@@ -1038,13 +898,14 @@
                     pendingImportData = newAreasData;
                     
                     const btn = document.getElementById('import-btn');
-                    btn.innerText = `CONFIRMAR E SALVAR ${totalComments} COMENTÁRIOS`;
-                    btn.className = "w-full bg-accent text-white rounded py-4 text-sm font-bold hover:bg-green-600 cursor-pointer shadow-lg animate-pulse border-2 border-green-700 mt-4";
+                    btn.innerText = `Sincronizar ${totalComments} comentário(s) na Nuvem`;
+                    // Botão PISCANDO E VERDE para chamar atenção!
+                    btn.className = "w-full bg-accent text-white rounded py-3 text-sm font-bold hover:bg-green-600 cursor-pointer shadow-lg animate-pulse";
                     btn.onclick = executeImport; 
 
                 } catch(err) {
                     console.error(err);
-                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro crítico ao ler Excel. Tente remover formatações mescladas complexas.</div>';
+                    previewList.innerHTML = '<div class="p-8 text-center text-danger">Erro ao ler Excel. Certifique-se de ser um arquivo válido.</div>';
                 }
             };
             reader.readAsArrayBuffer(input.files[0]);
@@ -1052,34 +913,15 @@
 
         async function executeImport() {
             if(!pendingImportData) return;
-            
             const btn = document.getElementById('import-btn');
-            const newCycleInput = document.getElementById('import-new-cycle').value.trim();
-            const existingCycle = document.getElementById('import-cycle-select').value;
-            
-            btn.innerText = "Sincronizando com Supabase...";
+            btn.innerText = "Salvando no Supabase...";
             btn.classList.replace('bg-accent', 'bg-blue-600');
             btn.classList.replace('animate-pulse', 'opacity-50');
-            btn.classList.remove('border-green-700');
             btn.classList.add('cursor-wait');
 
-            if(newCycleInput) {
-                // Cria novo ciclo e o torna ativo
-                appState.cycles.push({
-                    name: newCycleInput,
-                    data: pendingImportData
-                });
-                appState.activeCycleName = newCycleInput;
-            } else if (existingCycle) {
-                // Atualiza o ciclo selecionado
-                let cycleObj = appState.cycles.find(c => c.name === existingCycle);
-                if(cycleObj) cycleObj.data = pendingImportData;
-                appState.activeCycleName = existingCycle;
-            } else {
-                // Se a base era totalmente vazia
-                appState.cycles.push({ name: 'Ciclo Inicial', data: pendingImportData });
-                appState.activeCycleName = 'Ciclo Inicial';
-            }
+            // Substitui todas as áreas
+            areasData.length = 0;
+            pendingImportData.forEach(p => areasData.push(p));
             
             await saveStateToSupabase();
             
@@ -1088,34 +930,28 @@
             document.getElementById('import-preview-list').classList.add('hidden');
             document.getElementById('import-preview-empty').classList.remove('hidden');
             document.querySelector('input[type="file"]').value = '';
-            document.getElementById('import-new-cycle').value = '';
             
-            btn.innerText = "Importar comentário(s)";
-            btn.className = "w-full bg-blue-400 text-white rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed transition-all shadow mt-4";
+            btn.innerText = "Aguardando arquivo...";
+            btn.className = "w-full bg-gray-300 text-gray-500 rounded py-3 text-sm font-bold opacity-50 cursor-not-allowed shadow";
             btn.onclick = null;
             
-            updateCycleDropdowns();
-            
-            alert("Sucesso! Planilha adicionada ao Histórico do Supabase.");
+            alert("Sucesso! Planilha salva na Nuvem. Todos os usuários já podem ver a atualização.");
             navigate('dashboard');
         }
 
-        // --- PAINEL ADMIN COM SENHAS ---
+        // --- PAINEL ADMIN ---
         let editingUserEmail = null;
 
         function renderAdminTable() {
             const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
-            
-            const activeData = getActiveCycleData();
-            
             adminUsers.forEach(u => {
                 let tags = '';
                 if(u.areas.includes('all')) {
-                    tags = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">ADM (Acesso Total)</span>`;
+                    tags = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">ADM (Todas)</span>`;
                 } else {
                     u.areas.forEach(aId => {
-                        const areaObj = activeData.find(a=>a.id === aId);
+                        const areaObj = areasData.find(a=>a.id === aId);
                         if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${areaObj.name}</span>`;
                         else tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${aId}</span>`;
                     });
@@ -1135,33 +971,22 @@
             const container = document.getElementById('admin-areas-checkboxes');
             container.innerHTML = '';
             
-            let user = email ? adminUsers.find(u=>u.email===email) : {email: '', password: '', areas: []};
-            
+            let user = email ? adminUsers.find(u=>u.email===email) : {email: '', areas: []};
             document.getElementById('admin-user-email').value = user.email;
-            document.getElementById('admin-user-password').value = user.password;
-            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões & Senha" : "Novo Usuário";
-            
-            const deleteBtn = document.getElementById('admin-delete-btn');
-            if(email && adminUsers.length > 1) deleteBtn.classList.remove('hidden');
-            else deleteBtn.classList.add('hidden');
+            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões" : "Novo Usuário";
             
             let isAll = user.areas.includes('all');
             document.getElementById('admin-check-all').checked = isAll;
 
-            const activeData = getActiveCycleData();
-            if(activeData.length === 0) {
-                container.innerHTML = "<p class='text-xs text-gray-500'>Importe um ciclo de Planilha primeiro para ver a lista de áreas disponíveis.</p>";
-            } else {
-                activeData.forEach(area => {
-                    const checked = isAll || user.areas.includes(area.id) ? 'checked' : '';
-                    const disabled = isAll ? 'disabled' : '';
-                    container.innerHTML += `
-                        <label class="flex items-center gap-2 cursor-pointer ml-2">
-                            <input type="checkbox" value="${area.id}" class="admin-area-chk w-4 h-4 text-secondary" ${checked} ${disabled}>
-                            <span class="text-gray-700 text-sm">${area.name}</span>
-                        </label>`;
-                });
-            }
+            areasData.forEach(area => {
+                const checked = isAll || user.areas.includes(area.id) ? 'checked' : '';
+                const disabled = isAll ? 'disabled' : '';
+                container.innerHTML += `
+                    <label class="flex items-center gap-2 cursor-pointer ml-2">
+                        <input type="checkbox" value="${area.id}" class="admin-area-chk w-4 h-4 text-secondary" ${checked} ${disabled}>
+                        <span class="text-gray-700 text-sm">${area.name}</span>
+                    </label>`;
+            });
 
             document.getElementById('admin-modal').classList.remove('hidden');
         }
@@ -1180,9 +1005,7 @@
 
         async function saveAdminModal() {
             const email = document.getElementById('admin-user-email').value.trim();
-            const password = document.getElementById('admin-user-password').value.trim();
-            
-            if(!email || !password) return alert("E-mail e Senha são obrigatórios.");
+            if(!email) return alert("Digite um e-mail válido.");
 
             const isAll = document.getElementById('admin-check-all').checked;
             let selectedAreas = [];
@@ -1196,27 +1019,15 @@
             if(editingUserEmail) {
                 let u = adminUsers.find(u => u.email === editingUserEmail);
                 u.email = email;
-                u.password = password;
                 u.areas = selectedAreas;
             } else {
-                adminUsers.push({email: email, password: password, areas: selectedAreas});
+                adminUsers.push({email: email, areas: selectedAreas});
             }
             
             await saveStateToSupabase();
+            
             closeAdminModal();
             renderAdminTable();
-            if(editingUserEmail === loggedEmail && email !== loggedEmail) logout();
-        }
-
-        async function deleteUser() {
-            if(!editingUserEmail) return;
-            if(confirm(`Tem certeza que deseja excluir o usuário ${editingUserEmail}?`)) {
-                adminUsers = adminUsers.filter(u => u.email !== editingUserEmail);
-                await saveStateToSupabase();
-                closeAdminModal();
-                renderAdminTable();
-                if(editingUserEmail === loggedEmail) logout();
-            }
         }
     </script>
 </body>
