@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
-    <!-- Favicon Dinâmico -->
     <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Bibliotecas: Ler Excel e Supabase -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -71,11 +69,11 @@
         </div>
     </div>
 
-    <!-- TELA DE TROCA DE SENHA -->
+    <!-- TELA DE TROCA DE SENHA OBRIGATÓRIA -->
     <div id="change-pwd-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[400px]">
             <h3 class="font-bold text-2xl text-primary mb-2" id="pwd-modal-title">Definir Nova Senha</h3>
-            <p class="text-sm text-gray-500 mb-6" id="pwd-modal-desc">Por segurança, você precisa definir uma senha pessoal.</p>
+            <p class="text-sm text-gray-500 mb-6" id="pwd-modal-desc">Por segurança, defina uma senha pessoal.</p>
             <input type="hidden" id="change-pwd-email">
             <input type="password" id="new-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary text-gray-800" placeholder="Digite a nova senha">
             <input type="password" id="confirm-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary text-gray-800" placeholder="Confirme a nova senha">
@@ -87,54 +85,48 @@
         </div>
     </div>
 
-    <!-- TELA DE BRANDING / DESIGN (NOVO) -->
+    <!-- TELA DE BRANDING / DESIGN (NOVIDADE QUE CORRIGE O ERRO DO CONSOLE) -->
     <div id="branding-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[500px]">
-            <h3 class="font-bold text-2xl text-primary mb-2">Configurações de Design</h3>
-            <p class="text-sm text-gray-500 mb-6">Altere a identidade visual do sistema. As mudanças refletem para todos os usuários.</p>
+            <h3 class="font-bold text-2xl text-primary mb-2">Design da Plataforma</h3>
+            <p class="text-sm text-gray-500 mb-6">Altere a identidade visual. O design será atualizado para todos.</p>
 
-            <!-- Inputs ocultos para os arquivos -->
             <input type="file" id="upload-header-logo" class="hidden" accept="image/*" onchange="previewImage(event, 'preview-header', 'headerLogo')">
             <input type="file" id="upload-login-logo" class="hidden" accept="image/*" onchange="previewImage(event, 'preview-login', 'loginLogo')">
             <input type="file" id="upload-favicon" class="hidden" accept="image/*" onchange="previewImage(event, 'preview-favicon', 'favicon')">
 
             <div class="space-y-4 mb-8">
-                <!-- Logo Cabeçalho -->
                 <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Logo do Cabeçalho</p>
-                        <p class="text-[10px] text-gray-500">Aparece na barra azul superior (ideal logo com letras brancas).</p>
+                        <p class="text-[10px] text-gray-500">Fundo azul. Use imagem com letras brancas.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-24 bg-primary flex items-center justify-center rounded overflow-hidden">
+                        <div class="h-10 w-24 bg-primary flex items-center justify-center rounded overflow-hidden p-1">
                             <img id="preview-header" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-header-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
                     </div>
                 </div>
-
-                <!-- Logo Login -->
                 <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Logo do Login</p>
-                        <p class="text-[10px] text-gray-500">Aparece na tela inicial branca (ideal logo com letras escuras).</p>
+                        <p class="text-[10px] text-gray-500">Fundo branco. Use imagem com letras escuras.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-24 bg-white flex items-center justify-center rounded overflow-hidden border">
+                        <div class="h-10 w-24 bg-white flex items-center justify-center rounded overflow-hidden border p-1">
                             <img id="preview-login" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-login-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
                     </div>
                 </div>
-
-                <!-- Favicon -->
                 <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
                     <div>
                         <p class="font-bold text-sm text-gray-800">Favicon</p>
-                        <p class="text-[10px] text-gray-500">Ícone pequeno que fica na aba do navegador.</p>
+                        <p class="text-[10px] text-gray-500">Ícone pequeno da aba do navegador.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 bg-white flex items-center justify-center rounded overflow-hidden border">
+                        <div class="h-10 w-10 bg-white flex items-center justify-center rounded overflow-hidden border p-1">
                             <img id="preview-favicon" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
                         </div>
                         <button onclick="document.getElementById('upload-favicon').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
@@ -142,7 +134,7 @@
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3 mt-6">
+            <div class="flex justify-end gap-3">
                 <button onclick="closeBrandingModal()" class="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-50 text-sm font-medium">Cancelar</button>
                 <button onclick="saveBranding()" class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-green-600 text-sm font-bold shadow transition-colors">Salvar Design Global</button>
             </div>
@@ -152,18 +144,19 @@
     <!-- Tela de Carregamento -->
     <div id="loading-overlay" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center text-white">
         <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
-        <h2 class="text-xl font-bold text-white">Conectando à Nuvem...</h2>
+        <h2 class="text-xl font-bold">Conectando à Nuvem...</h2>
         <p class="text-blue-200 mt-2 text-sm">Sincronizando dados do Supabase</p>
     </div>
 
-    <!-- HEADER PRINCIPAL -->
+    <!-- SISTEMA PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-4 sm:px-6 py-4 flex-shrink-0 z-50 shadow-md">
         <div class="flex items-center gap-3 sm:gap-4 shrink-0">
-            <!-- LOGO DA BARRA (DUPLO CLIQUE CHAMA O MODAL DE DESIGN) -->
-            <div class="cursor-pointer user-select-none shrink-0 relative group" onclick="navigate('dashboard')" ondblclick="openBrandingModal()" title="Admin: Duplo clique para alterar Design do sistema">
-                <div class="px-1 py-1 rounded flex items-center justify-center h-10 sm:h-12 w-[100px] sm:w-[140px]">
+            <!-- LOGO: 1 Clique Home, Duplo Clique Admin Branding -->
+            <div class="cursor-pointer user-select-none shrink-0 relative group" onclick="navigate('dashboard')" ondblclick="openBrandingModal()" title="Duplo clique p/ Configurar Design (Admin)">
+                <div class="px-1 py-1 rounded flex items-center justify-center h-10 sm:h-12 w-[100px] sm:w-[140px] overflow-hidden">
                     <img id="header-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="max-h-full max-w-full object-contain pointer-events-none">
                 </div>
+                <div id="header-logo-overlay" class="hidden absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 items-center justify-center font-bold transition-opacity">Design</div>
             </div>
             <h1 class="font-bold text-sm sm:text-lg tracking-wide uppercase text-white truncate">Planos de Ação</h1>
         </div>
@@ -171,7 +164,6 @@
         <nav class="flex items-center gap-2 sm:gap-6 text-sm font-medium">
             <button onclick="navigate('dashboard')" id="nav-dashboard" class="hidden sm:inline-block opacity-100 border-b-2 border-white pb-1 text-white">Visão geral</button>
             <button onclick="navigate('areas')" id="nav-areas" class="hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white">Áreas</button>
-            
             <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1 text-white">Importar planilha</button>
             <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1 text-white"><i class="fas fa-cog mr-1"></i> Admin</button>
             
@@ -190,7 +182,7 @@
         </nav>
     </header>
 
-    <main class="flex-1 overflow-auto bg-bglight flex flex-col">
+    <main class="flex-1 overflow-auto relative bg-bglight flex flex-col">
         <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 h-64 transition-all duration-300" id="hero-bg"></div>
 
         <!-- FAIXA DE CICLO FECHADO -->
@@ -199,7 +191,7 @@
         </div>
 
         <!-- DASHBOARD -->
-        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block">
+        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4">
                 <div>
                     <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
@@ -254,7 +246,6 @@
             <div class="bg-primary w-full px-4 sm:px-8 pt-8 pb-20">
                 <div class="max-w-7xl mx-auto">
                     <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1"><i class="fas fa-arrow-left"></i> Voltar</button>
-                    
                     <div class="flex flex-col sm:flex-row justify-between items-start mb-4 text-white gap-4">
                         <h2 class="text-3xl font-bold text-white" id="detail-title">Área</h2>
                         <div class="flex items-center gap-4">
@@ -282,7 +273,7 @@
             </div>
         </div>
 
-        <!-- ÁREAS -->
+        <!-- ÁREAS SIMPLES -->
         <div id="view-areas" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
             <div class="mb-8">
                 <h2 class="text-3xl font-bold mb-2 text-primary">Áreas</h2>
@@ -304,7 +295,7 @@
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-primary mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
                         <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border border-blue-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary bg-blue-50"></select>
-                        <p class="text-[10px] text-gray-500 mt-1">Os outros ciclos ficarão trancados para edição (Leitura).</p>
+                        <p class="text-[10px] text-gray-500 mt-1">Os outros ciclos ficarão trancados para edição.</p>
                     </div>
                     
                     <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mt-8 mb-4">2. Importar Novo Excel</h3>
@@ -314,7 +305,7 @@
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
-                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26" class="w-full border rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-gray-50">
+                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26 (Junho e Julho/2026)" class="w-full border rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-gray-50">
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
@@ -338,75 +329,66 @@
             </div>
         </div>
         
-        <!-- ADMIN -->
+        <!-- ADMIN REPAGINADO (CARDS) -->
         <div id="view-admin" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold mb-2 text-primary">Painel de Administração</h2>
-                <p class="text-gray-500 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
-            </div>
-            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 overflow-x-auto">
-                <div class="flex justify-between items-center mb-6 min-w-[500px]">
-                    <h3 class="font-bold text-gray-800 text-lg">Gestão de Usuários</h3>
-                    <button onclick="openAdminModal()" class="bg-accent text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-600 transition-colors shadow"><i class="fas fa-plus mr-1"></i> Novo Usuário</button>
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2 text-primary">Painel de Administração</h2>
+                    <p class="text-gray-500 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
                 </div>
-                <table class="w-full text-left text-sm text-gray-600 min-w-[600px]">
-                    <thead class="bg-gray-50 border-b">
-                        <tr>
-                            <th class="py-3 px-4 font-semibold text-gray-700">E-mail de Acesso</th>
-                            <th class="py-3 px-4 font-semibold text-gray-700">Autenticação</th>
-                            <th class="py-3 px-4 font-semibold text-gray-700">Permissão (Áreas)</th>
-                            <th class="py-3 px-4 font-semibold text-gray-700 w-48 text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100" id="adminTableBody"></tbody>
-                </table>
+                <button onclick="openAdminModal()" class="bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-green-600 transition-colors shadow-md flex items-center gap-2"><i class="fas fa-user-plus"></i> Novo Usuário</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12" id="adminTableBody">
+                <!-- Cards de Usuário Renderizados aqui -->
             </div>
         </div>
+
     </main>
 
-    <!-- Modal Admin Permissões -->
+    <!-- Modal Admin (Criar/Editar User) -->
     <div id="admin-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[250] hidden flex items-center justify-center">
-        <div class="bg-white rounded-lg p-6 w-[90%] max-w-[500px] shadow-xl max-h-[90vh] flex flex-col">
-            <h3 class="font-bold text-lg text-primary mb-4" id="admin-modal-title">Novo Usuário</h3>
+        <div class="bg-white rounded-xl p-6 w-[90%] max-w-[500px] shadow-2xl max-h-[90vh] flex flex-col">
+            <h3 class="font-bold text-xl text-primary mb-4 border-b pb-2" id="admin-modal-title">Novo Usuário</h3>
             
             <div class="mb-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-1">E-mail do Usuário</label>
-                <input type="email" id="admin-user-email" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary bg-gray-50 text-gray-800">
+                <label class="block text-sm font-bold text-gray-700 mb-1">E-mail do Usuário</label>
+                <input type="email" id="admin-user-email" class="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-secondary bg-gray-50 text-gray-800">
             </div>
 
-            <div class="mb-4 bg-blue-50 border border-blue-100 p-3 rounded">
-                <label class="block text-sm font-semibold text-primary mb-2">Autenticação</label>
-                <div class="flex gap-4">
+            <div class="mb-4 bg-blue-50 border border-blue-100 p-4 rounded-lg">
+                <label class="block text-sm font-bold text-primary mb-3">Tipo de Autenticação</label>
+                <div class="flex gap-6">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="auth_type" value="email" class="w-4 h-4 text-primary" onchange="togglePwdField(this.value)">
-                        <span class="text-gray-700 text-sm">Só E-mail</span>
+                        <span class="text-gray-700 text-sm font-medium">Só E-mail</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="auth_type" value="password" class="w-4 h-4 text-primary" checked onchange="togglePwdField(this.value)">
-                        <span class="text-gray-700 text-sm">E-mail e Senha</span>
+                        <span class="text-gray-700 text-sm font-medium">E-mail e Senha</span>
                     </label>
                 </div>
-                <div id="admin-pwd-container" class="mt-3">
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Senha Provisória</label>
-                    <input type="text" id="admin-user-password" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-secondary text-gray-800" placeholder="Ex: 1234">
-                    <p class="text-[10px] text-gray-500 mt-1 italic">Ao usar 1234, o usuário será forçado a trocar no primeiro acesso.</p>
+                <div id="admin-pwd-container" class="mt-4 pt-4 border-t border-blue-200">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Senha Provisória</label>
+                    <input type="text" id="admin-user-password" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-secondary text-gray-800" placeholder="Ex: 1234">
+                    <p class="text-[10px] text-gray-500 mt-1 italic">Dica: Se a senha for <span class="font-bold">1234</span> ou <span class="font-bold">123456</span>, o usuário será obrigado a trocar no primeiro acesso.</p>
                 </div>
             </div>
 
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Áreas Permitidas para Edição</label>
-            <div class="border rounded p-3 bg-gray-50 flex-1 overflow-y-auto mb-6">
-                <label class="flex items-center gap-2 mb-2 pb-2 border-b cursor-pointer">
+            <label class="block text-sm font-bold text-gray-700 mb-2">Áreas Permitidas para Edição</label>
+            <div class="border rounded-lg p-4 bg-gray-50 flex-1 overflow-y-auto mb-6">
+                <label class="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200 cursor-pointer">
                     <input type="checkbox" id="admin-check-all" class="w-4 h-4 text-primary" onchange="toggleAllAdminAreas(this)">
                     <span class="font-bold text-gray-800 text-sm">Administrador Geral (Acesso Total)</span>
                 </label>
-                <div id="admin-areas-checkboxes" class="flex flex-col gap-2"></div>
+                <div id="admin-areas-checkboxes" class="flex flex-col gap-3"></div>
             </div>
             
             <div class="flex justify-between items-center shrink-0">
-                <button onclick="deleteUser()" id="admin-delete-btn" class="text-danger text-sm font-semibold hover:underline hidden"><i class="fas fa-trash"></i> Excluir</button>
+                <button onclick="deleteUser()" id="admin-delete-btn" class="text-danger text-sm font-bold hover:underline hidden"><i class="fas fa-trash"></i> Excluir Conta</button>
                 <div class="flex gap-3 ml-auto">
-                    <button onclick="closeAdminModal()" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50 text-sm font-medium">Cancelar</button>
-                    <button onclick="saveAdminModal()" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-800 text-sm font-medium shadow">Salvar Usuário</button>
+                    <button onclick="closeAdminModal()" class="px-5 py-2.5 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm font-bold">Cancelar</button>
+                    <button onclick="saveAdminModal()" class="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-blue-800 text-sm font-bold shadow-md">Salvar Usuário</button>
                 </div>
             </div>
         </div>
@@ -439,9 +421,10 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Plano de ação Previsto</label>
                     <textarea id="form-plano" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
                 </div>
+                <!-- Oculto Ação Executada -->
                 <div class="mb-4 hidden">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Ação executada</label>
-                    <textarea id="form-acao" rows="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary resize-none"></textarea>
+                    <textarea id="form-acao" rows="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
                     <div class="w-full sm:w-1/2">
@@ -486,7 +469,6 @@
         let currentGlobalFilterType = 'Todos';
         let pendingImportData = null;
         let isForcedPwdChange = false;
-        let currentImageUploadType = null;
 
         const defaultAdmin = [
             { email: 'daniela@fasttennis.com.br', authType: 'password', password: '1234', areas: ['all'] },
@@ -496,7 +478,6 @@
         window.addEventListener('DOMContentLoaded', async () => {
             try {
                 if (!supabaseClient) throw new Error("Supabase não carregou.");
-                
                 const fetchPromise = supabaseClient.from('app_state').select('*').eq('id', 1).single();
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
                 
@@ -506,9 +487,7 @@
                 if (data) {
                     let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
                     adminUsers = (Array.isArray(aUsers) && aUsers.length > 0) ? aUsers.map(u => ({
-                        ...u, 
-                        authType: u.authType || 'password', 
-                        password: u.password || '1234'
+                        ...u, authType: u.authType || 'password', password: u.password || '1234'
                     })) : defaultAdmin;
                     
                     let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
@@ -517,13 +496,15 @@
                     } else if (aData && aData.cycles) {
                         appState = aData; 
                         if (!appState.vigenteCycle && appState.cycles.length > 0) {
-                            appState.vigenteCycle = appState.activeCycleName || appState.cycles[0].name;
+                            appState.vigenteCycle = appState.activeCycleName || appState.cycles[appState.cycles.length-1].name;
+                        }
+                        if (!appState.activeCycleName && appState.vigenteCycle) {
+                            appState.activeCycleName = appState.vigenteCycle;
                         }
                     } else {
                         appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
                     }
 
-                    // Lê as configurações de design da nuvem
                     if (data.settings) {
                         let settingsData = typeof data.settings === 'string' ? JSON.parse(data.settings) : data.settings;
                         appSettings = { ...appSettings, ...settingsData };
@@ -559,33 +540,67 @@
             return cycle ? cycle.data : [];
         }
 
+        // BRANDING
+        function applyBrandingToUI() {
+            if (appSettings.headerLogo) document.getElementById('header-logo-img').src = appSettings.headerLogo;
+            if (appSettings.loginLogo) {
+                document.getElementById('login-logo-img').src = appSettings.loginLogo;
+                document.getElementById('preview-login').src = appSettings.loginLogo;
+            }
+            if (appSettings.favicon) {
+                document.getElementById('favicon').href = appSettings.favicon;
+                document.getElementById('preview-favicon').src = appSettings.favicon;
+            }
+        }
+        function triggerLogoUpload() {
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
+            if (user && user.areas.includes('all')) {
+                document.getElementById('branding-modal').classList.remove('hidden');
+                if(appSettings.headerLogo) document.getElementById('preview-header').src = appSettings.headerLogo;
+                if(appSettings.loginLogo) document.getElementById('preview-login').src = appSettings.loginLogo;
+                if(appSettings.favicon) document.getElementById('preview-favicon').src = appSettings.favicon;
+            }
+        }
+        function closeBrandingModal() { document.getElementById('branding-modal').classList.add('hidden'); }
+        function previewImage(event, previewId, type) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                    appSettings[type] = e.target.result; 
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        async function saveBranding() {
+            await saveStateToSupabase();
+            applyBrandingToUI();
+            closeBrandingModal();
+            alert("Design atualizado para todos os usuários!");
+        }
+
         function checkAuthType() {
             const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
             const pwdContainer = document.getElementById('login-password-container');
             const user = adminUsers.find(u => u.email.toLowerCase() === emailInput);
             
-            if(user && user.authType === 'email') {
-                pwdContainer.classList.add('hidden');
-            } else {
-                pwdContainer.classList.remove('hidden');
-            }
+            if(user && user.authType === 'email') pwdContainer.classList.add('hidden');
+            else pwdContainer.classList.remove('hidden');
         }
 
         function handleLogin() {
             const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
             const passInput = document.getElementById('login-password').value.trim();
-            
             if(!emailInput) return;
 
             const user = adminUsers.find(u => u.email.toLowerCase() === emailInput);
-            
             if (!user) {
                 const errDiv = document.getElementById('login-error');
                 errDiv.innerText = "⚠️ Acesso negado. Este e-mail não possui permissão.";
                 errDiv.classList.remove('hidden');
                 return;
             }
-
             if (user.authType !== 'email') {
                 if(!passInput) {
                     const errDiv = document.getElementById('login-error');
@@ -619,19 +634,13 @@
             updateUIPermissions();
             
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
-            if(user && user.authType === 'email') {
-                document.getElementById('btn-change-pwd').classList.add('hidden');
-            } else {
-                document.getElementById('btn-change-pwd').classList.remove('hidden');
-            }
+            if(user && user.authType === 'email') document.getElementById('btn-change-pwd').classList.add('hidden');
+            else document.getElementById('btn-change-pwd').classList.remove('hidden');
             
             navigate('dashboard');
         }
 
-        function logout() {
-            localStorage.removeItem('fastTennisUser');
-            location.reload();
-        }
+        function logout() { localStorage.removeItem('fastTennisUser'); location.reload(); }
 
         function openChangePwdModal(forced = false, email = null) {
             isForcedPwdChange = forced;
@@ -653,12 +662,7 @@
             document.getElementById('change-pwd-modal').classList.remove('hidden');
         }
 
-        function closeChangePwdModal() {
-            if(!isForcedPwdChange) {
-                document.getElementById('change-pwd-modal').classList.add('hidden');
-            }
-        }
-
+        function closeChangePwdModal() { if(!isForcedPwdChange) document.getElementById('change-pwd-modal').classList.add('hidden'); }
         function showPwdError(msg) {
             const errDiv = document.getElementById('pwd-error');
             errDiv.innerText = msg;
@@ -689,67 +693,6 @@
             }
         }
 
-        // ======= BRANDING / DESIGN (NOVO) =======
-        function applyBrandingToUI() {
-            if (appSettings.headerLogo) {
-                document.getElementById('header-logo-img').src = appSettings.headerLogo;
-            }
-            if (appSettings.loginLogo) {
-                document.getElementById('login-logo-img').src = appSettings.loginLogo;
-                document.getElementById('preview-login').src = appSettings.loginLogo;
-            }
-            if (appSettings.favicon) {
-                document.getElementById('favicon').href = appSettings.favicon;
-                document.getElementById('preview-favicon').src = appSettings.favicon;
-            }
-        }
-
-        function triggerLogoUpload() {
-            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
-            const isAdmin = user && user.areas.includes('all');
-            
-            if (isAdmin) {
-                document.getElementById('branding-modal').classList.remove('hidden');
-                // Preenche os previews com os dados atuais
-                if(appSettings.headerLogo) document.getElementById('preview-header').src = appSettings.headerLogo;
-                if(appSettings.loginLogo) document.getElementById('preview-login').src = appSettings.loginLogo;
-                if(appSettings.favicon) document.getElementById('preview-favicon').src = appSettings.favicon;
-            } else {
-                alert("Acesso Negado: Apenas administradores podem acessar as Configurações de Design da Plataforma.");
-            }
-        }
-
-        function closeBrandingModal() {
-            document.getElementById('branding-modal').classList.add('hidden');
-        }
-
-        function previewImage(event, previewId, type) {
-            const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result;
-                    document.getElementById(previewId).src = base64;
-                    appSettings[type] = base64; // Atualiza objeto na memória
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        async function saveBranding() {
-            const btn = document.querySelector('#branding-modal button.bg-accent');
-            btn.innerText = "Salvando...";
-            btn.classList.add('opacity-50');
-
-            await saveStateToSupabase();
-            applyBrandingToUI();
-            
-            btn.innerText = "Salvar Design Global";
-            btn.classList.remove('opacity-50');
-            closeBrandingModal();
-            alert("Design atualizado para todos os usuários com sucesso!");
-        }
-
         function updateUIPermissions() {
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             const isAdmin = user && user.areas.includes('all');
@@ -765,14 +708,14 @@
                 adminNav.classList.add('sm:inline-block');
                 importNav.classList.add('sm:inline-block');
                 syncStatus.classList.replace('hidden', 'inline-block');
-                logoOverlay.classList.replace('hidden', 'flex');
+                if(logoOverlay) logoOverlay.classList.replace('hidden', 'flex');
             } else {
                 adminNav.classList.add('hidden');
                 importNav.classList.add('hidden');
                 adminNav.classList.remove('sm:inline-block');
                 importNav.classList.remove('sm:inline-block');
                 syncStatus.classList.replace('inline-block', 'hidden');
-                logoOverlay.classList.replace('flex', 'hidden');
+                if(logoOverlay) logoOverlay.classList.replace('flex', 'hidden');
             }
         }
 
@@ -824,7 +767,8 @@
                 importSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 vigenteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
             } else {
-                appState.cycles.forEach(c => {
+                // Inverter para mostrar os mais recentes primeiro
+                [...appState.cycles].reverse().forEach(c => {
                     let selAct = c.name === appState.activeCycleName ? 'selected' : '';
                     let selVig = c.name === appState.vigenteCycle ? 'selected' : '';
                     
@@ -894,7 +838,7 @@
             const isVigente = appState.activeCycleName === appState.vigenteCycle;
             const banner = document.getElementById('read-only-banner-dash');
             
-            if(!isVigente && viewId === 'dashboard') {
+            if(!isVigente && (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'global-comments')) {
                 if(banner) banner.classList.remove('hidden');
             } else {
                 if(banner) banner.classList.add('hidden');
@@ -1186,7 +1130,7 @@
                 return;
             }
             if(!checkPermission(currentAreaId)) {
-                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS validado.");
+                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS.");
                 return;
             }
             const activeData = getActiveCycleData();
@@ -1293,6 +1237,7 @@
             }
         }
 
+        // --- IMPORTAÇÃO EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -1467,41 +1412,51 @@
             navigate('dashboard');
         }
 
+        // --- PAINEL ADMIN COM CARDS (NOVO) ---
+        let editingUserEmail = null;
+
         function renderAdminTable() {
-            const tbody = document.getElementById('adminTableBody');
-            tbody.innerHTML = '';
+            const container = document.getElementById('adminTableBody');
+            container.innerHTML = '';
             
             const activeData = getActiveCycleData();
             
             adminUsers.forEach(u => {
                 let tags = '';
                 if(u.areas.includes('all')) {
-                    tags = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">ADM (Acesso Total)</span>`;
+                    tags = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold shadow-sm">ADM Geral</span>`;
                 } else {
                     u.areas.forEach(aId => {
                         const areaObj = activeData.find(a=>a.id === aId);
-                        if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${areaObj.name}</span>`;
-                        else tags += `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold mr-1">${aId}</span>`;
+                        if(areaObj) tags += `<span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded text-[10px] font-semibold">${areaObj.name}</span>`;
+                        else tags += `<span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded text-[10px] font-semibold">${aId}</span>`;
                     });
                 }
                 
                 let authBadge = u.authType === 'email' 
-                    ? `<span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-[10px] font-bold uppercase"><i class="fas fa-envelope"></i> Só E-mail</span>`
-                    : `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-[10px] font-bold uppercase"><i class="fas fa-lock"></i> E-mail + Senha</span>`;
+                    ? `<span class="text-purple-600 text-xs font-bold bg-purple-50 px-2 py-1 rounded border border-purple-100"><i class="fas fa-envelope"></i> Só E-mail</span>`
+                    : `<span class="text-gray-600 text-xs font-bold bg-gray-100 px-2 py-1 rounded border border-gray-200"><i class="fas fa-lock"></i> E-mail + Senha</span>`;
                 
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="py-3 px-4 font-medium text-gray-800">
-                            ${u.email}
-                            ${(u.password === '1234' || u.password === '123456') && u.authType === 'password' ? '<span class="ml-2 text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-bold">SENHA PADRÃO</span>' : ''}
-                        </td>
-                        <td class="py-3 px-4">${authBadge}</td>
-                        <td class="py-3 px-4 flex flex-wrap gap-1">${tags || '<span class="text-gray-400 text-xs">Nenhuma área</span>'}</td>
-                        <td class="py-3 px-4 text-gray-400 flex gap-3 text-xs font-semibold">
-                            <button class="hover:text-primary" onclick="openAdminModal('${u.email}')"><i class="fas fa-edit"></i> Editar</button>
-                            ${u.authType === 'password' ? `<button class="hover:text-warning" onclick="resetUserPassword('${u.email}')" title="Resetar para senha padrão"><i class="fas fa-key"></i> Resetar</button>` : ''}
-                        </td>
-                    </tr>`;
+                let pwdWarn = (u.password === '1234' || u.password === '123456') && u.authType === 'password' 
+                    ? '<span class="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded text-[10px] font-bold border border-yellow-200">SENHA PADRÃO</span>' : '';
+
+                container.innerHTML += `
+                    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow relative flex flex-col">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="w-full">
+                                <h4 class="font-bold text-gray-800 truncate text-sm" title="${u.email}">${u.email}</h4>
+                                <div class="flex items-center gap-2 mt-2">${authBadge} ${pwdWarn}</div>
+                            </div>
+                        </div>
+                        <div class="mb-5 mt-2 flex-1">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold mb-2">Permissões de Edição</p>
+                            <div class="flex flex-wrap gap-1">${tags || '<span class="text-gray-400 text-xs">Sem áreas (Apenas visualização)</span>'}</div>
+                        </div>
+                        <div class="flex gap-2 border-t pt-3 mt-auto">
+                            <button class="flex-1 bg-gray-50 hover:bg-blue-50 text-blue-600 border border-gray-200 py-1.5 rounded text-xs font-bold transition-colors" onclick="openAdminModal('${u.email}')"><i class="fas fa-edit"></i> Editar</button>
+                            ${u.authType === 'password' ? `<button class="flex-1 bg-gray-50 hover:bg-yellow-50 text-warning border border-gray-200 py-1.5 rounded text-xs font-bold transition-colors" onclick="resetUserPassword('${u.email}')" title="Resetar para a senha 1234"><i class="fas fa-key"></i> Reset</button>` : ''}
+                        </div>
+                    </div>`;
             });
         }
 
