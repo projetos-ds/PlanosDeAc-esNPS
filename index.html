@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
+    <!-- Favicon -->
     <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -47,39 +48,43 @@
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
+    <!-- Uploader Oculto para Logo (Apenas Admin acessa via Header) -->
     <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
         <div class="bg-white p-10 rounded-xl shadow-2xl w-[90%] max-w-[400px] text-center relative">
-            <div class="mb-6 flex justify-center">
-                <div class="relative group cursor-pointer" onclick="triggerLogoUpload()" title="Clique para alterar a logo">
-                    <div class="bg-primary px-3 py-2 rounded-lg flex items-center justify-center h-16 w-auto min-w-[120px] overflow-hidden">
-                        <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full object-contain">
-                    </div>
+            <div class="mb-8 flex justify-center">
+                <!-- Logo Perfeita e não clicável aqui -->
+                <div class="flex items-center justify-center h-16 w-auto">
+                    <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="max-h-full max-w-full object-contain">
                 </div>
             </div>
-            <h2 class="text-2xl font-bold mb-2 text-gray-800">Acesso Restrito</h2>
+            <h2 class="text-2xl font-bold mb-2 text-primary">Acesso Restrito</h2>
             <p class="text-sm text-gray-500 mb-8">Faça login para acessar os Planos de Ação.</p>
             
-            <input type="email" id="login-email" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left" placeholder="E-mail corporativo">
-            <input type="password" id="login-password" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left" placeholder="Senha" onkeypress="if(event.key === 'Enter') handleLogin()">
+            <input type="email" id="login-email" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left text-gray-800" placeholder="E-mail corporativo" oninput="checkAuthType()">
+            
+            <!-- A SENHA PODE SUMIR SE O USUÁRIO FOR SÓ EMAIL -->
+            <div id="login-password-container">
+                <input type="password" id="login-password" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-left text-gray-800" placeholder="Senha" onkeypress="if(event.key === 'Enter') handleLogin()">
+            </div>
             
             <div id="login-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 rounded">⚠️ E-mail ou senha incorretos.</div>
             
-            <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors">Entrar no Sistema</button>
+            <button onclick="handleLogin()" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors shadow">Entrar no Sistema</button>
         </div>
     </div>
 
-    <!-- TELA DE TROCA DE SENHA OBRIGATÓRIA (OU MANUAL) -->
+    <!-- TELA DE TROCA DE SENHA OBRIGATÓRIA -->
     <div id="change-pwd-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[400px]">
-            <h3 class="font-bold text-2xl text-gray-800 mb-2" id="pwd-modal-title">Definir Nova Senha</h3>
+            <h3 class="font-bold text-2xl text-primary mb-2" id="pwd-modal-title">Definir Nova Senha</h3>
             <p class="text-sm text-gray-500 mb-6" id="pwd-modal-desc">Por segurança, você precisa definir uma senha pessoal.</p>
 
             <input type="hidden" id="change-pwd-email">
-            <input type="password" id="new-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary" placeholder="Digite a nova senha">
-            <input type="password" id="confirm-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary" placeholder="Confirme a nova senha">
+            <input type="password" id="new-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary text-gray-800" placeholder="Digite a nova senha">
+            <input type="password" id="confirm-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary text-gray-800" placeholder="Confirme a nova senha">
 
             <div id="pwd-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 px-3 rounded">As senhas não conferem.</div>
 
@@ -93,55 +98,61 @@
     <!-- Tela de Carregamento -->
     <div id="loading-overlay" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center text-white">
         <i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
-        <h2 class="text-xl font-bold">Conectando à Nuvem...</h2>
+        <h2 class="text-xl font-bold text-white">Conectando à Nuvem...</h2>
         <p class="text-blue-200 mt-2 text-sm">Sincronizando dados do Supabase</p>
     </div>
 
     <!-- SISTEMA PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-4 sm:px-6 py-4 flex-shrink-0">
-        <!-- Logo e Título com Flexbox ajustado para Mobile -->
-        <div class="flex items-center gap-3 sm:gap-4 shrink-0 overflow-hidden">
+        <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+            <!-- LOGO: 1 CLIQUE = HOME | 2 CLIQUES = TROCAR -->
             <div class="cursor-pointer user-select-none shrink-0" onclick="navigate('dashboard')" ondblclick="triggerLogoUpload()" title="Clique duplo para alterar a logo (Admin)">
-                <div class="px-1 py-1 rounded flex items-center justify-center overflow-hidden hover:bg-blue-800 transition-all h-8 sm:h-12 w-[80px] sm:w-[120px]">
+                <div class="px-1 py-1 rounded flex items-center justify-center overflow-hidden h-10 sm:h-12 w-[100px] sm:w-[140px]">
                     <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="max-h-full max-w-full object-contain pointer-events-none">
                 </div>
             </div>
-            <h1 class="font-bold text-sm sm:text-lg tracking-wide uppercase truncate">Planos de Ação</h1>
+            <h1 class="font-bold text-sm sm:text-lg tracking-wide uppercase text-white truncate">Planos de Ação</h1>
         </div>
         
-        <nav class="flex items-center gap-3 sm:gap-6 text-sm font-medium">
-            <button onclick="navigate('dashboard')" id="nav-dashboard" class="hidden sm:block opacity-100 border-b-2 border-white pb-1">Visão geral</button>
-            <button onclick="navigate('areas')" id="nav-areas" class="hidden sm:block opacity-70 hover:opacity-100 pb-1">Áreas</button>
-            <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1">Importar planilha</button>
-            <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1"><i class="fas fa-cog mr-1"></i> Admin</button>
+        <nav class="flex items-center gap-2 sm:gap-6 text-sm font-medium">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="hidden sm:inline-block opacity-100 border-b-2 border-white pb-1 text-white">Visão geral</button>
+            <button onclick="navigate('areas')" id="nav-areas" class="hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white">Áreas</button>
+            
+            <button onclick="navigate('import')" id="nav-import" class="hidden opacity-70 hover:opacity-100 pb-1 text-white">Importar planilha</button>
+            <button onclick="navigate('admin')" id="nav-admin" class="hidden opacity-70 hover:opacity-100 pb-1 text-white"><i class="fas fa-cog mr-1"></i> Admin</button>
             
             <div id="sync-status" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow" title="Status da conexão com a nuvem">
-                <i class="fas fa-check"></i> <span class="hidden sm:inline">Atualizado</span>
+                <i class="fas fa-check"></i> <span class="hidden sm:inline text-white">Atualizado</span>
             </div>
             
-            <div class="ml-2 sm:border-l sm:border-blue-400 sm:pl-4 flex items-center gap-2">
+            <div class="ml-1 sm:ml-2 sm:border-l sm:border-blue-400 sm:pl-4 flex items-center gap-2">
                 <div class="text-right hidden md:block mr-2">
                     <div class="text-[10px] text-blue-300 uppercase tracking-wide">Logado como</div>
                     <div id="logged-user-display" class="font-bold text-white text-xs">...</div>
                 </div>
-                <!-- Botão de Trocar Senha e Sair -->
-                <button onclick="openChangePwdModal(false)" class="bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded text-xs transition-colors" title="Trocar Senha"><i class="fas fa-key"></i></button>
-                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs transition-colors shadow" title="Sair do sistema"><i class="fas fa-sign-out-alt"></i></button>
+                <!-- Botões Perfil e Sair -->
+                <button onclick="openChangePwdModal(false)" id="btn-change-pwd" class="bg-blue-800 hover:bg-blue-900 text-white px-3 py-1.5 rounded text-xs transition-colors" title="Trocar Senha"><i class="fas fa-key"></i></button>
+                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs transition-colors shadow" title="Sair do sistema"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </nav>
     </header>
 
-    <main class="flex-1 overflow-auto relative">
+    <main class="flex-1 overflow-auto relative bg-bglight">
         <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 h-64 transition-all duration-300" id="hero-bg"></div>
 
+        <!-- FAIXA DE CICLO FECHADO -->
+        <div id="read-only-banner" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow mb-4">
+            <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Os dados estão em modo de visualização (Apenas Leitura).
+        </div>
+
         <!-- DASHBOARD -->
-        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto block">
+        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4">
                 <div>
-                    <h2 class="text-3xl font-bold mb-2">Visão geral do ciclo</h2>
+                    <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
                     <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos de ação.</p>
                 </div>
-                <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold w-full sm:w-auto">
+                <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold w-full sm:w-auto focus:ring-1 focus:ring-white">
                 </select>
             </div>
 
@@ -178,7 +189,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start mb-8 text-white gap-4">
                 <div>
                     <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-2 flex items-center gap-1"><i class="fas fa-arrow-left"></i> Voltar para Dashboard</button>
-                    <h2 class="text-2xl sm:text-3xl font-bold mb-2" id="global-title">Comentários</h2>
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-white" id="global-title">Comentários</h2>
                     <p class="text-blue-100 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
                 </div>
             </div>
@@ -188,7 +199,7 @@
         <!-- ÁREAS -->
         <div id="view-areas" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
-                <h2 class="text-3xl font-bold mb-2">Áreas</h2>
+                <h2 class="text-3xl font-bold mb-2 text-white">Áreas</h2>
                 <p class="text-blue-100 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-12" id="areas-list-grid"></div>
@@ -197,20 +208,28 @@
         <!-- IMPORTAR -->
         <div id="view-import" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
-                <h2 class="text-3xl font-bold mb-2">Importar planilha do ciclo</h2>
-                <p class="text-blue-100 text-sm">Suba o arquivo Excel do ciclo vigente com uma aba por área.</p>
+                <h2 class="text-3xl font-bold mb-2 text-white">Importar e Configurar Ciclos</h2>
+                <p class="text-blue-100 text-sm">Suba o Excel e defina qual ciclo ficará aberto para edição.</p>
             </div>
             
             <div class="flex flex-col md:flex-row gap-6 pb-12">
                 <div class="w-full md:w-1/3 bg-white rounded-lg shadow p-6 border border-gray-100 h-fit">
+                    
+                    <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mb-4">1. Gerenciar Ciclos</h3>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ciclo existente (Atualizar dados)</label>
-                        <select id="import-cycle-select" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary"></select>
+                        <label class="block text-sm font-semibold text-primary mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
+                        <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border border-blue-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary bg-blue-50"></select>
+                        <p class="text-[10px] text-gray-500 mt-1">Os outros ciclos ficarão trancados para edição (Apenas Leitura).</p>
+                    </div>
+                    
+                    <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mt-8 mb-4">2. Importar Novo Excel</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Atualizar ciclo existente</label>
+                        <select id="import-cycle-select" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary bg-gray-50"></select>
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
-                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26 (Junho e Julho/2026)" class="w-full border rounded px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
-                        <p class="text-[10px] text-gray-400 mt-1">Padrão de nome: Ciclo MM/AA com os meses de referência.</p>
+                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26 (Junho e Julho/2026)" class="w-full border rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-gray-50">
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
@@ -237,7 +256,7 @@
         <!-- ADMIN -->
         <div id="view-admin" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden">
             <div class="text-white mb-8">
-                <h2 class="text-3xl font-bold mb-2">Painel de Administração</h2>
+                <h2 class="text-3xl font-bold mb-2 text-white">Painel de Administração</h2>
                 <p class="text-blue-100 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
             </div>
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 overflow-x-auto">
@@ -249,6 +268,7 @@
                     <thead class="bg-gray-50 border-b">
                         <tr>
                             <th class="py-3 px-4 font-semibold text-gray-700">E-mail de Acesso</th>
+                            <th class="py-3 px-4 font-semibold text-gray-700">Autenticação</th>
                             <th class="py-3 px-4 font-semibold text-gray-700">Permissão (Áreas)</th>
                             <th class="py-3 px-4 font-semibold text-gray-700 w-48 text-center">Ações</th>
                         </tr>
@@ -263,7 +283,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start mb-8 text-white gap-4">
                 <div>
                     <button onclick="navigate('dashboard')" class="text-blue-200 hover:text-white text-sm mb-2 flex items-center gap-1"><i class="fas fa-arrow-left"></i> Voltar</button>
-                    <h2 class="text-3xl font-bold mb-2" id="detail-title">Área</h2>
+                    <h2 class="text-3xl font-bold mb-2 text-white" id="detail-title">Área</h2>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2">
@@ -291,11 +311,30 @@
     <!-- Modal Admin Permissões -->
     <div id="admin-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[250] hidden flex items-center justify-center">
         <div class="bg-white rounded-lg p-6 w-[90%] max-w-[500px] shadow-xl max-h-[90vh] flex flex-col">
-            <h3 class="font-bold text-lg text-gray-800 mb-4" id="admin-modal-title">Novo Usuário</h3>
+            <h3 class="font-bold text-lg text-primary mb-4" id="admin-modal-title">Novo Usuário</h3>
             
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">E-mail do Usuário</label>
-                <input type="email" id="admin-user-email" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary bg-gray-50">
+                <input type="email" id="admin-user-email" class="w-full border rounded px-3 py-2 text-sm outline-none focus:border-secondary bg-gray-50 text-gray-800">
+            </div>
+
+            <div class="mb-4 bg-blue-50 border border-blue-100 p-3 rounded">
+                <label class="block text-sm font-semibold text-primary mb-2">Autenticação</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="auth_type" value="email" class="w-4 h-4 text-primary" onchange="togglePwdField(this.value)">
+                        <span class="text-gray-700 text-sm">Só E-mail</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="auth_type" value="password" class="w-4 h-4 text-primary" checked onchange="togglePwdField(this.value)">
+                        <span class="text-gray-700 text-sm">E-mail e Senha</span>
+                    </label>
+                </div>
+                <div id="admin-pwd-container" class="mt-3">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Senha Provisória</label>
+                    <input type="text" id="admin-user-password" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-secondary text-gray-800" placeholder="Ex: 1234">
+                    <p class="text-[10px] text-gray-500 mt-1 italic">Ao usar 1234, o usuário será forçado a trocar no primeiro acesso.</p>
+                </div>
             </div>
 
             <label class="block text-sm font-semibold text-gray-700 mb-2">Áreas Permitidas para Edição</label>
@@ -306,8 +345,6 @@
                 </label>
                 <div id="admin-areas-checkboxes" class="flex flex-col gap-2"></div>
             </div>
-            
-            <p class="text-xs text-gray-500 mb-4 italic">A senha padrão para um novo usuário é <span class="font-bold text-gray-700">1234</span>. Ele será obrigado a alterá-la no primeiro acesso.</p>
             
             <div class="flex justify-between items-center shrink-0">
                 <button onclick="deleteUser()" id="admin-delete-btn" class="text-danger text-sm font-semibold hover:underline hidden"><i class="fas fa-trash"></i> Excluir</button>
@@ -323,18 +360,18 @@
     <div id="slide-over-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[240] hidden transition-opacity" onclick="closePanel()"></div>
     <div id="slide-over-panel" class="fixed inset-y-0 right-0 w-full sm:w-[450px] bg-white shadow-2xl z-[250] transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="flex justify-between items-center px-6 py-4 border-b">
-            <h3 class="font-bold text-lg text-gray-800">Plano de ação</h3>
+            <h3 class="font-bold text-lg text-primary">Plano de ação</h3>
             <button onclick="closePanel()" class="text-gray-400 hover:text-gray-600 rounded-full p-1 border hover:bg-gray-50 w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
         </div>
         <div class="flex-1 overflow-y-auto p-6">
             <div class="bg-gray-50 border rounded p-4 mb-6 text-sm">
                 <div class="flex flex-wrap gap-x-4 gap-y-2 text-gray-500 mb-2">
-                    <span id="panel-etapa">Etapa</span>
+                    <span id="panel-etapa" class="font-bold text-gray-700">Etapa</span>
                     <span id="panel-unidade">Unidade</span>
                 </div>
                 <div class="text-gray-500 mb-2" id="panel-pesquisa">Fase</div>
                 <div class="flex gap-4 text-gray-500 mb-3">
-                    <span id="panel-nps">NPS</span>
+                    <span id="panel-nps" class="font-bold text-danger">NPS</span>
                     <span id="panel-nps-area">Nota da área</span>
                 </div>
                 <p class="text-gray-800 font-medium" id="panel-comment">Comentário</p>
@@ -343,37 +380,36 @@
             <form id="actionPlanForm" onsubmit="event.preventDefault(); savePlan();">
                 <input type="hidden" id="form-item-id">
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Plano de ação</label>
-                    <textarea id="form-plano" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary resize-none"></textarea>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Plano de ação Previsto</label>
+                    <textarea id="form-plano" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Ação executada</label>
-                    <textarea id="form-acao" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary resize-none"></textarea>
+                    <textarea id="form-acao" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
                     <div class="w-full sm:w-1/2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Responsável</label>
-                        <input type="text" id="form-responsavel" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                        <input type="text" id="form-responsavel" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
                     </div>
                     <div class="w-full sm:w-1/2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Data prevista</label>
-                        <input type="date" id="form-data" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                        <input type="date" id="form-data" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
                     </div>
                 </div>
                 <div class="mb-6">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                    <select id="form-status" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-secondary">
+                    <select id="form-status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary font-medium">
                         <option value="A iniciar">A iniciar</option>
                         <option value="Em andamento">Em andamento</option>
                         <option value="Concluído">Concluído</option>
                     </select>
                 </div>
-                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-primary text-white font-semibold rounded-lg py-3 transition-colors shadow mb-4">Salvar plano de ação</button>
+                <button type="submit" id="save-plan-btn" class="w-full bg-secondary hover:bg-blue-800 text-white font-bold rounded-lg py-3 transition-colors shadow mb-4">Salvar plano de ação</button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL -->
     <script>
         let supabaseClient;
         try {
@@ -385,7 +421,7 @@
         } catch(e) { console.error("Erro ao inicializar Supabase:", e); }
 
         let loggedEmail = null; 
-        let appState = { cycles: [], activeCycleName: null };
+        let appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
         let adminUsers = [];
         let currentAreaId = null;
         let currentFilter = 'Todos';
@@ -394,8 +430,8 @@
         let isForcedPwdChange = false;
 
         const defaultAdmin = [
-            { email: 'daniela@fasttennis.com.br', password: '123', areas: ['all'] },
-            { email: 'ladeira@fasttennis.com.br', password: '123', areas: ['all'] }
+            { email: 'daniela@fasttennis.com.br', authType: 'password', password: '1234', areas: ['all'] },
+            { email: 'ladeira@fasttennis.com.br', authType: 'password', password: '1234', areas: ['all'] }
         ];
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -410,21 +446,26 @@
                 
                 if (data) {
                     let aUsers = typeof data.admin_users === 'string' ? JSON.parse(data.admin_users) : data.admin_users;
-                    adminUsers = (Array.isArray(aUsers) && aUsers.length > 0) ? aUsers.map(u => ({...u, password: u.password || '1234'})) : defaultAdmin;
+                    // Mapeia usuarios antigos para o novo formato (authType default = password, senha 1234)
+                    adminUsers = (Array.isArray(aUsers) && aUsers.length > 0) ? aUsers.map(u => ({
+                        ...u, 
+                        authType: u.authType || 'password', 
+                        password: u.password || '1234'
+                    })) : defaultAdmin;
                     
                     let aData = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
                     if(Array.isArray(aData)) {
-                        appState = { cycles: [{ name: 'Ciclo Vigente', data: aData }], activeCycleName: 'Ciclo Vigente' };
+                        appState = { cycles: [{ name: 'Ciclo Vigente', data: aData }], activeCycleName: 'Ciclo Vigente', vigenteCycle: 'Ciclo Vigente' };
                     } else if (aData && aData.cycles) {
                         appState = aData; 
                     } else {
-                        appState = { cycles: [], activeCycleName: null };
+                        appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
                     }
                 }
             } catch (err) {
                 console.warn("Aviso: Falha ao sincronizar. Usando base vazia.", err);
                 adminUsers = defaultAdmin;
-                appState = { cycles: [], activeCycleName: null };
+                appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
                 updateCycleDropdowns(); 
@@ -450,29 +491,59 @@
             return cycle ? cycle.data : [];
         }
 
-        // ======= SISTEMA DE LOGIN =======
+        function checkAuthType() {
+            const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
+            const pwdContainer = document.getElementById('login-password-container');
+            const user = adminUsers.find(u => u.email.toLowerCase() === emailInput);
+            
+            if(user && user.authType === 'email') {
+                pwdContainer.classList.add('hidden');
+            } else {
+                pwdContainer.classList.remove('hidden');
+            }
+        }
+
+        // ======= LOGIN =======
         function handleLogin() {
             const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
             const passInput = document.getElementById('login-password').value.trim();
             
-            if(!emailInput || !passInput) return;
+            if(!emailInput) return;
 
-            const user = adminUsers.find(u => u.email.toLowerCase() === emailInput && u.password === passInput);
+            const user = adminUsers.find(u => u.email.toLowerCase() === emailInput);
             
-            if (user) {
-                // Se a senha for a padrão 1234, obriga a trocar
-                if(user.password === '1234' || user.password === '123456') {
-                    isForcedPwdChange = true;
-                    document.getElementById('login-screen').classList.add('hidden');
-                    openChangePwdModal(true, emailInput);
-                } else {
-                    localStorage.setItem('fastTennisUser', emailInput);
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('login-error').classList.add('hidden');
-                    finishLogin(emailInput);
+            if (!user) {
+                const errDiv = document.getElementById('login-error');
+                errDiv.innerText = "⚠️ Acesso negado. Este e-mail não possui permissão.";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (user.authType !== 'email') {
+                if(!passInput) {
+                    const errDiv = document.getElementById('login-error');
+                    errDiv.innerText = "⚠️ A senha é obrigatória.";
+                    errDiv.classList.remove('hidden');
+                    return;
                 }
+                if(user.password !== passInput) {
+                    const errDiv = document.getElementById('login-error');
+                    errDiv.innerText = "⚠️ E-mail ou senha incorretos.";
+                    errDiv.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            // Se for login por senha e usar a senha padrão, força a troca
+            if (user.authType !== 'email' && (user.password === '1234' || user.password === '123456')) {
+                isForcedPwdChange = true;
+                document.getElementById('login-screen').classList.add('hidden');
+                openChangePwdModal(true, emailInput);
             } else {
-                document.getElementById('login-error').classList.remove('hidden');
+                localStorage.setItem('fastTennisUser', emailInput);
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('login-error').classList.add('hidden');
+                finishLogin(emailInput);
             }
         }
 
@@ -480,6 +551,14 @@
             loggedEmail = email;
             document.getElementById('logged-user-display').innerText = email;
             updateUIPermissions();
+            
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail.toLowerCase());
+            if(user && user.authType === 'email') {
+                document.getElementById('btn-change-pwd').classList.add('hidden');
+            } else {
+                document.getElementById('btn-change-pwd').classList.remove('hidden');
+            }
+            
             navigate('dashboard');
         }
 
@@ -488,7 +567,7 @@
             location.reload();
         }
 
-        // TELA DE TROCA DE SENHA
+        // ======= TROCA DE SENHA =======
         function openChangePwdModal(forced = false, email = null) {
             isForcedPwdChange = forced;
             document.getElementById('pwd-error').classList.add('hidden');
@@ -498,7 +577,7 @@
             if(forced) {
                 document.getElementById('change-pwd-email').value = email;
                 document.getElementById('pwd-modal-title').innerText = "Bem-vindo! Defina sua Senha";
-                document.getElementById('pwd-modal-desc').innerText = "Por segurança, defina uma senha de acesso diferente da padrão.";
+                document.getElementById('pwd-modal-desc').innerText = "Por segurança, defina uma senha pessoal de acesso diferente da provisória.";
                 document.getElementById('pwd-cancel-btn').classList.add('hidden');
             } else {
                 document.getElementById('change-pwd-email').value = loggedEmail;
@@ -506,7 +585,6 @@
                 document.getElementById('pwd-modal-desc').innerText = "Digite a sua nova senha de acesso.";
                 document.getElementById('pwd-cancel-btn').classList.remove('hidden');
             }
-            
             document.getElementById('change-pwd-modal').classList.remove('hidden');
         }
 
@@ -529,13 +607,12 @@
 
             if(!p1 || !p2) return showPwdError("Preencha ambos os campos.");
             if(p1 !== p2) return showPwdError("As senhas não conferem.");
-            if(p1 === '1234' || p1 === '123456') return showPwdError("A nova senha não pode ser a padrão.");
+            if(p1 === '1234' || p1 === '123456') return showPwdError("A nova senha não pode ser a padrão (1234). Escolha outra.");
 
             const user = adminUsers.find(u => u.email === email);
             if(user) {
                 user.password = p1;
                 await saveStateToSupabase();
-                
                 document.getElementById('change-pwd-modal').classList.add('hidden');
                 
                 if(isForcedPwdChange) {
@@ -547,6 +624,7 @@
             }
         }
 
+        // ======= PERMISSÕES E MENU =======
         function updateUIPermissions() {
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             const isAdmin = user && user.areas.includes('all');
@@ -558,10 +636,14 @@
             if(isAdmin) {
                 adminNav.classList.remove('hidden');
                 importNav.classList.remove('hidden');
+                adminNav.classList.add('sm:inline-block');
+                importNav.classList.add('sm:inline-block');
                 syncStatus.classList.replace('hidden', 'inline-block');
             } else {
                 adminNav.classList.add('hidden');
                 importNav.classList.add('hidden');
+                adminNav.classList.remove('sm:inline-block');
+                importNav.classList.remove('sm:inline-block');
                 syncStatus.classList.replace('inline-block', 'hidden');
             }
         }
@@ -573,11 +655,12 @@
             return user.areas.includes(areaId);
         }
 
+        // ======= NUVEM =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
             const syncUI = document.getElementById('sync-status');
             if(syncUI && !syncUI.classList.contains('hidden')) {
-                syncUI.innerHTML = '<i class="fas fa-sync fa-spin"></i> Salvando...';
+                syncUI.innerHTML = '<i class="fas fa-sync fa-spin"></i> <span class="hidden sm:inline">Salvando...</span>';
                 syncUI.className = 'inline-block text-xs bg-yellow-600 text-white px-2 py-1 rounded transition-colors shadow';
             }
 
@@ -588,18 +671,62 @@
                 if(error) throw error;
 
                 if(syncUI && !syncUI.classList.contains('hidden')) {
-                    syncUI.innerHTML = '<i class="fas fa-check"></i> Atualizado';
-                    syncUI.className = 'hidden sm:inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow';
+                    syncUI.innerHTML = '<i class="fas fa-check"></i> <span class="hidden sm:inline">Nuvem atualizada</span>';
+                    syncUI.className = 'inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow';
                 }
             } catch(err) {
                 console.error("Erro na API:", err);
                 if(syncUI && !syncUI.classList.contains('hidden')) {
-                    syncUI.innerHTML = '<i class="fas fa-times"></i> Erro (Veja o SQL)';
-                    syncUI.className = 'hidden sm:inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
+                    syncUI.innerHTML = '<i class="fas fa-times"></i> <span class="hidden sm:inline">Erro no Supabase</span>';
+                    syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
+                    syncUI.title = "Atenção: O Supabase bloqueou a gravação! Rode a Query SQL 'WITH CHECK (true)'.";
                 }
             }
         }
 
+        // ======= CONTROLES DE INTERFACE (NAVEGAÇÃO) =======
+        function navigate(viewId) {
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
+            const isAdmin = user && user.areas.includes('all');
+
+            if ((viewId === 'admin' || viewId === 'import') && !isAdmin) {
+                alert("Acesso Negado.");
+                return;
+            }
+
+            document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
+            
+            ['dashboard', 'areas', 'import', 'admin', 'area-detail', 'global-comments'].forEach(id => {
+                const btn = document.getElementById(`nav-${id}`);
+                if(btn) {
+                    if((id === 'admin' || id === 'import') && !isAdmin) {
+                        btn.classList.add('hidden');
+                    } else {
+                        btn.className = (id === viewId) 
+                            ? "opacity-100 border-b-2 border-white pb-1 text-white inline-block font-bold" 
+                            : "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white";
+                    }
+                }
+            });
+            
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById('hero-bg').style.height = (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'admin' || viewId === 'global-comments') ? '18rem' : '12rem';
+
+            // Logica visual de Ciclo Vigente/Passado
+            const isVigente = appState.activeCycleName === appState.vigenteCycle;
+            const banner = document.getElementById('read-only-banner');
+            if(!isVigente && (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'global-comments')) {
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+
+            if(viewId === 'dashboard') renderDashboard();
+            if(viewId === 'areas') renderAreasList();
+            if(viewId === 'admin') renderAdminTable();
+        }
+
+        // ======= LOGO =======
         window.onload = () => {
             const savedLogo = localStorage.getItem('fastTennisLogo');
             if(savedLogo) {
@@ -610,14 +737,11 @@
         };
 
         function triggerLogoUpload() {
-            const isLoginScreen = !document.getElementById('login-screen').classList.contains('hidden');
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
-            const isAdmin = user && user.areas.includes('all');
-            
-            if (isLoginScreen || isAdmin) {
+            if (user && user.areas.includes('all')) {
                 document.getElementById('logo-upload').click();
             } else {
-                alert("Apenas administradores podem alterar a logo.");
+                alert("Apenas administradores podem alterar a logo do sistema.");
             }
         }
 
@@ -636,21 +760,28 @@
             }
         }
 
+        // ======= MULTI-CICLO (HISTÓRICO) =======
         function updateCycleDropdowns() {
             const dashSelect = document.getElementById('dashboard-cycle-select');
             const importSelect = document.getElementById('import-cycle-select');
+            const vigenteSelect = document.getElementById('import-vigente-select');
             
             dashSelect.innerHTML = '';
             importSelect.innerHTML = '';
+            vigenteSelect.innerHTML = '';
             
             if(appState.cycles.length === 0) {
                 dashSelect.innerHTML = '<option value="">Nenhum ciclo criado</option>';
-                importSelect.innerHTML = '<option value="">Nenhum ciclo existente</option>';
+                importSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
+                vigenteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
             } else {
                 appState.cycles.forEach(c => {
-                    let sel = c.name === appState.activeCycleName ? 'selected' : '';
-                    dashSelect.innerHTML += `<option value="${c.name}" ${sel}>${c.name}</option>`;
-                    importSelect.innerHTML += `<option value="${c.name}" ${sel}>${c.name}</option>`;
+                    let selAct = c.name === appState.activeCycleName ? 'selected' : '';
+                    let selVig = c.name === appState.vigenteCycle ? 'selected' : '';
+                    
+                    dashSelect.innerHTML += `<option value="${c.name}" ${selAct}>${c.name}</option>`;
+                    importSelect.innerHTML += `<option value="${c.name}" ${selAct}>${c.name}</option>`;
+                    vigenteSelect.innerHTML += `<option value="${c.name}" ${selVig}>${c.name} ${c.name===appState.vigenteCycle ? '(Aberto)' : '(Fechado)'}</option>`;
                 });
             }
         }
@@ -660,33 +791,25 @@
             appState.activeCycleName = newCycleName;
             document.getElementById('import-cycle-select').value = newCycleName;
             
+            const isVigente = appState.activeCycleName === appState.vigenteCycle;
+            const banner = document.getElementById('read-only-banner');
+            if(!isVigente) banner.classList.remove('hidden');
+            else banner.classList.add('hidden');
+
             renderDashboard();
             if(!document.getElementById('view-areas').classList.contains('hidden')) renderAreasList();
             if(!document.getElementById('view-global-comments').classList.contains('hidden')) openGlobalFilter(currentGlobalFilterType);
         }
 
-        function navigate(viewId) {
-            if (viewId === 'admin' || viewId === 'import') {
-                const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
-                if (!user || !user.areas.includes('all')) {
-                    alert("Acesso Negado.");
-                    return;
-                }
-            }
-
-            document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
-            ['dashboard', 'areas', 'import', 'admin', 'area-detail', 'global-comments'].forEach(id => {
-                const btn = document.getElementById(`nav-${id}`);
-                if(btn) btn.className = (id === viewId) ? "opacity-100 border-b-2 border-white pb-1" : "hidden sm:block opacity-70 hover:opacity-100 pb-1";
-            });
-            document.getElementById(`view-${viewId}`).classList.remove('hidden');
-            document.getElementById('hero-bg').style.height = (viewId === 'dashboard' || viewId === 'area-detail' || viewId === 'admin' || viewId === 'global-comments') ? '18rem' : '12rem';
-
-            if(viewId === 'dashboard') renderDashboard();
-            if(viewId === 'areas') renderAreasList();
-            if(viewId === 'admin') renderAdminTable();
+        async function setVigenteCycle() {
+            const sel = document.getElementById('import-vigente-select').value;
+            appState.vigenteCycle = sel;
+            await saveStateToSupabase();
+            updateCycleDropdowns();
+            alert("Ciclo Vigente alterado com sucesso! Apenas este ciclo permitirá edições.");
         }
 
+        // ======= LÓGICA DE DADOS & RENDER =======
         function parseBrDate(dStr) {
             if(!dStr) return null;
             dStr = String(dStr).trim();
@@ -828,10 +951,9 @@
                         let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
                         let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
+                        // REMOVIDO "AÇÃO EXECUTADA" DOS CARDS, SOMENTE PLANO PREVISTO
                         let planPreview = item.plan && item.plan.trim() !== ''
                             ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100"><span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>${item.plan}</div>` : '';
-                        let actionPreview = item.action && item.action.trim() !== ''
-                            ? `<div class="mt-2 bg-green-50/50 p-3 rounded text-sm text-gray-700 border border-green-100"><span class="font-bold text-green-700 text-[10px] uppercase block mb-1">Ação Executada:</span>${item.action}</div>` : '';
 
                         itemsHtml += `
                             <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel('${item.id}', '${area.id}')">
@@ -841,7 +963,6 @@
                                 </div>
                                 <p class="text-gray-800 text-sm mb-2">${item.comment}</p>
                                 ${planPreview}
-                                ${actionPreview}
                                 <div class="flex border-t pt-4 mt-4">
                                     <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">STATUS</div>
                                         <div class="inline-flex items-center gap-1.5 border px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${sColor}"><div class="w-1.5 h-1.5 rounded-full ${bColor}"></div>${item.status}</div>
@@ -943,8 +1064,6 @@
 
                 let planPreview = item.plan && item.plan.trim() !== ''
                     ? `<div class="mt-4 bg-blue-50/50 p-3 rounded text-sm text-gray-700 border border-blue-100"><span class="font-bold text-primary text-[10px] uppercase block mb-1">Plano de Ação Previsto:</span>${item.plan}</div>` : '';
-                let actionPreview = item.action && item.action.trim() !== ''
-                    ? `<div class="mt-2 bg-green-50/50 p-3 rounded text-sm text-gray-700 border border-green-100"><span class="font-bold text-green-700 text-[10px] uppercase block mb-1">Ação Executada:</span>${item.action}</div>` : '';
 
                 container.innerHTML += `
                     <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-accent transition-colors" onclick="openPanel('${item.id}', '${area.id}')">
@@ -955,7 +1074,6 @@
                         <p class="text-gray-800 text-sm mb-2">${item.comment}</p>
                         
                         ${planPreview}
-                        ${actionPreview}
 
                         <div class="flex border-t pt-4 mt-4">
                             <div class="w-1/3"><div class="text-gray-400 text-[10px] sm:text-xs font-semibold mb-1">STATUS</div>
@@ -969,8 +1087,12 @@
         }
 
         async function editNps() {
+            if(appState.activeCycleName !== appState.vigenteCycle) {
+                alert("🔒 Ciclo Encerrado. Não é possível alterar a nota.");
+                return;
+            }
             if(!checkPermission(currentAreaId)) {
-                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS validado.");
+                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS.");
                 return;
             }
             const activeData = getActiveCycleData();
@@ -986,6 +1108,12 @@
         }
 
         function openPanel(itemId, forceAreaId = null) {
+            // TRAVA DE CICLO PASSADO (LEITURA APENAS)
+            if(appState.activeCycleName !== appState.vigenteCycle) {
+                alert("🔒 Ciclo Encerrado. Os dados estão em modo de Apenas Leitura e não podem ser editados.");
+                return;
+            }
+
             let targetAreaId = forceAreaId || currentAreaId;
             
             if(!checkPermission(targetAreaId)) {
@@ -1074,6 +1202,7 @@
             }
         }
 
+        // --- SISTEMA DE LEITURA E GERAÇÃO DINÂMICA (EXCEL) ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -1154,26 +1283,28 @@
                             }
                         }
                         
-                        if(validRows > 0) {
+                        if(validRows > 0 || rows.length > 0) {
+                            const activeData = getActiveCycleData();
+                            let existingArea = activeData.find(a => a.id === rawId);
+                            let preservedNps = existingArea ? existingArea.realNps : null;
+
                             newAreasData.push({
                                 id: rawId,
                                 name: sheetName,
-                                realNps: null, 
+                                realNps: preservedNps,
                                 comments: validRows,
                                 done: tempItems.filter(i => i.status === 'Concluído').length,
                                 late: 0,
                                 items: tempItems
                             });
 
-                            html += `<li class="px-6 py-4 flex justify-between items-center border-l-4 border-accent bg-green-50 mb-1">
-                                        <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Importada com Sucesso</p></div>
-                                        <span class="text-sm font-bold text-gray-600">${validRows} comentário(s)</span>
-                                    </li>`;
-                            totalComments += validRows;
-                        } else if(rows.length > 0) {
-                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50 mb-1">
-                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Sem comentários encontrados)</p></div>
-                                    </li>`;
+                            if(validRows > 0) {
+                                html += `<li class="px-6 py-4 flex justify-between items-center border-l-4 border-accent bg-green-50 mb-1">
+                                            <div><p class="text-sm font-bold text-gray-800">${sheetName}</p><p class="text-xs text-accent">&rarr; Importada com Sucesso</p></div>
+                                            <span class="text-sm font-bold text-gray-600">${validRows} comentário(s)</span>
+                                        </li>`;
+                                totalComments += validRows;
+                            }
                         }
                     });
                     
@@ -1207,11 +1338,9 @@
             btn.classList.add('cursor-wait');
 
             if(newCycleInput) {
-                appState.cycles.push({
-                    name: newCycleInput,
-                    data: pendingImportData
-                });
+                appState.cycles.push({ name: newCycleInput, data: pendingImportData });
                 appState.activeCycleName = newCycleInput;
+                appState.vigenteCycle = newCycleInput; // NOVO CICLO CRIA E JÁ VIRA O VIGENTE
             } else if (existingCycle) {
                 let cycleObj = appState.cycles.find(c => c.name === existingCycle);
                 if(cycleObj) cycleObj.data = pendingImportData;
@@ -1219,6 +1348,7 @@
             } else {
                 appState.cycles.push({ name: 'Ciclo Inicial', data: pendingImportData });
                 appState.activeCycleName = 'Ciclo Inicial';
+                appState.vigenteCycle = 'Ciclo Inicial';
             }
             
             await saveStateToSupabase();
@@ -1236,11 +1366,11 @@
             
             updateCycleDropdowns();
             
-            alert("Sucesso! Planilha adicionada ao Histórico do Supabase.");
+            alert("Sucesso! Planilha adicionada e sincronizada na nuvem.");
             navigate('dashboard');
         }
 
-        // --- PAINEL ADMIN COM SENHAS ---
+        // --- PAINEL ADMIN COM AUTENTICAÇÃO FLEXÍVEL ---
         let editingUserEmail = null;
 
         function renderAdminTable() {
@@ -1261,16 +1391,21 @@
                     });
                 }
                 
+                let authBadge = u.authType === 'email' 
+                    ? `<span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-[10px] font-bold uppercase"><i class="fas fa-envelope"></i> Só E-mail</span>`
+                    : `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-[10px] font-bold uppercase"><i class="fas fa-lock"></i> E-mail + Senha</span>`;
+                
                 tbody.innerHTML += `
                     <tr>
                         <td class="py-3 px-4 font-medium text-gray-800">
                             ${u.email}
-                            ${u.password === '1234' ? '<span class="ml-2 text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded">Senha Padrão</span>' : ''}
+                            ${u.password === '1234' && u.authType === 'password' ? '<span class="ml-2 text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-bold">SENHA PADRÃO</span>' : ''}
                         </td>
+                        <td class="py-3 px-4">${authBadge}</td>
                         <td class="py-3 px-4 flex flex-wrap gap-1">${tags || '<span class="text-gray-400 text-xs">Nenhuma área</span>'}</td>
-                        <td class="py-3 px-4 text-gray-400 flex gap-3">
+                        <td class="py-3 px-4 text-gray-400 flex gap-3 text-xs font-semibold">
                             <button class="hover:text-primary" onclick="openAdminModal('${u.email}')"><i class="fas fa-edit"></i> Editar</button>
-                            <button class="hover:text-warning" onclick="resetUserPassword('${u.email}')" title="Resetar para senha padrão"><i class="fas fa-key"></i> Resetar</button>
+                            ${u.authType === 'password' ? `<button class="hover:text-warning" onclick="resetUserPassword('${u.email}')" title="Resetar para senha padrão"><i class="fas fa-key"></i> Resetar</button>` : ''}
                         </td>
                     </tr>`;
             });
@@ -1288,16 +1423,24 @@
             }
         }
 
+        function togglePwdField(val) {
+            const pwdContainer = document.getElementById('admin-pwd-container');
+            if(val === 'email') pwdContainer.classList.add('hidden');
+            else pwdContainer.classList.remove('hidden');
+        }
+
         function openAdminModal(email = null) {
             editingUserEmail = email;
             const container = document.getElementById('admin-areas-checkboxes');
             container.innerHTML = '';
             
-            // Para não expor a senha real no modal, não preenchemos o input de senha ao editar
-            let user = email ? adminUsers.find(u=>u.email===email) : {email: '', areas: []};
+            let user = email ? adminUsers.find(u=>u.email===email) : {email: '', authType: 'password', password: '', areas: []};
             
             document.getElementById('admin-user-email').value = user.email;
-            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões" : "Novo Usuário";
+            document.getElementById('admin-modal-title').innerText = email ? "Editar Permissões & Senha" : "Novo Usuário";
+            
+            document.querySelector(`input[name="auth_type"][value="${user.authType}"]`).checked = true;
+            togglePwdField(user.authType);
             
             const deleteBtn = document.getElementById('admin-delete-btn');
             if(email && adminUsers.length > 1) deleteBtn.classList.remove('hidden');
@@ -1338,8 +1481,11 @@
 
         async function saveAdminModal() {
             const email = document.getElementById('admin-user-email').value.trim();
+            const authType = document.querySelector('input[name="auth_type"]:checked').value;
+            const password = document.getElementById('admin-user-password').value.trim();
             
             if(!email) return alert("O e-mail é obrigatório.");
+            if(authType === 'password' && !password && !editingUserEmail) return alert("A senha provisória é obrigatória para novos usuários.");
 
             const isAll = document.getElementById('admin-check-all').checked;
             let selectedAreas = [];
@@ -1353,10 +1499,11 @@
             if(editingUserEmail) {
                 let u = adminUsers.find(u => u.email === editingUserEmail);
                 u.email = email;
+                u.authType = authType;
+                if(password) u.password = password; // só atualiza se digitou algo novo
                 u.areas = selectedAreas;
             } else {
-                // Usuário novo sempre nasce com senha 1234
-                adminUsers.push({email: email, password: '1234', areas: selectedAreas});
+                adminUsers.push({email: email, authType: authType, password: password || '1234', areas: selectedAreas});
             }
             
             await saveStateToSupabase();
