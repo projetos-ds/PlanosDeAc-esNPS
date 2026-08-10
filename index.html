@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planos de Ação - NPS | Fast Tennis</title>
-    <!-- Favicon -->
+    <!-- Favicon Dinâmico -->
     <link id="favicon" rel="icon" type="image/png" href="LOGO_FAST_TENNIS_RGB_COR_2.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -48,14 +48,10 @@
 </head>
 <body class="bg-bglight text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
-    <!-- Uploader Oculto para Logo (Admin apenas) -->
-    <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
-
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
         <div class="bg-white p-10 rounded-xl shadow-2xl w-[90%] max-w-[400px] text-center relative">
             <div class="mb-8 flex justify-center">
-                <!-- Logo sem hover de edição no login -->
                 <div class="flex items-center justify-center h-16 w-full max-w-[200px]">
                     <img id="login-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="h-full w-full object-contain">
                 </div>
@@ -75,21 +71,80 @@
         </div>
     </div>
 
-    <!-- TELA DE TROCA DE SENHA OBRIGATÓRIA -->
+    <!-- TELA DE TROCA DE SENHA -->
     <div id="change-pwd-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[400px]">
             <h3 class="font-bold text-2xl text-primary mb-2" id="pwd-modal-title">Definir Nova Senha</h3>
             <p class="text-sm text-gray-500 mb-6" id="pwd-modal-desc">Por segurança, você precisa definir uma senha pessoal.</p>
-
             <input type="hidden" id="change-pwd-email">
             <input type="password" id="new-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-3 outline-none focus:border-secondary text-gray-800" placeholder="Digite a nova senha">
             <input type="password" id="confirm-pwd" class="w-full border border-gray-300 px-4 py-3 rounded-lg mb-4 outline-none focus:border-secondary text-gray-800" placeholder="Confirme a nova senha">
-
             <div id="pwd-error" class="text-danger text-sm font-semibold hidden mb-4 bg-red-50 py-2 px-3 rounded">As senhas não conferem.</div>
-
             <div class="flex justify-end gap-3 mt-6">
                 <button id="pwd-cancel-btn" onclick="closeChangePwdModal()" class="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-50 text-sm font-medium">Cancelar</button>
                 <button onclick="saveNewPassword()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-800 text-sm font-bold shadow transition-colors">Salvar e Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA DE BRANDING / DESIGN (NOVO) -->
+    <div id="branding-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[250] flex items-center justify-center hidden">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-[500px]">
+            <h3 class="font-bold text-2xl text-primary mb-2">Configurações de Design</h3>
+            <p class="text-sm text-gray-500 mb-6">Altere a identidade visual do sistema. As mudanças refletem para todos os usuários.</p>
+
+            <!-- Inputs ocultos para os arquivos -->
+            <input type="file" id="upload-header-logo" class="hidden" accept="image/*" onchange="previewImage(event, 'preview-header', 'headerLogo')">
+            <input type="file" id="upload-login-logo" class="hidden" accept="image/*" onchange="previewImage(event, 'preview-login', 'loginLogo')">
+            <input type="file" id="upload-favicon" class="hidden" accept="image/*" onchange="previewImage(event, 'preview-favicon', 'favicon')">
+
+            <div class="space-y-4 mb-8">
+                <!-- Logo Cabeçalho -->
+                <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
+                    <div>
+                        <p class="font-bold text-sm text-gray-800">Logo do Cabeçalho</p>
+                        <p class="text-[10px] text-gray-500">Aparece na barra azul superior (ideal logo com letras brancas).</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-24 bg-primary flex items-center justify-center rounded overflow-hidden">
+                            <img id="preview-header" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <button onclick="document.getElementById('upload-header-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
+                    </div>
+                </div>
+
+                <!-- Logo Login -->
+                <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
+                    <div>
+                        <p class="font-bold text-sm text-gray-800">Logo do Login</p>
+                        <p class="text-[10px] text-gray-500">Aparece na tela inicial branca (ideal logo com letras escuras).</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-24 bg-white flex items-center justify-center rounded overflow-hidden border">
+                            <img id="preview-login" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <button onclick="document.getElementById('upload-login-logo').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
+                    </div>
+                </div>
+
+                <!-- Favicon -->
+                <div class="flex items-center justify-between border p-3 rounded-lg bg-gray-50">
+                    <div>
+                        <p class="font-bold text-sm text-gray-800">Favicon</p>
+                        <p class="text-[10px] text-gray-500">Ícone pequeno que fica na aba do navegador.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 bg-white flex items-center justify-center rounded overflow-hidden border">
+                            <img id="preview-favicon" src="LOGO_FAST_TENNIS_RGB_COR_2.png" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <button onclick="document.getElementById('upload-favicon').click()" class="text-secondary text-sm font-bold hover:underline">Trocar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeBrandingModal()" class="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-50 text-sm font-medium">Cancelar</button>
+                <button onclick="saveBranding()" class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-green-600 text-sm font-bold shadow transition-colors">Salvar Design Global</button>
             </div>
         </div>
     </div>
@@ -104,11 +159,11 @@
     <!-- HEADER PRINCIPAL -->
     <header class="bg-primary text-white flex items-center justify-between px-4 sm:px-6 py-4 flex-shrink-0 z-50 shadow-md">
         <div class="flex items-center gap-3 sm:gap-4 shrink-0">
-            <div class="cursor-pointer user-select-none shrink-0 relative group" onclick="navigate('dashboard')" ondblclick="triggerLogoUpload()" title="Clique duplo para alterar a logo (Admin)">
+            <!-- LOGO DA BARRA (DUPLO CLIQUE CHAMA O MODAL DE DESIGN) -->
+            <div class="cursor-pointer user-select-none shrink-0 relative group" onclick="navigate('dashboard')" ondblclick="openBrandingModal()" title="Admin: Duplo clique para alterar Design do sistema">
                 <div class="px-1 py-1 rounded flex items-center justify-center h-10 sm:h-12 w-[100px] sm:w-[140px]">
-                    <img id="logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="max-h-full max-w-full object-contain pointer-events-none">
+                    <img id="header-logo-img" src="LOGO_FAST_TENNIS_RGB_COR_2.png" alt="Fast Tennis" class="max-h-full max-w-full object-contain pointer-events-none">
                 </div>
-                <div id="header-logo-overlay" class="hidden absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 items-center justify-center font-bold transition-opacity">Trocar Logo</div>
             </div>
             <h1 class="font-bold text-sm sm:text-lg tracking-wide uppercase text-white truncate">Planos de Ação</h1>
         </div>
@@ -136,56 +191,50 @@
     </header>
 
     <main class="flex-1 overflow-auto bg-bglight flex flex-col">
+        <div class="bg-primary text-white pt-8 pb-24 px-8 w-full absolute top-0 left-0 -z-10 h-64 transition-all duration-300" id="hero-bg"></div>
 
-        <!-- VISÃO: DASHBOARD -->
-        <div id="view-dashboard" class="page-view flex-col w-full hidden">
-            <!-- Fundo azul dinâmico -->
-            <div class="bg-primary w-full px-4 sm:px-8 pt-8 pb-20">
-                <div class="max-w-7xl mx-auto">
-                    <!-- Banner de Bloqueio -->
-                    <div id="read-only-banner-dash" class="hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow mb-6">
-                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 text-white gap-4">
-                        <div>
-                            <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
-                            <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
-                        </div>
-                        <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold w-full sm:w-auto focus:ring-1 focus:ring-white">
-                        </select>
-                    </div>
+        <!-- FAIXA DE CICLO FECHADO -->
+        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow mb-4">
+            <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
+                    <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
+                </div>
+                <select id="dashboard-cycle-select" onchange="changeActiveCycle(this.value)" class="bg-blue-800 border border-blue-600 text-white rounded px-4 py-2 text-sm outline-none shadow font-semibold w-full sm:w-auto">
+                </select>
+            </div>
+
+            <!-- CARDS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
+                </div>
+                <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Concluídos</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0%</div>
+                </div>
+                <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Em Atraso</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-danger mb-1" id="dash-total-late">0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
+                </div>
+                <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Sem Plano</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
+                    <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
                 </div>
             </div>
-            
-            <!-- Cards Sobrepostos -->
-            <div class="-mt-12 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-                    <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400">Demandam plano</div>
-                    </div>
-                    <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Concluídos</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0%</div>
-                    </div>
-                    <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Em Atraso</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-danger mb-1" id="dash-total-late">0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
-                    </div>
-                    <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all">
-                        <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wide">Sem Plano</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1" id="dash-total-noplan">0</div>
-                        <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
-                    </div>
-                </div>
 
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Áreas de Atuação</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-areas-grid"></div>
-            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Áreas de Atuação</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-12" id="dashboard-areas-grid"></div>
         </div>
 
         <!-- VISÃO GLOBAL DE COMENTÁRIOS -->
@@ -200,7 +249,7 @@
             <div class="-mt-8 max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12" id="global-comments-list"></div>
         </div>
 
-        <!-- VISÃO: DETALHE DA ÁREA -->
+        <!-- DETALHE DA ÁREA -->
         <div id="view-area-detail" class="page-view flex-col w-full hidden">
             <div class="bg-primary w-full px-4 sm:px-8 pt-8 pb-20">
                 <div class="max-w-7xl mx-auto">
@@ -233,7 +282,7 @@
             </div>
         </div>
 
-        <!-- ÁREAS SIMPLES -->
+        <!-- ÁREAS -->
         <div id="view-areas" class="page-view px-4 sm:px-8 pt-8 max-w-7xl mx-auto hidden flex-col w-full">
             <div class="mb-8">
                 <h2 class="text-3xl font-bold mb-2 text-primary">Áreas</h2>
@@ -255,7 +304,7 @@
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-primary mb-1">Qual é o Ciclo Vigente (Aberto)?</label>
                         <select id="import-vigente-select" onchange="setVigenteCycle()" class="w-full border border-blue-300 rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary bg-blue-50"></select>
-                        <p class="text-[10px] text-gray-500 mt-1">Os outros ciclos ficarão trancados para edição.</p>
+                        <p class="text-[10px] text-gray-500 mt-1">Os outros ciclos ficarão trancados para edição (Leitura).</p>
                     </div>
                     
                     <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mt-8 mb-4">2. Importar Novo Excel</h3>
@@ -265,7 +314,7 @@
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Ou criar novo ciclo</label>
-                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26 (Junho e Julho/2026)" class="w-full border rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-gray-50">
+                        <input type="text" id="import-new-cycle" placeholder="Ex.: Ciclo 07/26" class="w-full border rounded px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary bg-gray-50">
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Arquivo (.xlsx ou .xls)</label>
@@ -313,7 +362,6 @@
                 </table>
             </div>
         </div>
-
     </main>
 
     <!-- Modal Admin Permissões -->
@@ -391,10 +439,9 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Plano de ação Previsto</label>
                     <textarea id="form-plano" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
                 </div>
-                <!-- CAMPO AÇÃO EXECUTADA OCULTO -->
                 <div class="mb-4 hidden">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Ação executada</label>
-                    <textarea id="form-acao" rows="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary resize-none"></textarea>
+                    <textarea id="form-acao" rows="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-secondary resize-none"></textarea>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
                     <div class="w-full sm:w-1/2">
@@ -433,11 +480,13 @@
         let loggedEmail = null; 
         let appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
         let adminUsers = [];
+        let appSettings = { headerLogo: null, loginLogo: null, favicon: null };
         let currentAreaId = null;
         let currentFilter = 'Todos';
         let currentGlobalFilterType = 'Todos';
         let pendingImportData = null;
         let isForcedPwdChange = false;
+        let currentImageUploadType = null;
 
         const defaultAdmin = [
             { email: 'daniela@fasttennis.com.br', authType: 'password', password: '1234', areas: ['all'] },
@@ -472,6 +521,13 @@
                         }
                     } else {
                         appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
+                    }
+
+                    // Lê as configurações de design da nuvem
+                    if (data.settings) {
+                        let settingsData = typeof data.settings === 'string' ? JSON.parse(data.settings) : data.settings;
+                        appSettings = { ...appSettings, ...settingsData };
+                        applyBrandingToUI();
                     }
                 }
             } catch (err) {
@@ -515,7 +571,6 @@
             }
         }
 
-        // ======= LOGIN =======
         function handleLogin() {
             const emailInput = document.getElementById('login-email').value.trim().toLowerCase();
             const passInput = document.getElementById('login-password').value.trim();
@@ -578,7 +633,6 @@
             location.reload();
         }
 
-        // ======= TROCA DE SENHA =======
         function openChangePwdModal(forced = false, email = null) {
             isForcedPwdChange = forced;
             document.getElementById('pwd-error').classList.add('hidden');
@@ -635,7 +689,67 @@
             }
         }
 
-        // ======= PERMISSÕES E MENU =======
+        // ======= BRANDING / DESIGN (NOVO) =======
+        function applyBrandingToUI() {
+            if (appSettings.headerLogo) {
+                document.getElementById('header-logo-img').src = appSettings.headerLogo;
+            }
+            if (appSettings.loginLogo) {
+                document.getElementById('login-logo-img').src = appSettings.loginLogo;
+                document.getElementById('preview-login').src = appSettings.loginLogo;
+            }
+            if (appSettings.favicon) {
+                document.getElementById('favicon').href = appSettings.favicon;
+                document.getElementById('preview-favicon').src = appSettings.favicon;
+            }
+        }
+
+        function triggerLogoUpload() {
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
+            const isAdmin = user && user.areas.includes('all');
+            
+            if (isAdmin) {
+                document.getElementById('branding-modal').classList.remove('hidden');
+                // Preenche os previews com os dados atuais
+                if(appSettings.headerLogo) document.getElementById('preview-header').src = appSettings.headerLogo;
+                if(appSettings.loginLogo) document.getElementById('preview-login').src = appSettings.loginLogo;
+                if(appSettings.favicon) document.getElementById('preview-favicon').src = appSettings.favicon;
+            } else {
+                alert("Acesso Negado: Apenas administradores podem acessar as Configurações de Design da Plataforma.");
+            }
+        }
+
+        function closeBrandingModal() {
+            document.getElementById('branding-modal').classList.add('hidden');
+        }
+
+        function previewImage(event, previewId, type) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    document.getElementById(previewId).src = base64;
+                    appSettings[type] = base64; // Atualiza objeto na memória
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function saveBranding() {
+            const btn = document.querySelector('#branding-modal button.bg-accent');
+            btn.innerText = "Salvando...";
+            btn.classList.add('opacity-50');
+
+            await saveStateToSupabase();
+            applyBrandingToUI();
+            
+            btn.innerText = "Salvar Design Global";
+            btn.classList.remove('opacity-50');
+            closeBrandingModal();
+            alert("Design atualizado para todos os usuários com sucesso!");
+        }
+
         function updateUIPermissions() {
             const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
             const isAdmin = user && user.areas.includes('all');
@@ -646,13 +760,17 @@
             const logoOverlay = document.getElementById('header-logo-overlay');
             
             if(isAdmin) {
-                adminNav.className = "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white";
-                importNav.className = "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white";
+                adminNav.classList.remove('hidden');
+                importNav.classList.remove('hidden');
+                adminNav.classList.add('sm:inline-block');
+                importNav.classList.add('sm:inline-block');
                 syncStatus.classList.replace('hidden', 'inline-block');
                 logoOverlay.classList.replace('hidden', 'flex');
             } else {
-                adminNav.className = "hidden"; // Esconde total
-                importNav.className = "hidden"; // Esconde total
+                adminNav.classList.add('hidden');
+                importNav.classList.add('hidden');
+                adminNav.classList.remove('sm:inline-block');
+                importNav.classList.remove('sm:inline-block');
                 syncStatus.classList.replace('inline-block', 'hidden');
                 logoOverlay.classList.replace('flex', 'hidden');
             }
@@ -665,7 +783,6 @@
             return user.areas.includes(areaId);
         }
 
-        // ======= NUVEM =======
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
             const syncUI = document.getElementById('sync-status');
@@ -676,99 +793,23 @@
 
             try {
                 const { error } = await supabaseClient.from('app_state')
-                    .upsert({ id: 1, areas_data: appState, admin_users: adminUsers });
+                    .upsert({ id: 1, areas_data: appState, admin_users: adminUsers, settings: appSettings });
                 
                 if(error) throw error;
 
                 if(syncUI && !syncUI.classList.contains('hidden')) {
-                    syncUI.innerHTML = '<i class="fas fa-check"></i> <span class="hidden sm:inline">Nuvem atualizada</span>';
-                    syncUI.className = 'inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow';
+                    syncUI.innerHTML = '<i class="fas fa-check"></i> <span class="hidden sm:inline">Atualizado</span>';
+                    syncUI.className = 'hidden sm:inline-block text-xs bg-green-600 text-white px-2 py-1 rounded transition-colors shadow';
                 }
             } catch(err) {
                 console.error("Erro na API:", err);
                 if(syncUI && !syncUI.classList.contains('hidden')) {
-                    syncUI.innerHTML = '<i class="fas fa-times"></i> <span class="hidden sm:inline">Erro no Supabase</span>';
-                    syncUI.className = 'inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
+                    syncUI.innerHTML = '<i class="fas fa-times"></i> <span class="hidden sm:inline">Erro no BD</span>';
+                    syncUI.className = 'hidden sm:inline-block text-xs bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors shadow';
                 }
             }
         }
 
-        // ======= CONTROLES DE INTERFACE (NAVEGAÇÃO) =======
-        function navigate(viewId) {
-            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
-            const isAdmin = user && user.areas.includes('all');
-
-            if ((viewId === 'admin' || viewId === 'import') && !isAdmin) {
-                alert("Acesso Negado.");
-                return;
-            }
-
-            document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
-            
-            ['dashboard', 'areas', 'import', 'admin', 'area-detail', 'global-comments'].forEach(id => {
-                const btn = document.getElementById(`nav-${id}`);
-                if(btn) {
-                    if((id === 'admin' || id === 'import') && !isAdmin) {
-                        btn.className = "hidden";
-                    } else {
-                        btn.className = (id === viewId) 
-                            ? "opacity-100 border-b-2 border-white pb-1 text-white inline-block font-bold" 
-                            : "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white";
-                    }
-                }
-            });
-            
-            document.getElementById(`view-${viewId}`).classList.remove('hidden');
-
-            const isVigente = appState.activeCycleName === appState.vigenteCycle;
-            const banner = document.getElementById('read-only-banner-dash');
-            
-            if(!isVigente && viewId === 'dashboard') {
-                banner.classList.remove('hidden');
-            } else {
-                if(banner) banner.classList.add('hidden');
-            }
-
-            if(viewId === 'dashboard') renderDashboard();
-            if(viewId === 'areas') renderAreasList();
-            if(viewId === 'admin') renderAdminTable();
-        }
-
-        // ======= LOGO =======
-        window.onload = () => {
-            const savedLogo = localStorage.getItem('fastTennisLogo');
-            if(savedLogo) {
-                document.getElementById('logo-img').src = savedLogo;
-                document.getElementById('login-logo-img').src = savedLogo;
-                document.getElementById('favicon').href = savedLogo;
-            }
-        };
-
-        function triggerLogoUpload() {
-            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
-            if (user && user.areas.includes('all')) {
-                document.getElementById('logo-upload').click();
-            } else {
-                alert("Apenas administradores podem alterar a logo do sistema.");
-            }
-        }
-
-        function changeLogo(event) {
-            const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result;
-                    document.getElementById('logo-img').src = base64;
-                    document.getElementById('login-logo-img').src = base64;
-                    document.getElementById('favicon').href = base64; 
-                    localStorage.setItem('fastTennisLogo', base64);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // ======= MULTI-CICLO (HISTÓRICO) =======
         function updateCycleDropdowns() {
             const dashSelect = document.getElementById('dashboard-cycle-select');
             const importSelect = document.getElementById('import-cycle-select');
@@ -780,7 +821,7 @@
             
             if(appState.cycles.length === 0) {
                 dashSelect.innerHTML = '<option value="">Nenhum ciclo criado</option>';
-                importSelect.innerHTML = '<option value="">Nenhum ciclo existente</option>';
+                importSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
                 vigenteSelect.innerHTML = '<option value="">Nenhum ciclo</option>';
             } else {
                 appState.cycles.forEach(c => {
@@ -816,10 +857,54 @@
             appState.vigenteCycle = sel;
             await saveStateToSupabase();
             updateCycleDropdowns();
+            
+            const banner = document.getElementById('read-only-banner-dash');
+            if(appState.activeCycleName === appState.vigenteCycle && banner) {
+                banner.classList.add('hidden');
+            }
             alert("Ciclo Vigente alterado com sucesso! Apenas este ciclo permitirá edições.");
         }
 
-        // ======= LÓGICA DE DADOS & RENDER =======
+        function navigate(viewId) {
+            const user = adminUsers.find(u => u.email.toLowerCase() === loggedEmail?.toLowerCase());
+            const isAdmin = user && user.areas.includes('all');
+
+            if ((viewId === 'admin' || viewId === 'import') && !isAdmin) {
+                alert("Acesso Negado.");
+                return;
+            }
+
+            document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
+            
+            ['dashboard', 'areas', 'import', 'admin', 'area-detail', 'global-comments'].forEach(id => {
+                const btn = document.getElementById(`nav-${id}`);
+                if(btn) {
+                    if((id === 'admin' || id === 'import') && !isAdmin) {
+                        btn.className = "hidden";
+                    } else {
+                        btn.className = (id === viewId) 
+                            ? "opacity-100 border-b-2 border-white pb-1 text-white inline-block font-bold" 
+                            : "hidden sm:inline-block opacity-70 hover:opacity-100 pb-1 text-white";
+                    }
+                }
+            });
+            
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+
+            const isVigente = appState.activeCycleName === appState.vigenteCycle;
+            const banner = document.getElementById('read-only-banner-dash');
+            
+            if(!isVigente && viewId === 'dashboard') {
+                if(banner) banner.classList.remove('hidden');
+            } else {
+                if(banner) banner.classList.add('hidden');
+            }
+
+            if(viewId === 'dashboard') renderDashboard();
+            if(viewId === 'areas') renderAreasList();
+            if(viewId === 'admin') renderAdminTable();
+        }
+
         function parseBrDate(dStr) {
             if(!dStr) return null;
             dStr = String(dStr).trim();
@@ -1101,7 +1186,7 @@
                 return;
             }
             if(!checkPermission(currentAreaId)) {
-                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS.");
+                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS validado.");
                 return;
             }
             const activeData = getActiveCycleData();
@@ -1142,7 +1227,6 @@
             document.getElementById('panel-comment').innerText = item.comment;
 
             document.getElementById('form-plano').value = item.plan || '';
-            document.getElementById('form-acao').value = item.action || '';
             document.getElementById('form-responsavel').value = item.owner || '';
             
             let dateVal = '';
@@ -1179,7 +1263,6 @@
             const item = area.items.find(i=>i.id == itemIdStr); 
             
             item.plan = document.getElementById('form-plano').value;
-            item.action = document.getElementById('form-acao').value;
             item.owner = document.getElementById('form-responsavel').value;
             
             let inputDate = document.getElementById('form-data').value;
@@ -1210,7 +1293,6 @@
             }
         }
 
-        // --- SISTEMA DE LEITURA EXCEL ---
         function readRealExcel(input) {
             if(!input.files || !input.files[0]) return;
             const previewList = document.getElementById('import-preview-list');
@@ -1313,6 +1395,10 @@
                                         </li>`;
                                 totalComments += validRows;
                             }
+                        } else if(rows.length > 0) {
+                            html += `<li class="px-6 py-4 flex justify-between items-center opacity-50 bg-gray-50 mb-1">
+                                        <div><p class="text-sm font-bold text-gray-800 line-through">${sheetName}</p><p class="text-xs text-gray-400">Ignorado (Sem comentários encontrados)</p></div>
+                                    </li>`;
                         }
                     });
                     
@@ -1380,9 +1466,6 @@
             alert("Sucesso! Planilha adicionada ao Histórico do Supabase.");
             navigate('dashboard');
         }
-
-        // --- PAINEL ADMIN ---
-        let editingUserEmail = null;
 
         function renderAdminTable() {
             const tbody = document.getElementById('adminTableBody');
