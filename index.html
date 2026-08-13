@@ -52,6 +52,18 @@
 
     <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="changeLogo(event)">
 
+    <!-- MODAL DE ALERTA CUSTOMIZADO (Atenção!) -->
+    <div id="custom-alert-modal" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-[999] flex items-center justify-center hidden backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-[90%] max-w-[400px] text-center transform scale-100 transition-transform">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-orange-100 mb-5 border-4 border-white shadow-sm">
+                <i class="fas fa-exclamation-triangle text-3xl text-warning"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Atenção!</h3>
+            <p id="custom-alert-message" class="text-gray-500 text-sm mb-8 whitespace-pre-wrap leading-relaxed"></p>
+            <button onclick="closeCustomAlert()" class="w-full bg-primary hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-md hover:shadow-lg">Entendi</button>
+        </div>
+    </div>
+
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-primary z-[200] flex items-center justify-center hidden">
         <div class="bg-white p-10 rounded-2xl shadow-2xl w-[90%] max-w-[400px] text-center relative card-shadow">
@@ -191,17 +203,17 @@
     </header>
 
     <main class="flex-1 overflow-auto relative bg-bglight flex flex-col z-0">
-        <!-- FAIXA AZUL DINÂMICA -->
-        <div class="bg-primary w-full absolute top-0 left-0 transition-all duration-300 z-[1]" id="hero-bg"></div>
+        <!-- FAIXA AZUL DINÂMICA (Controlada pelo JS sem sobreposição de conteúdo) -->
+        <div class="bg-primary text-white w-full absolute top-0 left-0 -z-10 transition-all duration-300" id="hero-bg"></div>
 
         <!-- FAIXA DE CICLO FECHADO -->
-        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow-md mb-4 z-10 relative">
+        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow-md mb-4 z-10 relative cursor-pointer" onclick="showCustomAlert('Este é um ciclo encerrado. Ele não pode ser modificado.')">
             <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
         </div>
 
         <!-- DASHBOARD -->
         <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full relative z-10">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4 relative z-10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4">
                 <div>
                     <h2 class="text-3xl font-bold mb-2 text-white">Visão geral do ciclo</h2>
                     <p class="text-blue-100 text-sm">Acompanhe os comentários distribuídos por área e o andamento dos planos.</p>
@@ -210,7 +222,8 @@
                 </select>
             </div>
 
-            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-12 relative z-10">
+            <!-- CARDS TOPO COM 5 COLUNAS -->
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-12">
                 <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-5 sm:p-6 cursor-pointer card-shadow card-shadow-hover transition-all">
                     <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Comentários</div>
                     <div class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
@@ -238,54 +251,47 @@
                 </div>
             </div>
 
-            <!-- Ajuste milimétrico para o texto cair no cinza e não no azul -->
-            <div class="mt-8 mb-6 relative z-10">
+            <div class="mt-8 mb-6">
                 <h3 class="text-xl font-bold text-gray-800">Áreas de Atuação</h3>
                 <p class="text-sm text-gray-500">Selecione um card para gerenciar os planos da área correspondente.</p>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pb-12 relative z-10" id="dashboard-areas-grid"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pb-12" id="dashboard-areas-grid"></div>
         </div>
 
         <!-- VISÃO GLOBAL DE COMENTÁRIOS -->
         <div id="view-global-comments" class="page-view flex-col w-full hidden flex-1 relative z-10">
             <div class="w-full px-4 sm:px-8 pt-6 pb-4 shrink-0">
                 <div class="max-w-7xl mx-auto text-gray-800">
-                    <div class="read-only-banner hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow-md mb-6">
-                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-                    </div>
                     <button onclick="navigate('dashboard')" class="text-primary hover:text-blue-800 text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
                     <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-primary" id="global-title">Comentários</h2>
                     <p class="text-gray-500 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
                 </div>
             </div>
-            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-2 relative z-10" id="global-comments-list"></div>
+            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-4" id="global-comments-list"></div>
         </div>
 
         <!-- VISÃO: DETALHE DA ÁREA -->
         <div id="view-area-detail" class="page-view flex-col w-full hidden z-10 relative">
-            <div class="w-full px-4 sm:px-8 pt-6 pb-6 relative z-10">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-6">
                 <div class="max-w-7xl mx-auto">
-                    <div class="read-only-banner hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow-md mb-6">
-                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-                    </div>
                     <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-start mb-4 text-white gap-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start mb-2 text-white gap-4">
                         <h2 class="text-3xl font-bold text-white" id="detail-title">Área</h2>
                         <div class="flex items-center gap-4">
                             <div class="bg-blue-800/50 rounded-full px-4 py-1.5 text-sm flex items-center gap-2 border border-blue-600 shadow-sm">
-                                <span id="detail-nps-display" class="font-bold text-white">NPS -</span> 
+                                <span id="detail-nps-display" class="font-bold">NPS -</span> 
                                 <button onclick="editNps()" class="text-blue-300 hover:text-white transition-colors" title="Editar NPS Real"><i class="fas fa-pencil-alt text-xs"></i></button>
                                 <span class="text-blue-300 mx-1">·</span> 
-                                <span id="detail-stats" class="text-white">0/0 concluídos</span>
+                                <span id="detail-stats">0/0 concluídos</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-4 relative z-10">
+            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-4">
                 <div class="flex overflow-x-auto pb-2 mb-4 no-scrollbar">
                     <div class="flex gap-2" id="filter-buttons">
                         <button onclick="setFilter('Todos')" class="filter-btn active bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm whitespace-nowrap transition-all border-none">Todos</button>
@@ -301,27 +307,27 @@
 
         <!-- VISÃO: ÁREAS SIMPLES -->
         <div id="view-areas" class="page-view flex-col w-full hidden z-10 relative">
-            <div class="w-full px-4 sm:px-8 pt-6 pb-6 relative z-10">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-6">
                 <div class="max-w-7xl mx-auto text-white">
-                    <h2 class="text-3xl font-bold mb-2 text-white">Áreas de Atuação</h2>
+                    <h2 class="text-3xl font-bold mb-2">Áreas de Atuação</h2>
                     <p class="text-blue-100 text-sm">Selecione sua área para registrar os planos de ação cabíveis.</p>
                 </div>
             </div>
-            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-6 relative z-10">
+            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6" id="areas-list-grid"></div>
             </div>
         </div>
 
         <!-- VISÃO: IMPORTAR -->
         <div id="view-import" class="page-view flex-col w-full hidden z-10 relative">
-            <div class="w-full px-4 sm:px-8 pt-6 pb-6 relative z-10">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-6">
                 <div class="max-w-7xl mx-auto text-white">
-                    <h2 class="text-3xl font-bold mb-2 text-white">Importar e Configurar Ciclos</h2>
+                    <h2 class="text-3xl font-bold mb-2">Importar e Configurar Ciclos</h2>
                     <p class="text-blue-100 text-sm">Suba o Excel, defina o ciclo vigente ou remova ciclos antigos.</p>
                 </div>
             </div>
             
-            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-6 relative z-10">
+            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-6">
                 <div class="flex flex-col md:flex-row gap-6">
                     <div class="w-full md:w-1/3 bg-white rounded-2xl shadow-md p-6 h-fit card-shadow">
                         <h3 class="font-bold text-gray-800 text-lg border-b pb-2 mb-4">1. Gerenciar Ciclos</h3>
@@ -372,17 +378,17 @@
         
         <!-- VISÃO: ADMIN -->
         <div id="view-admin" class="page-view flex-col w-full hidden z-10 relative">
-            <div class="w-full px-4 sm:px-8 pt-6 pb-6 relative z-10">
+            <div class="w-full px-4 sm:px-8 pt-6 pb-6">
                 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 text-white">
                     <div>
-                        <h2 class="text-3xl font-bold mb-2 text-white">Painel de Administração</h2>
+                        <h2 class="text-3xl font-bold mb-2">Painel de Administração</h2>
                         <p class="text-blue-100 text-sm">Gerencie senhas e permissões de acesso dos Heads do sistema.</p>
                     </div>
                     <button onclick="openAdminModal()" class="bg-accent text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-green-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"><i class="fas fa-user-plus"></i> Novo Usuário</button>
                 </div>
             </div>
             
-            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-6 relative z-10">
+            <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 flex-1 pb-12 pt-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="adminTableBody">
                     <!-- Cards Renderizados -->
                 </div>
@@ -454,7 +460,7 @@
                 </div>
                 <div class="text-gray-500 mb-3 text-xs" id="panel-pesquisa">Fase</div>
                 <div class="flex gap-4 text-gray-500 mb-4 border-b pb-3">
-                    <span id="panel-nps" class="font-bold text-gray-800 text-lg">Nota da área</span>
+                    <span id="panel-nps-area" class="font-bold text-gray-800 text-lg">Nota da área</span>
                 </div>
                 <p class="text-gray-800 font-medium leading-relaxed" id="panel-comment">Comentário</p>
             </div>
@@ -494,6 +500,15 @@
 
     <!-- SCRIPT PRINCIPAL -->
     <script>
+        // --- FUNÇÕES DE ALERTA CUSTOMIZADO ---
+        function showCustomAlert(message) {
+            document.getElementById('custom-alert-message').innerText = message;
+            document.getElementById('custom-alert-modal').classList.remove('hidden');
+        }
+        function closeCustomAlert() {
+            document.getElementById('custom-alert-modal').classList.add('hidden');
+        }
+
         let supabaseClient;
         let isDbConnected = true;
 
@@ -584,6 +599,7 @@
                 isDbConnected = false; 
                 adminUsers = defaultAdmin;
                 appState = { cycles: [], activeCycleName: null, vigenteCycle: null };
+                showCustomAlert("A conexão com o banco de dados falhou ou a internet está lenta. Recarregue a página. Não tente salvar dados agora para evitar perda do histórico.");
             } finally {
                 document.getElementById('loading-overlay').classList.add('hidden-loader');
                 updateCycleDropdowns(); 
@@ -628,7 +644,7 @@
                 if(appSettings.loginLogo) document.getElementById('preview-login').src = appSettings.loginLogo;
                 if(appSettings.favicon) document.getElementById('preview-favicon').src = appSettings.favicon;
             } else {
-                alert("Acesso Negado: Apenas administradores podem acessar as Configurações de Design.");
+                showCustomAlert("Acesso Negado: Apenas administradores podem acessar as Configurações de Design.");
             }
         }
         function closeBrandingModal() { document.getElementById('branding-modal').classList.add('hidden'); }
@@ -647,7 +663,7 @@
             await saveStateToSupabase();
             applyBrandingToUI();
             closeBrandingModal();
-            alert("Design atualizado para todos os usuários!");
+            showCustomAlert("Design atualizado para todos os usuários!");
         }
 
         function checkAuthType() {
@@ -758,7 +774,7 @@
                     localStorage.setItem('fastTennisUser', email);
                     finishLogin(email);
                 } else {
-                    alert("Senha alterada com sucesso!");
+                    showCustomAlert("Senha alterada com sucesso!");
                 }
             }
         }
@@ -799,7 +815,7 @@
         async function saveStateToSupabase() {
             if(!supabaseClient) return;
             if(!isDbConnected) {
-                alert("⚠️ Salvamento bloqueado: A conexão com o banco de dados falhou durante o carregamento inicial. Recarregue a página.");
+                showCustomAlert("⚠️ Salvamento bloqueado: A conexão com o banco de dados falhou durante o carregamento inicial. Recarregue a página.");
                 return;
             }
 
@@ -876,7 +892,7 @@
             const activeView = Array.from(document.querySelectorAll('.page-view')).find(el => !el.classList.contains('hidden'))?.id.replace('view-', '');
             if(activeView) navigate(activeView);
             
-            alert("Ciclo Vigente alterado com sucesso! Apenas este ciclo permitirá edições.");
+            showCustomAlert("Ciclo Vigente alterado com sucesso! Apenas este ciclo permitirá edições.");
         }
 
         async function deleteSelectedCycle() {
@@ -895,7 +911,7 @@
                 
                 await saveStateToSupabase();
                 updateCycleDropdowns();
-                alert(`Ciclo "${sel}" excluído com sucesso.`);
+                showCustomAlert(`Ciclo "${sel}" excluído com sucesso.`);
                 navigate('dashboard');
             }
         }
@@ -905,7 +921,7 @@
             const isAdmin = user && user.areas.includes('all');
 
             if ((viewId === 'admin' || viewId === 'import') && !isAdmin) {
-                alert("Acesso Negado.");
+                showCustomAlert("Acesso Negado.");
                 return;
             }
 
@@ -1060,10 +1076,11 @@
                                     <div class="bg-accent h-1.5 rounded-full transition-all" style="width: ${progress}%"></div>
                                 </div>
                             </div>
-                            <div class="flex justify-between text-sm">
-                                <div><div class="text-gray-400 text-[10px] sm:text-xs">Comentários</div><div class="font-semibold">${area.comments}</div></div>
-                                <div><div class="text-gray-400 text-[10px] sm:text-xs">Concluídos</div><div class="font-semibold">${area.done}</div></div>
-                                <div><div class="text-gray-400 text-[10px] sm:text-xs">Atrasados</div><div class="font-semibold text-danger">${area.late}</div></div>
+                            <div class="flex justify-between text-sm mt-4 pt-4 border-t border-gray-50">
+                                <div><div class="text-gray-400 text-[10px] sm:text-[11px] font-semibold mb-0.5">Total</div><div class="font-bold text-gray-800">${area.comments}</div></div>
+                                <div class="text-center"><div class="text-gray-400 text-[10px] sm:text-[11px] font-semibold mb-0.5">Andamento</div><div class="font-bold text-warning">${area.emAndamento}</div></div>
+                                <div class="text-center"><div class="text-gray-400 text-[10px] sm:text-[11px] font-semibold mb-0.5">Concluídos</div><div class="font-bold text-green-600">${area.done}</div></div>
+                                <div class="text-right"><div class="text-gray-400 text-[10px] sm:text-[11px] font-semibold mb-0.5">Atrasados</div><div class="font-bold text-danger">${area.late}</div></div>
                             </div>
                         </div>
                         <div class="hover-bar bg-accent rounded-b-2xl"></div>
@@ -1271,11 +1288,11 @@
 
         async function editNps() {
             if(appState.activeCycleName !== appState.vigenteCycle) {
-                alert("🔒 Ciclo Encerrado. Não é possível alterar a nota.");
+                showCustomAlert("🔒 Ciclo Encerrado. Não é possível alterar a nota.");
                 return;
             }
             if(!checkPermission(currentAreaId)) {
-                alert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS.");
+                showCustomAlert("TRAVA DE SEGURANÇA:\nAcesso negado. Somente o Admin ou o Head desta área podem alterar o NPS.");
                 return;
             }
             const activeData = getActiveCycleData();
@@ -1292,14 +1309,14 @@
 
         function openPanel(itemId, forceAreaId = null) {
             if(appState.activeCycleName !== appState.vigenteCycle) {
-                alert("🔒 Ciclo Encerrado. Os dados estão em modo de Apenas Leitura e não podem ser editados.");
+                showCustomAlert("🔒 Ciclo Encerrado. Os dados estão em modo de Apenas Leitura e não podem ser editados.");
                 return;
             }
 
             let targetAreaId = forceAreaId || currentAreaId;
             
             if(!checkPermission(targetAreaId)) {
-                alert("TRAVA DE SEGURANÇA:\nVocê não tem permissão para editar os planos desta área.");
+                showCustomAlert("TRAVA DE SEGURANÇA:\nVocê não tem permissão para editar os planos desta área.");
                 return;
             }
             currentAreaId = targetAreaId; 
@@ -1312,8 +1329,10 @@
             document.getElementById('panel-unidade').innerText = `${item.location}`;
             
             let notaExibir = (item.npsTotal !== '-' && item.npsTotal !== '') ? item.npsTotal : item.npsArea;
-            const panelNps = document.getElementById('panel-nps');
-            panelNps.innerHTML = `Nota da Área: <span class="${getNotaAreaColor(notaExibir)} ml-1">${formatNotaArea(notaExibir)}</span>`;
+            const panelNpsArea = document.getElementById('panel-nps-area');
+            if (panelNpsArea) {
+                panelNpsArea.innerHTML = `Nota da Área: <span class="${getNotaAreaColor(notaExibir)} ml-1">${formatNotaArea(notaExibir)}</span>`;
+            }
 
             document.getElementById('panel-pesquisa').innerText = `Fase de Pesquisa: ${item.pesquisa}`;
             document.getElementById('panel-comment').innerText = item.comment;
@@ -1551,7 +1570,7 @@
             
             updateCycleDropdowns();
             
-            alert("Sucesso! Planilha adicionada ao Histórico do Supabase.");
+            showCustomAlert("Sucesso! Planilha adicionada ao Histórico do Supabase.");
             navigate('dashboard');
         }
 
@@ -1607,7 +1626,7 @@
                     user.password = '1234';
                     await saveStateToSupabase();
                     renderAdminTable();
-                    alert("Senha resetada com sucesso!");
+                    showCustomAlert("Senha resetada com sucesso!");
                 }
             }
         }
@@ -1678,8 +1697,8 @@
             const authType = document.querySelector('input[name="auth_type"]:checked').value;
             const password = document.getElementById('admin-user-password').value.trim();
             
-            if(!email) return alert("O e-mail é obrigatório.");
-            if(authType === 'password' && !password && !editingUserEmail) return alert("A senha provisória é obrigatória para novos usuários.");
+            if(!email) return showCustomAlert("O e-mail é obrigatório.");
+            if(authType === 'password' && !password && !editingUserEmail) return showCustomAlert("A senha provisória é obrigatória para novos usuários.");
 
             const isAll = document.getElementById('admin-check-all').checked;
             let selectedAreas = [];
