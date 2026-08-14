@@ -206,11 +206,6 @@
         <!-- FAIXA AZUL DINÂMICA -->
         <div class="bg-primary text-white w-full absolute top-0 left-0 -z-10 transition-all duration-300" id="hero-bg"></div>
 
-        <!-- FAIXA DE CICLO FECHADO (Global) -->
-        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow-md mb-4 z-10 relative cursor-pointer" onclick="showCustomAlert('Este é um ciclo encerrado. Ele não pode ser modificado.')">
-            <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-        </div>
-
         <!-- DASHBOARD -->
         <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full relative z-10">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4 relative z-10">
@@ -222,36 +217,37 @@
                 </select>
             </div>
 
-            <!-- CARDS TOPO (COM FUNIL COMPLETO DE 6 COLUNAS LOGICAS) -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 mb-12 relative z-10">
-                <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Comentários</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="dash-total-comments">0</div>
+            <!-- CARDS TOPO COM 6 COLUNAS (Funil Completo) -->
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6 mb-12 relative z-10">
+                <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
+                    <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 leading-none" id="dash-total-comments">0</div>
                     <div class="text-[10px] sm:text-xs text-gray-400">Total avaliado</div>
                 </div>
-                <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Sem Plano</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-blue-600 mb-1" id="dash-total-noplan">0</div>
+                <div onclick="openGlobalFilter('Sem plano')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
+                    <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">Sem Plano</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 leading-none" id="dash-total-noplan">0</div>
                     <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
                 </div>
-                <div onclick="openGlobalFilter('A iniciar')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">A Iniciar</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-red-400 mb-1" id="dash-total-ainiciar">0</div>
+                <!-- NOVO CARD: A INICIAR -->
+                <div onclick="openGlobalFilter('A iniciar')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
+                    <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">A Iniciar</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-red-400 mb-1 leading-none" id="dash-total-ainiciar">0</div>
                     <div class="text-[10px] sm:text-xs text-gray-400">Plano feito, na fila</div>
                 </div>
-                <div onclick="openGlobalFilter('Em andamento')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Andamento</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-warning mb-1" id="dash-total-emandamento">0</div>
+                <div onclick="openGlobalFilter('Em andamento')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
+                    <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">Andamento</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-warning mb-1 leading-none" id="dash-total-emandamento">0</div>
                     <div class="text-[10px] sm:text-xs text-gray-400">Em execução</div>
                 </div>
-                <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Concluídos</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-green-600 mb-1" id="dash-total-done">0/0</div>
+                <div onclick="openGlobalFilter('Concluídos')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
+                    <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">Concluídos</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1 leading-none" id="dash-total-done">0/0</div>
                     <div class="text-[10px] sm:text-xs text-gray-400" id="dash-total-percent">0% do ciclo</div>
                 </div>
-                <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all">
-                    <div class="text-[10px] sm:text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">Em Atraso</div>
-                    <div class="text-3xl sm:text-4xl font-bold text-danger mb-1" id="dash-total-late">0</div>
+                <div onclick="openGlobalFilter('Atrasados')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
+                    <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">Em Atraso</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-danger mb-1 leading-none" id="dash-total-late">0</div>
                     <div class="text-[10px] sm:text-xs text-gray-400">Prazo vencido</div>
                 </div>
             </div>
@@ -268,9 +264,6 @@
         <div id="view-global-comments" class="page-view flex-col w-full hidden flex-1 relative z-10">
             <div class="w-full px-4 sm:px-8 pt-6 pb-4 shrink-0">
                 <div class="max-w-7xl mx-auto text-gray-800">
-                    <div class="read-only-banner hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow-md mb-6 cursor-pointer" onclick="showCustomAlert('Este é um ciclo encerrado. Ele não pode ser modificado.')">
-                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-                    </div>
                     <button onclick="navigate('dashboard')" class="text-primary hover:text-blue-800 text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
                     <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-primary" id="global-title">Comentários</h2>
                     <p class="text-gray-500 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
@@ -283,9 +276,6 @@
         <div id="view-area-detail" class="page-view flex-col w-full hidden z-10 relative">
             <div class="w-full px-4 sm:px-8 pt-6 pb-6 relative z-10">
                 <div class="max-w-7xl mx-auto">
-                    <div class="read-only-banner hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow-md mb-6 cursor-pointer" onclick="showCustomAlert('Este é um ciclo encerrado. Ele não pode ser modificado.')">
-                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
-                    </div>
                     <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
                     
                     <div class="flex flex-col sm:flex-row justify-between items-start mb-4 text-white gap-4">
@@ -471,7 +461,6 @@
                     <span id="panel-unidade" class="text-xs bg-gray-100 px-2 py-0.5 rounded">Unidade</span>
                 </div>
                 <div class="text-gray-500 mb-3 text-xs" id="panel-pesquisa">Fase</div>
-                <!-- Apenas Nota da Área -->
                 <div class="flex gap-4 text-gray-500 mb-4 border-b pb-3">
                     <span id="panel-nps-area" class="font-bold text-gray-800 text-lg">Nota da área</span>
                 </div>
@@ -1151,7 +1140,7 @@
                         let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
                         let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
-                        let notaExibir = (item.npsTotal !== '-' && item.npsTotal !== '') ? item.npsTotal : item.npsArea;
+                        let notaExibir = (item.npsArea !== '-' && item.npsArea !== '') ? item.npsArea : item.npsTotal;
                         let notaFormatted = formatNotaArea(notaExibir);
                         let notaColor = getNotaAreaColor(notaExibir);
 
@@ -1248,7 +1237,6 @@
             
             let filteredItems = items.filter(item => {
                 if(currentFilter === 'Todos') return true;
-                if(currentFilter === 'Em aberto') return item.status !== 'Concluído';
                 if(currentFilter === 'A iniciar') return item.status === 'A iniciar';
                 if(currentFilter === 'Em andamento') return item.status === 'Em andamento';
                 if(currentFilter === 'Concluídos') return item.status === 'Concluído';
@@ -1274,7 +1262,7 @@
                 let sColor = item.status==='A iniciar' ? 'text-danger bg-red-50 border-red-200' : item.status==='Em andamento' ? 'text-warning bg-orange-50 border-orange-200' : 'text-accent bg-green-50 border-green-200';
                 let bColor = item.status==='A iniciar' ? 'bg-danger' : item.status==='Em andamento' ? 'bg-warning' : 'bg-accent';
 
-                let notaExibir = (item.npsTotal !== '-' && item.npsTotal !== '') ? item.npsTotal : item.npsArea;
+                let notaExibir = (item.npsArea !== '-' && item.npsArea !== '') ? item.npsArea : item.npsTotal;
                 let notaFormatted = formatNotaArea(notaExibir);
                 let notaColor = getNotaAreaColor(notaExibir);
 
@@ -1318,12 +1306,34 @@
             const activeData = getActiveCycleData();
             const area = activeData.find(a => a.id === currentAreaId);
             const newVal = prompt(`NPS validado da área ${area.name}:\n(Atual: ${area.realNps !== null && area.realNps !== '' ? parseFloat(area.realNps).toFixed(2).replace('.', ',') : 'Nenhum'})`);
+            
             if(newVal !== null && newVal.trim() !== '') {
-                area.realNps = parseFloat(newVal.replace(',', '.'));
-                document.getElementById('detail-nps-display').innerText = `NPS ${area.realNps.toFixed(2).replace('.', ',')}`;
-                
-                await saveStateToSupabase();
-                calculateGlobalStats(activeData);
+                try {
+                    // TRAVA DE CONCORRÊNCIA NA NOTA DA ÁREA
+                    const { data, error } = await supabaseClient.from('app_state').select('*').eq('id', 1).single();
+                    if (error) throw error;
+                    
+                    let freshState = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
+                    let freshCycles = Array.isArray(freshState) ? [{name: 'Ciclo Vigente', data: freshState}] : (freshState.cycles || []);
+
+                    const targetCycle = freshCycles.find(c => c.name === appState.activeCycleName);
+                    const targetArea = targetCycle ? targetCycle.data.find(a => a.id === currentAreaId) : null;
+
+                    if (targetArea) {
+                        targetArea.realNps = parseFloat(newVal.replace(',', '.'));
+                    }
+
+                    appState.cycles = freshCycles;
+                    await saveStateToSupabase();
+                    
+                    if (targetArea) {
+                        document.getElementById('detail-nps-display').innerText = `NPS ${targetArea.realNps.toFixed(2).replace('.', ',')}`;
+                        calculateGlobalStats(targetCycle.data);
+                    }
+                } catch(err) {
+                    console.error("Erro na sincronização:", err);
+                    showCustomAlert("Houve um conflito ao salvar a nota. Recarregue a página e tente novamente.");
+                }
             }
         }
 
@@ -1348,7 +1358,7 @@
             document.getElementById('panel-etapa').innerText = `${activeData.find(a=>a.id===targetAreaId).name}`;
             document.getElementById('panel-unidade').innerText = `${item.location}`;
             
-            let notaExibir = (item.npsTotal !== '-' && item.npsTotal !== '') ? item.npsTotal : item.npsArea;
+            let notaExibir = (item.npsArea !== '-' && item.npsArea !== '') ? item.npsArea : item.npsTotal;
             const panelNpsArea = document.getElementById('panel-nps-area');
             if (panelNpsArea) {
                 panelNpsArea.innerHTML = `Nota da Área: <span class="${getNotaAreaColor(notaExibir)} ml-1">${formatNotaArea(notaExibir)}</span>`;
@@ -1388,39 +1398,60 @@
             btn.innerText = "Salvando na Nuvem...";
             btn.classList.add('opacity-50', 'cursor-wait');
 
-            const activeData = getActiveCycleData();
-            const area = activeData.find(a=>a.id===currentAreaId);
             const itemIdStr = document.getElementById('form-item-id').value;
-            const item = area.items.find(i=>i.id == itemIdStr); 
-            
-            item.plan = document.getElementById('form-plano').value;
-            item.owner = document.getElementById('form-responsavel').value;
-            
-            let inputDate = document.getElementById('form-data').value;
-            if(inputDate && inputDate.includes('-')) {
-                let p = inputDate.split('-');
-                item.date = `${p[2]}/${p[1]}/${p[0]}`;
-            } else {
-                item.date = inputDate;
+            const formPlan = document.getElementById('form-plano').value;
+            const formOwner = document.getElementById('form-responsavel').value;
+            let formDate = document.getElementById('form-data').value;
+            if(formDate && formDate.includes('-')) {
+                let p = formDate.split('-');
+                formDate = `${p[2]}/${p[1]}/${p[0]}`;
             }
-            
-            item.status = document.getElementById('form-status').value;
-            area.done = area.items.filter(i => i.status === 'Concluído').length;
-            
-            await saveStateToSupabase();
-            
-            btn.innerText = "Salvar plano de ação";
-            btn.classList.remove('opacity-50', 'cursor-wait');
-            
-            closePanel();
-            
-            if (!document.getElementById('view-global-comments').classList.contains('hidden')) {
-                openGlobalFilter(currentGlobalFilterType);
-            } else if (!document.getElementById('view-area-detail').classList.contains('hidden')) {
-                document.getElementById('detail-stats').innerText = `${area.done}/${area.comments} concluídos`;
-                renderCommentsList();
-            } else {
-                renderDashboard();
+            const formStatus = document.getElementById('form-status').value;
+
+            try {
+                // TRAVA DE CONCORRÊNCIA AVANÇADA: Puxa o banco fresco ANTES de injetar o salvamento
+                const { data, error } = await supabaseClient.from('app_state').select('*').eq('id', 1).single();
+                if (error) throw error;
+                
+                let freshState = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
+                let freshCycles = Array.isArray(freshState) ? [{name: 'Ciclo Vigente', data: freshState}] : (freshState.cycles || []);
+
+                const targetCycle = freshCycles.find(c => c.name === appState.activeCycleName);
+                const targetArea = targetCycle ? targetCycle.data.find(a => a.id === currentAreaId) : null;
+                const targetItem = targetArea ? targetArea.items.find(i => i.id == itemIdStr) : null;
+
+                if(targetItem) {
+                    targetItem.plan = formPlan;
+                    targetItem.owner = formOwner;
+                    targetItem.date = formDate;
+                    targetItem.status = formStatus;
+                    targetArea.done = targetArea.items.filter(i => i.status === 'Concluído').length;
+                }
+
+                // Atualiza o estado local para espelhar a nuvem atualizada
+                appState.cycles = freshCycles;
+
+                // Salva tudo consolidado de volta (sem matar as edições do colega)
+                await saveStateToSupabase();
+                
+                closePanel();
+                
+                if (!document.getElementById('view-global-comments').classList.contains('hidden')) {
+                    openGlobalFilter(currentGlobalFilterType);
+                } else if (!document.getElementById('view-area-detail').classList.contains('hidden')) {
+                    document.getElementById('detail-stats').innerText = `${targetArea.done}/${targetArea.comments} concluídos`;
+                    renderCommentsList();
+                } else {
+                    renderDashboard();
+                }
+
+            } catch (err) {
+                console.error("Erro na sincronização:", err);
+                showCustomAlert("Houve um conflito ao salvar. A página será atualizada com os dados mais recentes da nuvem.");
+                setTimeout(() => location.reload(), 3000);
+            } finally {
+                btn.innerText = "Salvar Plano de Ação";
+                btn.classList.remove('opacity-50', 'cursor-wait');
             }
         }
 
