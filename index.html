@@ -206,6 +206,11 @@
         <!-- FAIXA AZUL DINÂMICA -->
         <div class="bg-primary text-white w-full absolute top-0 left-0 -z-10 transition-all duration-300" id="hero-bg"></div>
 
+        <!-- FAIXA DE CICLO FECHADO -->
+        <div id="read-only-banner-dash" class="hidden w-full max-w-7xl mx-auto bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-b-lg shadow-md mb-4 z-10 relative cursor-pointer" onclick="showCustomAlert('Este é um ciclo encerrado. Ele não pode ser modificado.')">
+            <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
+        </div>
+
         <!-- DASHBOARD -->
         <div id="view-dashboard" class="page-view px-4 sm:px-8 pt-4 sm:pt-8 max-w-7xl mx-auto block w-full relative z-10">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 text-white gap-4 relative z-10">
@@ -217,7 +222,6 @@
                 </select>
             </div>
 
-            <!-- CARDS TOPO COM 6 COLUNAS (Funil Completo) -->
             <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6 mb-12 relative z-10">
                 <div onclick="openGlobalFilter('Todos')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
                     <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">Comentários</div>
@@ -229,7 +233,6 @@
                     <div class="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 leading-none" id="dash-total-noplan">0</div>
                     <div class="text-[10px] sm:text-xs text-gray-400">Aguardando head</div>
                 </div>
-                <!-- NOVO CARD: A INICIAR -->
                 <div onclick="openGlobalFilter('A iniciar')" class="bg-white rounded-2xl p-4 sm:p-5 cursor-pointer card-shadow card-shadow-hover transition-all flex flex-col justify-center">
                     <div class="text-[10px] sm:text-[11px] text-gray-500 font-semibold mb-1 uppercase tracking-wide">A Iniciar</div>
                     <div class="text-2xl sm:text-3xl font-bold text-red-400 mb-1 leading-none" id="dash-total-ainiciar">0</div>
@@ -264,6 +267,9 @@
         <div id="view-global-comments" class="page-view flex-col w-full hidden flex-1 relative z-10">
             <div class="w-full px-4 sm:px-8 pt-6 pb-4 shrink-0">
                 <div class="max-w-7xl mx-auto text-gray-800">
+                    <div class="read-only-banner hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow-md mb-6 cursor-pointer" onclick="showCustomAlert('Este é um ciclo encerrado. Ele não pode ser modificado.')">
+                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
+                    </div>
                     <button onclick="navigate('dashboard')" class="text-primary hover:text-blue-800 text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Visão Geral</button>
                     <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-primary" id="global-title">Comentários</h2>
                     <p class="text-gray-500 text-sm">Visualização consolidada de todas as áreas do ciclo.</p>
@@ -276,6 +282,9 @@
         <div id="view-area-detail" class="page-view flex-col w-full hidden z-10 relative">
             <div class="w-full px-4 sm:px-8 pt-6 pb-6 relative z-10">
                 <div class="max-w-7xl mx-auto">
+                    <div class="read-only-banner hidden w-full bg-warning text-white text-center text-sm font-bold py-2 px-4 rounded-lg shadow-md mb-6 cursor-pointer" onclick="showCustomAlert('Este é um ciclo encerrado. Ele não pode ser modificado.')">
+                        <i class="fas fa-lock mr-2"></i> Este é um ciclo encerrado. Apenas Leitura.
+                    </div>
                     <button onclick="navigate('areas')" class="text-blue-200 hover:text-white text-sm mb-4 flex items-center gap-1 font-semibold transition-colors"><i class="fas fa-arrow-left"></i> Voltar para Áreas</button>
                     
                     <div class="flex flex-col sm:flex-row justify-between items-start mb-4 text-white gap-4">
@@ -461,6 +470,7 @@
                     <span id="panel-unidade" class="text-xs bg-gray-100 px-2 py-0.5 rounded">Unidade</span>
                 </div>
                 <div class="text-gray-500 mb-3 text-xs" id="panel-pesquisa">Fase</div>
+                <!-- Apenas Nota da Área -->
                 <div class="flex gap-4 text-gray-500 mb-4 border-b pb-3">
                     <span id="panel-nps-area" class="font-bold text-gray-800 text-lg">Nota da área</span>
                 </div>
@@ -662,7 +672,7 @@
             }
         }
         async function saveBranding() {
-            await saveStateToSupabase();
+            await saveStateToSupabase('settings');
             applyBrandingToUI();
             closeBrandingModal();
             showCustomAlert("Design atualizado para todos os usuários!");
@@ -769,7 +779,7 @@
             const user = adminUsers.find(u => u.email === email);
             if(user) {
                 user.password = p1;
-                await saveStateToSupabase();
+                await saveStateToSupabase('admin');
                 document.getElementById('change-pwd-modal').classList.add('hidden');
                 
                 if(isForcedPwdChange) {
@@ -814,7 +824,8 @@
             return user.areas.includes(areaId);
         }
 
-        async function saveStateToSupabase() {
+        // TÚNEIS ISOLADOS DE SALVAMENTO PARA EVITAR CONFLITOS DE GAVETAS MISTURADAS
+        async function saveStateToSupabase(type = 'all') {
             if(!supabaseClient) return;
             if(!isDbConnected) {
                 showCustomAlert("⚠️ Salvamento bloqueado: A conexão com o banco de dados falhou durante o carregamento inicial. Recarregue a página.");
@@ -828,10 +839,25 @@
             }
 
             try {
-                const { error } = await supabaseClient.from('app_state')
-                    .upsert({ id: 1, areas_data: appState, admin_users: adminUsers, settings: appSettings });
+                let updatePayload = {};
                 
-                if(error) throw error;
+                // Manda para o Supabase APENAS a gaveta que você quer editar
+                if (type === 'all') {
+                    updatePayload = { areas_data: appState, admin_users: adminUsers, settings: appSettings };
+                } else if (type === 'admin') {
+                    updatePayload = { admin_users: adminUsers };
+                } else if (type === 'areas') {
+                    updatePayload = { areas_data: appState };
+                } else if (type === 'settings') {
+                    updatePayload = { settings: appSettings };
+                }
+
+                const { error } = await supabaseClient.from('app_state').update(updatePayload).eq('id', 1);
+                
+                // Se der erro por algum motivo extremo, ele garante criando do zero
+                if (error) {
+                    await supabaseClient.from('app_state').upsert({ id: 1, areas_data: appState, admin_users: adminUsers, settings: appSettings });
+                }
 
                 if(syncUI && !syncUI.classList.contains('hidden')) {
                     syncUI.innerHTML = '<i class="fas fa-check"></i> <span class="hidden sm:inline">Atualizado</span>';
@@ -887,8 +913,20 @@
         async function setVigenteCycle() {
             const sel = document.getElementById('import-vigente-select').value;
             if(!sel) return;
-            appState.vigenteCycle = sel;
-            await saveStateToSupabase();
+            
+            // Trava de Concorrência ao mudar Ciclo Vigente
+            const { data } = await supabaseClient.from('app_state').select('*').eq('id', 1).single();
+            if(data) {
+                let freshState = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
+                if(freshState.cycles) {
+                    freshState.vigenteCycle = sel;
+                    appState = freshState;
+                }
+            } else {
+                appState.vigenteCycle = sel;
+            }
+
+            await saveStateToSupabase('areas');
             updateCycleDropdowns();
             
             const activeView = Array.from(document.querySelectorAll('.page-view')).find(el => !el.classList.contains('hidden'))?.id.replace('view-', '');
@@ -902,16 +940,26 @@
             if(!sel) return;
             
             if(confirm(`ATENÇÃO: Tem certeza que deseja EXCLUIR PERMANENTEMENTE o "${sel}"?\nTodos os comentários e planos deste ciclo serão apagados do Supabase.`)) {
-                appState.cycles = appState.cycles.filter(c => c.name !== sel);
                 
-                if(appState.activeCycleName === sel) {
-                    appState.activeCycleName = appState.cycles.length > 0 ? appState.cycles[appState.cycles.length-1].name : null;
-                }
-                if(appState.vigenteCycle === sel) {
-                    appState.vigenteCycle = appState.activeCycleName;
+                // Trava de Concorrência ao apagar Ciclo
+                const { data } = await supabaseClient.from('app_state').select('*').eq('id', 1).single();
+                if(data) {
+                    let freshState = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
+                    if(freshState.cycles) {
+                        freshState.cycles = freshState.cycles.filter(c => c.name !== sel);
+                        if(freshState.activeCycleName === sel) {
+                            freshState.activeCycleName = freshState.cycles.length > 0 ? freshState.cycles[freshState.cycles.length-1].name : null;
+                        }
+                        if(freshState.vigenteCycle === sel) {
+                            freshState.vigenteCycle = freshState.activeCycleName;
+                        }
+                        appState = freshState;
+                    }
+                } else {
+                    appState.cycles = appState.cycles.filter(c => c.name !== sel);
                 }
                 
-                await saveStateToSupabase();
+                await saveStateToSupabase('areas');
                 updateCycleDropdowns();
                 showCustomAlert(`Ciclo "${sel}" excluído com sucesso.`);
                 navigate('dashboard');
@@ -1309,7 +1357,6 @@
             
             if(newVal !== null && newVal.trim() !== '') {
                 try {
-                    // TRAVA DE CONCORRÊNCIA NA NOTA DA ÁREA
                     const { data, error } = await supabaseClient.from('app_state').select('*').eq('id', 1).single();
                     if (error) throw error;
                     
@@ -1324,7 +1371,7 @@
                     }
 
                     appState.cycles = freshCycles;
-                    await saveStateToSupabase();
+                    await saveStateToSupabase('areas');
                     
                     if (targetArea) {
                         document.getElementById('detail-nps-display').innerText = `NPS ${targetArea.realNps.toFixed(2).replace('.', ',')}`;
@@ -1409,7 +1456,6 @@
             const formStatus = document.getElementById('form-status').value;
 
             try {
-                // TRAVA DE CONCORRÊNCIA AVANÇADA: Puxa o banco fresco ANTES de injetar o salvamento
                 const { data, error } = await supabaseClient.from('app_state').select('*').eq('id', 1).single();
                 if (error) throw error;
                 
@@ -1428,11 +1474,8 @@
                     targetArea.done = targetArea.items.filter(i => i.status === 'Concluído').length;
                 }
 
-                // Atualiza o estado local para espelhar a nuvem atualizada
                 appState.cycles = freshCycles;
-
-                // Salva tudo consolidado de volta (sem matar as edições do colega)
-                await saveStateToSupabase();
+                await saveStateToSupabase('areas');
                 
                 closePanel();
                 
@@ -1589,6 +1632,13 @@
             btn.classList.remove('border-green-700');
             btn.classList.add('cursor-wait');
 
+            // Trava de Concorrência para Importação
+            const { data } = await supabaseClient.from('app_state').select('*').eq('id', 1).single();
+            if(data) {
+                let freshState = typeof data.areas_data === 'string' ? JSON.parse(data.areas_data) : data.areas_data;
+                if(freshState.cycles) appState = freshState;
+            }
+
             if(newCycleInput) {
                 appState.cycles.push({
                     name: newCycleInput,
@@ -1606,7 +1656,7 @@
                 appState.vigenteCycle = 'Ciclo Inicial';
             }
             
-            await saveStateToSupabase();
+            await saveStateToSupabase('areas');
             
             pendingImportData = null;
             document.getElementById('import-preview-list').innerHTML = '';
@@ -1675,7 +1725,7 @@
                 const user = adminUsers.find(u => u.email === email);
                 if(user) {
                     user.password = '1234';
-                    await saveStateToSupabase();
+                    await saveStateToSupabase('admin');
                     renderAdminTable();
                     showCustomAlert("Senha resetada com sucesso!");
                 }
@@ -1770,7 +1820,7 @@
                 adminUsers.push({email: email, authType: authType, password: password || '1234', areas: selectedAreas});
             }
             
-            await saveStateToSupabase();
+            await saveStateToSupabase('admin');
             closeAdminModal();
             renderAdminTable();
             if(editingUserEmail === loggedEmail && email !== loggedEmail) logout();
@@ -1780,7 +1830,7 @@
             if(!editingUserEmail) return;
             if(confirm(`Tem certeza que deseja excluir o usuário ${editingUserEmail}?`)) {
                 adminUsers = adminUsers.filter(u => u.email !== editingUserEmail);
-                await saveStateToSupabase();
+                await saveStateToSupabase('admin');
                 closeAdminModal();
                 renderAdminTable();
                 if(editingUserEmail === loggedEmail) logout();
